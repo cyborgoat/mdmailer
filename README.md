@@ -16,7 +16,7 @@ Turn a Markdown file into a branded email, ready to send manually — no automat
 npx @cyborgoat/mdmailer init
 ```
 
-This scaffolds `mdmailer.config.json` and `content/example.md` in the current directory. Edit both, then generate:
+This scaffolds `mdmailer.config.json`, a placeholder `assets/logo.svg`, and a `content/example.md` that demonstrates the full range of supported Markdown (headings, emphasis, lists, task lists, tables, blockquotes, code blocks, and more). Edit all three, then generate:
 
 ```bash
 npx @cyborgoat/mdmailer generate --input content/example.md
