@@ -7,7 +7,7 @@ import {
   Link,
   Preview,
   Text,
-} from "@react-email/components";
+} from "react-email";
 import * as React from "react";
 import Markdown from "markdown-to-jsx";
 import { Header } from "../components/Header.js";

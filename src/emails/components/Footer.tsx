@@ -1,4 +1,4 @@
-import { Column, Hr, Img, Row, Text } from "@react-email/components";
+import { Column, Hr, Img, Row, Text } from "react-email";
 import * as React from "react";
 
 interface FooterProps {
