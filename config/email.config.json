@@ -1,0 +1,11 @@
+{
+  "organization": {
+    "name": "Culture",
+    "logoUrl": "assets/logos/culture-logo.svg"
+  },
+  "theme": {
+    "primaryColor": "#1a73e8",
+    "footerText": "© 2026 Acme Corp. Internal use only — please do not forward externally.",
+    "slogan": "Flowing intelligence across the network."
+  }
+}

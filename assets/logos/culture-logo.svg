@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1000" viewBox="0 0 430 356" role="img" aria-labelledby="title desc">
+  <title id="title">Four-stripe black-shirt AA-to-N monogram — Emerald Mono</title>
+  <desc id="desc">A modern, high-contrast four-stripe AA-to-N logo for black apparel using the Emerald Mono flat-color treatment.</desc>
+  
+  <g  fill="none" stroke-width="4.2" stroke-linecap="butt">
+      <defs><clipPath id="single-emerald-mono-left" clipPathUnits="userSpaceOnUse"><rect x="0" y="35" width="430" height="133"/></clipPath><clipPath id="single-emerald-mono-center" clipPathUnits="userSpaceOnUse"><rect x="0" y="35" width="430" height="286"/></clipPath><clipPath id="single-emerald-mono-right" clipPathUnits="userSpaceOnUse"><rect x="0" y="206" width="430" height="115"/></clipPath></defs>
+      <path d="M 20 176 H 222.06 M 247.31 176 H 414" stroke="#0E9A6C"/>
+      <path d="M 20 182 H 224.51 M 249.76 182 H 414" stroke="#0E9A6C"/>
+      <path d="M 20 188 H 226.97 M 252.21 188 H 414" stroke="#0E9A6C"/>
+      <path d="M 20 194 H 229.42 M 254.67 194 H 414" stroke="#0E9A6C"/>
+      <g clip-path="url(#single-emerald-mono-left)"><line x1="67.37" y1="175.94" x2="153.85" y2="18.40" stroke="#0E9A6C"/><line x1="72.63" y1="178.83" x2="159.11" y2="21.28" stroke="#0E9A6C"/><line x1="77.89" y1="181.72" x2="164.37" y2="24.17" stroke="#0E9A6C"/><line x1="83.15" y1="184.60" x2="169.63" y2="27.06" stroke="#0E9A6C"/></g>
+      <g clip-path="url(#single-emerald-mono-center)"><line x1="180.03" y1="18.63" x2="307.63" y2="330.55" stroke="#0E9A6C"/><line x1="174.48" y1="20.91" x2="302.08" y2="332.82" stroke="#0E9A6C"/><line x1="168.92" y1="23.18" x2="296.52" y2="335.09" stroke="#0E9A6C"/><line x1="163.37" y1="25.45" x2="290.97" y2="337.37" stroke="#0E9A6C"/></g>
+      <g clip-path="url(#single-emerald-mono-right)"><line x1="302.59" y1="330.86" x2="356.60" y2="189.71" stroke="#0E9A6C"/><line x1="308.20" y1="333.00" x2="362.20" y2="191.85" stroke="#0E9A6C"/><line x1="313.80" y1="335.15" x2="367.80" y2="194.00" stroke="#0E9A6C"/><line x1="319.40" y1="337.29" x2="373.41" y2="196.14" stroke="#0E9A6C"/></g>
+    </g>
+</svg>
