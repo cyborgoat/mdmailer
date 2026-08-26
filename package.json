@@ -1,5 +1,5 @@
 {
-  "name": "mdmailer",
+  "name": "@cyborgoat/mdmailer",
   "version": "0.1.0",
   "description": "Turn a Markdown file into a branded HTML/EML email, ready to send manually. Configure your logo, theme, and slogan once; write updates in plain Markdown.",
   "type": "module",
@@ -20,7 +20,7 @@
     "node": ">=18"
   },
   "bin": {
-    "mdmailer": "./dist/cli.js"
+    "mdmailer": "dist/cli.js"
   },
   "files": [
     "dist",

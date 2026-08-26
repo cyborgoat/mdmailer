@@ -13,14 +13,16 @@ Turn a Markdown file into a branded email, ready to send manually — no automat
 ## Usage
 
 ```bash
-npx mdmailer init
+npx @cyborgoat/mdmailer init
 ```
 
 This scaffolds `mdmailer.config.json` and `content/example.md` in the current directory. Edit both, then generate:
 
 ```bash
-npx mdmailer generate --input content/example.md
+npx @cyborgoat/mdmailer generate --input content/example.md
 ```
+
+(If you install it globally — `npm install -g @cyborgoat/mdmailer` — the command is just `mdmailer`.)
 
 Optional `--config` flag to point at a different config file (defaults to `mdmailer.config.json`).
 
@@ -46,13 +48,15 @@ Edit `mdmailer.config.json`:
   "organization": { "name": "Your Organization", "logoUrl": "https://.../logo.png" },
   "theme": {
     "primaryColor": "#1a73e8",
-    "footerText": "© 2026 Your Organization",
+    "footerText": "© 2026 {{organization}}",
     "slogan": "Flowing intelligence across the network"
   }
 }
 ```
 
 `logoUrl` accepts either a hosted `https://...` URL, or a path (relative to the current directory) to a local image file — local logos are automatically embedded as a data URI at generation time (SVGs are rasterized to PNG first, since most email clients don't render inline SVG), so no image hosting is required.
+
+`organization.name` and `theme.slogan` are rendered together in the email's footer, below the body content — the name in bold, the slogan in a smaller, italic serif underneath it. `theme.footerText` can include the placeholder `{{organization}}`, which is replaced with `organization.name` at generation time, so your copyright line always stays in sync with the configured org name.
 
 ## Local development (this repo)
 
@@ -71,7 +75,7 @@ npm run build                                                 # bundles src/cli.
 ```bash
 npm login          # one-time, interactive
 npm run build
-npm publish
+npm publish --access=public
 ```
 
 `prepublishOnly` runs the build automatically. The published tarball only includes `dist/`, `README.md`, and `LICENSE` (see the `files` field in `package.json`) — none of this repo's own config, content, or logo assets are shipped.

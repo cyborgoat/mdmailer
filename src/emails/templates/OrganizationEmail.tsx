@@ -110,19 +110,18 @@ export default function OrganizationEmail({
       <Preview>{title}</Preview>
       <Body style={{ backgroundColor: "#f4f4f4", fontFamily: "Arial, sans-serif" }}>
         <Container style={{ backgroundColor: "#ffffff", padding: "24px", maxWidth: "600px" }}>
-          <Header
-            organizationName={organization.name}
-            organizationLogoUrl={organization.logoUrl}
-            slogan={slogan}
-          />
+          <Header organizationName={organization.name} organizationLogoUrl={organization.logoUrl} />
           <Heading as="h1" style={{ color: primaryColor, marginTop: "24px" }}>
             {title}
           </Heading>
-          <Text style={{ fontSize: "12px", color: "#8a8a8a", marginTop: "-8px" }}>
-            {date} &middot; {organization.name}
-          </Text>
+          <Text style={{ fontSize: "12px", color: "#8a8a8a", marginTop: "-8px" }}>{date}</Text>
           <Markdown options={{ overrides: markdownOverrides }}>{bodyMarkdown}</Markdown>
-          <Footer footerText={footerText} />
+          <Footer
+            organizationName={organization.name}
+            organizationLogoUrl={organization.logoUrl}
+            slogan={slogan}
+            footerText={footerText}
+          />
         </Container>
       </Body>
     </Html>
@@ -136,6 +135,6 @@ OrganizationEmail.PreviewProps = {
   bodyMarkdown: "# What shipped this month\n\nSample content for preview.",
   organization: { name: "Engineering", logoUrl: "https://placehold.co/80x40" },
   primaryColor: "#1a73e8",
-  footerText: "© 2026 Acme Corp",
+  footerText: "© 2026 {{organization}}",
   slogan: "Flowing intelligence across the network",
 } satisfies OrganizationEmailProps;
