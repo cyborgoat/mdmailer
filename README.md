@@ -2,10 +2,12 @@
 
 Turn a Markdown file into a branded email, ready to send manually — no automation, no SMTP involved.
 
+Requires Node.js 24 or later.
+
 ## How it works
 
 1. Write your update as Markdown, with frontmatter for `title` and `date`.
-2. Configure your organization's logo, theme, and slogan once in `mdmailer.config.json` — it's applied to every email you generate.
+2. Configure your organization's name, logo, theme, and slogan once in `mdmailer.config.json` — it's applied to every email you generate.
 3. Run the generator. It renders the email with [react.email](https://react.email/docs/introduction) and writes two files to `output/`:
    - `<name>.html` — open in a browser to preview.
    - `<name>.eml` — open it and your default mail client will pop up a compose window with the formatted email already in the body. Add recipients and hit send.
@@ -54,13 +56,13 @@ Edit `mdmailer.config.json`:
 }
 ```
 
-`logoUrl` accepts either a hosted `https://...` URL, or a path (relative to the current directory) to a local image file — local logos are automatically embedded as a data URI at generation time (SVGs are rasterized to PNG first, since most email clients don't render inline SVG), so no image hosting is required.
+`logoUrl` accepts either a hosted `https://...` URL, or a path (relative to the current directory) to a local image file — local logos are automatically embedded at generation time (SVGs are rasterized to PNG first, since most email clients don't render inline SVG), so no image hosting is required. It's embedded differently depending on the output: in the `.html` preview it's a `data:` URI (browsers render those fine), while in the `.eml` it's attached as a proper inline image referenced by `Content-ID`/`cid:` — Outlook doesn't render `data:` URIs in `<img>` tags, so this keeps the logo visible there too.
 
-`organization.name` and `theme.slogan` are rendered together in the email's footer, below the body content — the name in bold, the slogan in a smaller, italic serif underneath it. `theme.footerText` can include the placeholder `{{organization}}`, which is replaced with `organization.name` at generation time, so your copyright line always stays in sync with the configured org name.
+`organization.name`, a small version of `organization.logoUrl`, and `theme.slogan` are rendered together in the email's footer, below the body content — a small logo beside the bold org name, with the slogan in a smaller, italic serif underneath it. `theme.footerText` can include the placeholder `{{organization}}`, which is replaced with `organization.name` at generation time, so your copyright line always stays in sync with the configured org name.
 
 ## Local development (this repo)
 
-This repo is also mdmailer's own dogfood project — `mdmailer.config.json` and `content/` at the root are the maintainer's live example, not part of the published package.
+This repo is also mdmailer's own dogfood project — `mdmailer.config.json` and `content/` at the root are the maintainer's live example, not part of the published package. Only one default example each is tracked in git (`content/2026-08-engineering.md` and `assets/logos/logo-dark-with-letters.svg` — see `.gitignore`), so feel free to drop extra local content or logo files in those folders without worrying about committing them.
 
 ```bash
 npm install
@@ -78,4 +80,4 @@ npm run build
 npm publish --access=public
 ```
 
-`prepublishOnly` runs the build automatically. The published tarball only includes `dist/`, `README.md`, and `LICENSE` (see the `files` field in `package.json`) — none of this repo's own config, content, or logo assets are shipped.
+`prepublishOnly` runs the build automatically. The published tarball only includes `dist/`, `README.md`, and `LICENSE` (see the `files` field in `package.json`) — none of this repo's own config, content, or logo assets are shipped. `npm pack --dry-run` is a quick way to double-check tarball contents before publishing. The package's `engines.node` field (`>=24`) matches `react-email`'s own Node requirement.
