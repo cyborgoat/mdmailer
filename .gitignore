@@ -151,6 +151,7 @@ output/*.eml
 content/*
 !content/2026-08-engineering.md
 !content/2026-06-monthly-digest.md
+!content/2026-06-monthly-digest-zh.md
 !content/2026-05-product-launch.md
 !content/2026-03-release-notes.md
 !content/2026-01-quarterly-review.md

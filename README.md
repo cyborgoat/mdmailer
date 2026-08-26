@@ -70,7 +70,7 @@ Edit `mdmailer.config.json`:
 
 ## Local development (this repo)
 
-This repo is also mdmailer's own dogfood project — `mdmailer.config.json` and `content/` at the root are the maintainer's live example, not part of the published package. Only a handful of example files are tracked in git (`content/2026-08-engineering.md`, `content/2026-06-monthly-digest.md`, `content/2026-05-product-launch.md`, `content/2026-03-release-notes.md`, `content/2026-01-quarterly-review.md`, `assets/logos/logo-dark-with-letters.svg` — a generic placeholder wordmark, not a real organization's branding — and `assets/images/team-offsite.jpg`, a freely-licensed stock photo used as the local-image example; see `.gitignore`), so feel free to drop extra local content, logo, or image files in those folders without worrying about committing them.
+This repo is also mdmailer's own dogfood project — `mdmailer.config.json` and `content/` at the root are the maintainer's live example, not part of the published package. Only a handful of example files are tracked in git (`content/2026-08-engineering.md`, `content/2026-06-monthly-digest.md`, `content/2026-06-monthly-digest-zh.md` (a Chinese translation, demonstrating the default CJK-safe `fontFamily`), `content/2026-05-product-launch.md`, `content/2026-03-release-notes.md`, `content/2026-01-quarterly-review.md`, `assets/logos/logo-dark-with-letters.svg` — a generic placeholder wordmark, not a real organization's branding — and `assets/images/team-offsite.jpg`, a freely-licensed stock photo used as the local-image example; see `.gitignore`), so feel free to drop extra local content, logo, or image files in those folders without worrying about committing them.
 
 ```bash
 npm install

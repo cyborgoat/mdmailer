@@ -47,4 +47,11 @@ A few things the team has been reading and experimenting with:
 - [ ] Q3 offsite planning survey — closes June 30
 - [ ] New hire buddy program pilot
 
+## Upcoming Events
+
+- **July 9** — Q3 kickoff all-hands (10am, main auditorium + livestream)
+- **July 16** — Customer Advisory Board roundtable
+- **July 22** — Summer volunteer day, sign up in `#culture`
+- **August 3** — Engineering demo day
+
 Have something for next month's digest? Reply to this email or drop it in `#announcements`.
