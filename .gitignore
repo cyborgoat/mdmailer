@@ -147,5 +147,15 @@ output/*.html
 output/*.eml
 !output/.gitkeep
 
+# Local example content (repo dogfooding) — only the default example ships
+content/*
+!content/2026-08-engineering.md
+
+# Local example logos (repo dogfooding) — only the default logo ships
+assets/*
+!assets/logos
+assets/logos/*
+!assets/logos/logo-dark-with-letters.svg
+
 # macOS
 .DS_Store
