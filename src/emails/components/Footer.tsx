@@ -6,9 +6,10 @@ interface FooterProps {
   organizationLogoUrl: string;
   slogan: string;
   footerText: string;
+  fontFamily: string;
 }
 
-export function Footer({ organizationName, organizationLogoUrl, slogan, footerText }: FooterProps) {
+export function Footer({ organizationName, organizationLogoUrl, slogan, footerText, fontFamily }: FooterProps) {
   return (
     <>
       <Hr style={{ borderColor: "#e6e6e6", margin: "32px 0 16px" }} />
@@ -23,7 +24,7 @@ export function Footer({ organizationName, organizationLogoUrl, slogan, footerTe
           />
         </Column>
         <Column style={{ verticalAlign: "middle", paddingLeft: "8px" }}>
-          <Text style={{ fontSize: "13px", fontWeight: 600, color: "#111827", margin: "0" }}>
+          <Text style={{ fontFamily, fontSize: "13px", fontWeight: 600, color: "#111827", margin: "0" }}>
             {organizationName}
           </Text>
         </Column>
@@ -40,7 +41,7 @@ export function Footer({ organizationName, organizationLogoUrl, slogan, footerTe
       >
         {slogan}
       </Text>
-      <Text style={{ fontSize: "12px", color: "#8a8a8a", margin: "0" }}>
+      <Text style={{ fontFamily, fontSize: "12px", color: "#8a8a8a", margin: "0" }}>
         {footerText.replaceAll("{{organization}}", organizationName)}
       </Text>
     </>

@@ -9,7 +9,8 @@ const DEFAULT_CONFIG = `{
   "theme": {
     "primaryColor": "#1a73e8",
     "footerText": "© 2026 {{organization}}. Internal use only.",
-    "slogan": "Flowing intelligence across the network"
+    "slogan": "Flowing intelligence across the network",
+    "fontFamily": "\\"Helvetica Neue\\", Helvetica, Arial, \\"PingFang SC\\", \\"Microsoft YaHei\\", sans-serif"
   }
 }
 `;

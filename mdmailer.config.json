@@ -6,6 +6,7 @@
   "theme": {
     "primaryColor": "#1a73e8",
     "footerText": "© 2026 {{organization}}. Internal use only — please do not forward externally.",
-    "slogan": "Flowing intelligence across the network."
+    "slogan": "Flowing intelligence across the network.",
+    "fontFamily": "\"Helvetica Neue\", Helvetica, Arial, \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
   }
 }

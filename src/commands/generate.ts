@@ -120,6 +120,7 @@ export async function runGenerate(argv: string[]) {
     primaryColor: config.theme.primaryColor,
     footerText: config.theme.footerText,
     slogan: config.theme.slogan,
+    fontFamily: config.theme.fontFamily,
   });
 
   const html = await render(element);
