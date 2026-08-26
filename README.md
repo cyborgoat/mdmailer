@@ -1,11 +1,11 @@
-# mailman
+# mdmailer
 
-Turn a Markdown file into a branded organization newsletter email, ready to send manually — no automation, no SMTP involved.
+Turn a Markdown file into a branded email, ready to send manually — no automation, no SMTP involved.
 
 ## How it works
 
-1. Write your update as Markdown in `content/`, with frontmatter for `title` and `date`.
-2. Configure your organization's logo and theme once in `config/email.config.json` — it's applied to every newsletter.
+1. Write your update as Markdown, with frontmatter for `title` and `date`.
+2. Configure your organization's logo, theme, and slogan once in `mdmailer.config.json` — it's applied to every email you generate.
 3. Run the generator. It renders the email with [react.email](https://react.email/docs/introduction) and writes two files to `output/`:
    - `<name>.html` — open in a browser to preview.
    - `<name>.eml` — open it and your default mail client will pop up a compose window with the formatted email already in the body. Add recipients and hit send.
@@ -13,15 +13,18 @@ Turn a Markdown file into a branded organization newsletter email, ready to send
 ## Usage
 
 ```bash
-npm install
-npm run generate -- --input content/2026-08-engineering.md
+npx mdmailer init
 ```
 
-Optional `--config` flag to point at a different config file (defaults to `config/email.config.json`).
+This scaffolds `mdmailer.config.json` and `content/example.md` in the current directory. Edit both, then generate:
 
-## Adding a news issue
+```bash
+npx mdmailer generate --input content/example.md
+```
 
-Create a new file in `content/`, e.g. `content/2026-09-update.md`:
+Optional `--config` flag to point at a different config file (defaults to `mdmailer.config.json`).
+
+## Writing an update
 
 ```markdown
 ---
@@ -36,21 +39,39 @@ Your content here, in normal Markdown (headings, lists, tables, task lists, link
 
 ## Configuring branding
 
-Edit `config/email.config.json`:
+Edit `mdmailer.config.json`:
 
 ```json
 {
-  "organization": { "name": "Culture", "logoUrl": "assets/logos/culture-logo.svg" },
-  "theme": { "primaryColor": "#1a73e8", "footerText": "© 2026 Acme Corp" }
+  "organization": { "name": "Your Organization", "logoUrl": "https://.../logo.png" },
+  "theme": {
+    "primaryColor": "#1a73e8",
+    "footerText": "© 2026 Your Organization",
+    "slogan": "Flowing intelligence across the network"
+  }
 }
 ```
 
-`logoUrl` accepts either a hosted `https://...` URL, or a path (relative to the repo root) to a local file under `assets/` — local logos are automatically embedded as a data URI at generation time (SVGs are rasterized to PNG first, since most email clients don't render inline SVG), so no image hosting is required.
+`logoUrl` accepts either a hosted `https://...` URL, or a path (relative to the current directory) to a local image file — local logos are automatically embedded as a data URI at generation time (SVGs are rasterized to PNG first, since most email clients don't render inline SVG), so no image hosting is required.
 
-## Previewing the template while editing
+## Local development (this repo)
+
+This repo is also mdmailer's own dogfood project — `mdmailer.config.json` and `content/` at the root are the maintainer's live example, not part of the published package.
 
 ```bash
-npm run email:dev
+npm install
+npm run generate -- --input content/2026-08-engineering.md   # runs src/cli.ts directly via tsx
+npm run email:dev                                             # react.email live preview server
+npm run typecheck
+npm run build                                                 # bundles src/cli.ts -> dist/cli.js via tsup
 ```
 
-Opens the react.email local preview server for `emails/templates/OrganizationNewsletter.tsx` using its sample `PreviewProps`.
+## Publishing
+
+```bash
+npm login          # one-time, interactive
+npm run build
+npm publish
+```
+
+`prepublishOnly` runs the build automatically. The published tarball only includes `dist/`, `README.md`, and `LICENSE` (see the `files` field in `package.json`) — none of this repo's own config, content, or logo assets are shipped.

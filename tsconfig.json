@@ -13,5 +13,5 @@
     "noEmit": true,
     "isolatedModules": true
   },
-  "include": ["emails", "scripts"]
+  "include": ["src"]
 }

@@ -3,9 +3,9 @@ import { basename, extname, resolve } from "node:path";
 import * as React from "react";
 import matter from "gray-matter";
 import { render } from "@react-email/render";
-import { configSchema } from "../config/config.schema.js";
-import OrganizationNewsletter from "../emails/templates/OrganizationNewsletter.js";
-import { resolveBrandLogo } from "./resolve-logo.js";
+import { configSchema } from "../config-schema.js";
+import OrganizationEmail from "../emails/templates/OrganizationEmail.js";
+import { resolveBrandLogo } from "../resolve-logo.js";
 
 function parseArgs(argv: string[]) {
   const args = new Map<string, string>();
@@ -27,7 +27,7 @@ function formatDate(value: unknown): string {
 }
 
 function buildEml(subject: string, html: string, text: string): string {
-  const boundary = `mailman-${Date.now()}`;
+  const boundary = `mdmailer-${Date.now()}`;
   return [
     `Subject: ${subject}`,
     `MIME-Version: 1.0`,
@@ -48,13 +48,13 @@ function buildEml(subject: string, html: string, text: string): string {
   ].join("\r\n");
 }
 
-async function main() {
-  const args = parseArgs(process.argv.slice(2));
+export async function runGenerate(argv: string[]) {
+  const args = parseArgs(argv);
   const inputPath = args.get("input");
-  const configPath = args.get("config") ?? "config/email.config.json";
+  const configPath = args.get("config") ?? "mdmailer.config.json";
 
   if (!inputPath) {
-    console.error("Usage: npm run generate -- --input content/<file>.md [--config config/email.config.json]");
+    console.error("Usage: mdmailer generate --input content/<file>.md [--config mdmailer.config.json]");
     process.exitCode = 1;
     return;
   }
@@ -65,11 +65,11 @@ async function main() {
   const rawMarkdown = await readFile(resolve(inputPath), "utf-8");
   const { data: frontmatter, content: bodyMarkdown } = matter(rawMarkdown);
 
-  const title = frontmatter.title ?? "Organization News";
+  const title = frontmatter.title ?? "Untitled Email";
   const date = formatDate(frontmatter.date);
   const organization = await resolveBrandLogo(config.organization);
 
-  const element = React.createElement(OrganizationNewsletter, {
+  const element = React.createElement(OrganizationEmail, {
     title,
     date,
     bodyMarkdown,
@@ -93,8 +93,3 @@ async function main() {
 
   console.log(`Generated:\n  ${htmlPath}  (preview in a browser)\n  ${emlPath}  (open to compose in your mail client)`);
 }
-
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});

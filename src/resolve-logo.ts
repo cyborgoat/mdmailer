@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { extname, resolve } from "node:path";
 import sharp from "sharp";
-import type { Brand } from "../config/config.schema.js";
+import type { Brand } from "./config-schema.js";
 
 const RASTER_MIME: Record<string, string> = {
   ".png": "image/png",

@@ -12,9 +12,9 @@ import * as React from "react";
 import Markdown from "markdown-to-jsx";
 import { Header } from "../components/Header.js";
 import { Footer } from "../components/Footer.js";
-import type { Brand } from "../../config/config.schema.js";
+import type { Brand } from "../../config-schema.js";
 
-export interface OrganizationNewsletterProps {
+export interface OrganizationEmailProps {
   title: string;
   date: string;
   bodyMarkdown: string;
@@ -95,7 +95,7 @@ const markdownOverrides = {
   input: { props: { disabled: true, style: { marginRight: "6px" } } },
 };
 
-export default function OrganizationNewsletter({
+export default function OrganizationEmail({
   title,
   date,
   bodyMarkdown,
@@ -103,7 +103,7 @@ export default function OrganizationNewsletter({
   primaryColor,
   footerText,
   slogan,
-}: OrganizationNewsletterProps) {
+}: OrganizationEmailProps) {
   return (
     <Html>
       <Head />
@@ -130,7 +130,7 @@ export default function OrganizationNewsletter({
 }
 
 // Sample props so `npm run email:dev` has something to preview.
-OrganizationNewsletter.PreviewProps = {
+OrganizationEmail.PreviewProps = {
   title: "August Engineering Update",
   date: "2026-08-26",
   bodyMarkdown: "# What shipped this month\n\nSample content for preview.",
@@ -138,4 +138,4 @@ OrganizationNewsletter.PreviewProps = {
   primaryColor: "#1a73e8",
   footerText: "© 2026 Acme Corp",
   slogan: "Flowing intelligence across the network",
-} satisfies OrganizationNewsletterProps;
+} satisfies OrganizationEmailProps;

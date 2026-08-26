@@ -1,13 +1,38 @@
 {
-  "name": "mailman",
+  "name": "mdmailer",
   "version": "0.1.0",
-  "private": true,
-  "description": "Generate branded organization newsletter emails from Markdown, ready to send manually.",
+  "description": "Turn a Markdown file into a branded HTML/EML email, ready to send manually. Configure your logo, theme, and slogan once; write updates in plain Markdown.",
   "type": "module",
+  "license": "MIT",
+  "author": "cyborgoat",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cyborgoat/mailman.git"
+  },
+  "keywords": [
+    "email",
+    "markdown",
+    "cli",
+    "react-email",
+    "branding"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "bin": {
+    "mdmailer": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
-    "generate": "tsx scripts/generate-email.ts",
-    "email:dev": "email dev --dir emails/templates",
-    "typecheck": "tsc --noEmit"
+    "generate": "tsx src/cli.ts generate",
+    "email:dev": "email dev --dir src/emails/templates",
+    "typecheck": "tsc --noEmit",
+    "build": "tsup",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "@react-email/components": "^0.0.31",
@@ -16,12 +41,14 @@
     "markdown-to-jsx": "^7.5.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "sharp": "^0.33.5",
     "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
     "@types/react": "^18.3.18",
     "react-email": "^3.0.4",
+    "tsup": "^8.3.5",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2"
   }
