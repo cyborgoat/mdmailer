@@ -6,7 +6,17 @@ import matter from "gray-matter";
 import { render } from "@react-email/render";
 import { configSchema } from "../config-schema.js";
 import OrganizationEmail from "../emails/templates/OrganizationEmail.js";
-import { resolveBrandLogo, type LogoAttachment } from "../resolve-logo.js";
+import { resolveBrandLogo } from "../resolve-logo.js";
+import { resolveContentImages } from "../resolve-content-images.js";
+
+interface EmlAttachment {
+  cid: string;
+  mime: string;
+  buffer: Buffer;
+  // The string to find-and-replace in the rendered HTML with `cid:<cid>` —
+  // either the org logo's resolved src, or a content image's data URI.
+  renderedSrc: string;
+}
 
 function parseArgs(argv: string[]) {
   const args = new Map<string, string>();
@@ -37,7 +47,7 @@ function wrapBase64(base64: string): string {
   return base64.match(/.{1,76}/g)?.join("\r\n") ?? base64;
 }
 
-function buildEml(subject: string, html: string, text: string, logoAttachment?: LogoAttachment): string {
+function buildEml(subject: string, html: string, text: string, attachments: EmlAttachment[]): string {
   const altBoundary = `mdmailer-alt-${randomUUID()}`;
   const alternativePart = [
     `--${altBoundary}`,
@@ -53,7 +63,7 @@ function buildEml(subject: string, html: string, text: string, logoAttachment?: 
     `--${altBoundary}--`,
   ].join("\r\n");
 
-  if (!logoAttachment) {
+  if (attachments.length === 0) {
     return [
       `Subject: ${subject}`,
       `MIME-Version: 1.0`,
@@ -64,10 +74,25 @@ function buildEml(subject: string, html: string, text: string, logoAttachment?: 
     ].join("\r\n");
   }
 
-  // Outlook doesn't render `data:` URI images in <img src>, so the logo travels
-  // as a proper inline attachment referenced by Content-ID (`cid:...`) instead,
+  // Outlook doesn't render `data:` URI images in <img src>, so local images travel
+  // as proper inline attachments referenced by Content-ID (`cid:...`) instead,
   // wrapped in multipart/related around the text/html + text/plain alternative.
   const relatedBoundary = `mdmailer-rel-${randomUUID()}`;
+  const attachmentParts = attachments
+    .map((attachment) =>
+      [
+        `--${relatedBoundary}`,
+        `Content-Type: ${attachment.mime}`,
+        `Content-Transfer-Encoding: base64`,
+        `Content-ID: <${attachment.cid}>`,
+        `Content-Disposition: inline; filename="${attachment.cid}.${extensionForMime(attachment.mime)}"`,
+        ``,
+        wrapBase64(attachment.buffer.toString("base64")),
+        ``,
+      ].join("\r\n"),
+    )
+    .join("");
+
   return [
     `Subject: ${subject}`,
     `MIME-Version: 1.0`,
@@ -78,14 +103,7 @@ function buildEml(subject: string, html: string, text: string, logoAttachment?: 
     ``,
     alternativePart,
     ``,
-    `--${relatedBoundary}`,
-    `Content-Type: ${logoAttachment.mime}`,
-    `Content-Transfer-Encoding: base64`,
-    `Content-ID: <${logoAttachment.cid}>`,
-    `Content-Disposition: inline; filename="logo.${extensionForMime(logoAttachment.mime)}"`,
-    ``,
-    wrapBase64(logoAttachment.buffer.toString("base64")),
-    ``,
+    attachmentParts,
     `--${relatedBoundary}--`,
     ``,
   ].join("\r\n");
@@ -106,7 +124,8 @@ export async function runGenerate(argv: string[]) {
   const config = configSchema.parse(rawConfig);
 
   const rawMarkdown = await readFile(resolve(inputPath), "utf-8");
-  const { data: frontmatter, content: bodyMarkdown } = matter(rawMarkdown);
+  const { data: frontmatter, content: rawBodyMarkdown } = matter(rawMarkdown);
+  const { markdown: bodyMarkdown, attachments: contentImages } = await resolveContentImages(rawBodyMarkdown);
 
   const title = frontmatter.title ?? "Untitled Email";
   const date = formatDate(frontmatter.date);
@@ -132,12 +151,17 @@ export async function runGenerate(argv: string[]) {
   const htmlPath = resolve("output", `${stem}.html`);
   const emlPath = resolve("output", `${stem}.eml`);
 
-  // The .html preview keeps the data: URI (browsers render it fine); the .eml
-  // swaps it for a cid: reference matching the attached logo part below.
-  const emlHtml = logoAttachment ? html.split(organization.logoUrl).join(`cid:${logoAttachment.cid}`) : html;
+  // The .html preview keeps every local image as a data: URI (browsers render
+  // those fine); the .eml swaps each one for a cid: reference matching its
+  // attached part below, since Outlook doesn't render data: URIs in <img src>.
+  const attachments: EmlAttachment[] = [
+    ...(logoAttachment ? [{ ...logoAttachment, renderedSrc: organization.logoUrl }] : []),
+    ...contentImages.map((image): EmlAttachment => ({ ...image, renderedSrc: image.dataUri })),
+  ];
+  const emlHtml = attachments.reduce((acc, att) => acc.split(att.renderedSrc).join(`cid:${att.cid}`), html);
 
   await writeFile(htmlPath, html, "utf-8");
-  await writeFile(emlPath, buildEml(title, emlHtml, text, logoAttachment), "utf-8");
+  await writeFile(emlPath, buildEml(title, emlHtml, text, attachments), "utf-8");
 
   console.log(`Generated:\n  ${htmlPath}  (preview in a browser)\n  ${emlPath}  (open to compose in your mail client)`);
 }

@@ -150,6 +150,7 @@ output/*.eml
 # Local example content (repo dogfooding) — only the tracked examples below ship
 content/*
 !content/2026-08-engineering.md
+!content/2026-06-monthly-digest.md
 !content/2026-05-product-launch.md
 !content/2026-03-release-notes.md
 !content/2026-01-quarterly-review.md
@@ -159,6 +160,11 @@ assets/*
 !assets/logos
 assets/logos/*
 !assets/logos/logo-dark-with-letters.svg
+
+# Local example content images (repo dogfooding) — only the default image ships
+!assets/images
+assets/images/*
+!assets/images/team-offsite.jpg
 
 # macOS
 .DS_Store

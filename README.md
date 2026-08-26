@@ -39,7 +39,12 @@ date: 2026-09-15
 # Headline
 
 Your content here, in normal Markdown (headings, lists, tables, task lists, links, bold/italic, etc.).
+
+![Alt text](https://.../photo.jpg)
+![Alt text](assets/images/photo.jpg)
 ```
+
+Images work the same way the logo does: a hosted `https://...` URL is left as-is, while a local path (relative to the current directory) is automatically embedded at generation time — no image hosting required. As with the logo, it's a `data:` URI in the `.html` preview and a `cid:`-referenced inline attachment in the `.eml`, since Outlook doesn't render `data:` URIs; on the page itself, images are scaled down with CSS to fit the email width, but not re-encoded, so keep source files reasonably sized.
 
 ## Configuring branding
 
@@ -65,7 +70,7 @@ Edit `mdmailer.config.json`:
 
 ## Local development (this repo)
 
-This repo is also mdmailer's own dogfood project — `mdmailer.config.json` and `content/` at the root are the maintainer's live example, not part of the published package. Only a handful of example files are tracked in git (`content/2026-08-engineering.md`, `content/2026-05-product-launch.md`, `content/2026-03-release-notes.md`, `content/2026-01-quarterly-review.md`, and `assets/logos/logo-dark-with-letters.svg` — a generic placeholder wordmark, not a real organization's branding; see `.gitignore`), so feel free to drop extra local content or logo files in those folders without worrying about committing them.
+This repo is also mdmailer's own dogfood project — `mdmailer.config.json` and `content/` at the root are the maintainer's live example, not part of the published package. Only a handful of example files are tracked in git (`content/2026-08-engineering.md`, `content/2026-06-monthly-digest.md`, `content/2026-05-product-launch.md`, `content/2026-03-release-notes.md`, `content/2026-01-quarterly-review.md`, `assets/logos/logo-dark-with-letters.svg` — a generic placeholder wordmark, not a real organization's branding — and `assets/images/team-offsite.jpg`, a freely-licensed stock photo used as the local-image example; see `.gitignore`), so feel free to drop extra local content, logo, or image files in those folders without worrying about committing them.
 
 ```bash
 npm install

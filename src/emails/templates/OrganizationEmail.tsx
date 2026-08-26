@@ -40,6 +40,7 @@ function buildMarkdownOverrides(fontFamily: string) {
     ol: { props: { style: { ...bodyText, paddingLeft: "20px" } } },
     li: { props: { style: { fontFamily, margin: "0 0 4px" } } },
     a: { component: Link, props: { style: { fontFamily } } },
+    img: { props: { style: { maxWidth: "100%", height: "auto", display: "block", margin: "16px 0" } } },
     del: { props: { style: { fontFamily, color: "#8a8a8a" } } },
     blockquote: {
       props: {
