@@ -109,7 +109,7 @@ export default function OrganizationEmail({
       <Head />
       <Preview>{title}</Preview>
       <Body style={{ backgroundColor: "#f4f4f4", fontFamily: "Arial, sans-serif" }}>
-        <Container style={{ backgroundColor: "#ffffff", padding: "24px", maxWidth: "600px" }}>
+        <Container style={{ backgroundColor: "#ffffff", padding: "24px", maxWidth: "680px" }}>
           <Header organizationName={organization.name} organizationLogoUrl={organization.logoUrl} />
           <Heading as="h1" style={{ color: primaryColor, marginTop: "24px" }}>
             {title}
