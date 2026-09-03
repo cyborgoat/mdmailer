@@ -59,9 +59,6 @@ web_modules/
 # Optional REPL history
 .node_repl_history
 
-# Output of 'npm pack'
-*.tgz
-
 # Yarn Integrity file
 .yarn-integrity
 
@@ -141,11 +138,6 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
-
-# Generated emails
-output/*.html
-output/*.eml
-!output/.gitkeep
 
 # Local example content (repo dogfooding) — only the tracked examples below ship
 content/*

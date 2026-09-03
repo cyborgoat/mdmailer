@@ -15,16 +15,15 @@ Requires Node.js 24 or later.
 ## Usage
 
 ```bash
-npx @cyborgoat/mdmailer init
+npm install
+npm run init
 ```
 
 This scaffolds `mdmailer.config.json`, a placeholder `assets/logo.svg`, and a set of `content/example*.md` files — `example.md` demonstrates the full range of supported Markdown (headings, emphasis, lists, task lists, tables, blockquotes, code blocks, and more), and `example-workshop.md` / `example-announcement.md` / `example-minimal.md` show the other layouts (see [Email types](#email-types)). Edit the config and a content file, then generate:
 
 ```bash
-npx @cyborgoat/mdmailer generate --input content/example.md
+npm run generate -- --input content/example.md
 ```
-
-(If you install it globally — `npm install -g @cyborgoat/mdmailer` — the command is just `mdmailer`.)
 
 Optional `--config` flag to point at a different config file (defaults to `mdmailer.config.json`).
 
@@ -51,7 +50,7 @@ Images work the same way the logo does: a hosted `https://...` URL is left as-is
 The same branding and the same Markdown pipeline can render several layouts. Pick one with a `type:` line in the frontmatter, or with `--template <name>` on the command line (the flag wins if both are set). With neither, you get `regular`.
 
 ```bash
-npx @cyborgoat/mdmailer generate --input content/invite.md --template workshop
+npm run generate -- --input content/invite.md --template workshop
 ```
 
 | `type:` | Layout |
@@ -115,24 +114,16 @@ Edit `mdmailer.config.json`:
 
 `organization.name`, a small version of `organization.logoUrl`, and `theme.slogan` are rendered together in the email's footer, below the body content — a small logo beside the bold org name, with the slogan in a smaller, italic serif underneath it. `theme.footerText` can include the placeholder `{{organization}}`, which is replaced with `organization.name` at generation time, so your copyright line always stays in sync with the configured org name.
 
-## Local development (this repo)
+## Local development
 
-This repo is also mdmailer's own dogfood project — `mdmailer.config.json` and `content/` at the root are the maintainer's live example, not part of the published package. Only a handful of example files are tracked in git (`content/2026-08-engineering.md`, `content/2026-06-monthly-digest.md`, `content/2026-06-monthly-digest-zh.md` (a Chinese translation, demonstrating the default CJK-safe `fontFamily`), `content/2026-05-product-launch.md`, `content/2026-03-release-notes.md`, `content/2026-01-quarterly-review.md`, `content/2026-09-devtools-workshop.md`, `content/2026-09-policy-announcement.md`, and `content/2026-09-quick-note.md` (the `event`/`workshop`, `announcement`, and `minimal` layouts), `assets/logos/logo-dark-with-letters.svg` — a generic placeholder wordmark, not a real organization's branding — and `assets/images/team-offsite.jpg`, a freely-licensed stock photo used as the local-image example; see `.gitignore`), so feel free to drop extra local content, logo, or image files in those folders without worrying about committing them.
+Example content lives under `content/` (`2026-08-engineering.md`, `2026-06-monthly-digest.md`, `2026-06-monthly-digest-zh.md`, `2026-05-product-launch.md`, `2026-03-release-notes.md`, `2026-01-quarterly-review.md`, `2026-09-devtools-workshop.md`, `2026-09-policy-announcement.md`, and `2026-09-quick-note.md`). Matching generated `.html` / `.eml` previews for those examples are tracked under `output/`. Logo and image assets are under `assets/` — see `.gitignore` if you want to keep extra local files untracked.
 
 ```bash
 npm install
-npm run generate -- --input content/2026-08-engineering.md   # runs src/cli.ts directly via tsx
+npm run generate -- --input content/2026-08-engineering.md
 npm run email:dev                                             # react.email live preview server
 npm run typecheck
 npm run build                                                 # bundles src/cli.ts -> dist/cli.js via tsup
 ```
 
-## Publishing
-
-```bash
-npm login          # one-time, interactive
-npm run build
-npm publish --access=public
-```
-
-`prepublishOnly` runs the build automatically. The published tarball only includes `dist/`, `README.md`, and `LICENSE` (see the `files` field in `package.json`) — none of this repo's own config, content, or logo assets are shipped. `npm pack --dry-run` is a quick way to double-check tarball contents before publishing. The package's `engines.node` field (`>=24`) matches `react-email`'s own Node requirement.
+`engines.node` is `>=24`, matching `react-email`'s own Node requirement.
