@@ -59,7 +59,7 @@ OrganizationEmail.PreviewProps = {
   date: "2026-08-26",
   bodyMarkdown: "# What shipped this month\n\nSample content for preview.",
   organization: { name: "Engineering", logoUrl: "https://placehold.co/80x40" },
-  primaryColor: "#145A45",
+  primaryColor: "#1A4B8C",
   footerText: "© 2026 {{organization}}",
   slogan: "Flowing intelligence across the network",
   fontFamily: DEFAULT_FONT_FAMILY,

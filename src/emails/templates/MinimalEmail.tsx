@@ -56,7 +56,7 @@ MinimalEmail.PreviewProps = {
     "We're pushing the search reindex tonight at 22:00 UTC. Expect ~10 minutes of stale results; nothing else is affected.\n\nPing me if you see anything odd afterwards.",
   footerText: "© 2026 {{organization}}",
   organizationName: "Platform",
-  primaryColor: "#145A45",
+  primaryColor: "#1A4B8C",
   fontFamily: DEFAULT_FONT_FAMILY,
 } satisfies MinimalEmailProps;
 
