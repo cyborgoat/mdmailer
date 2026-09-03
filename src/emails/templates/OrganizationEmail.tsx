@@ -38,7 +38,7 @@ export default function OrganizationEmail({
           <Heading as="h1" style={{ fontFamily, color: primaryColor, marginTop: "24px" }}>
             {title}
           </Heading>
-          <Text style={{ fontFamily, fontSize: "12px", color: "#8a8a8a", marginTop: "-8px" }}>{date}</Text>
+          <Text style={{ fontFamily, fontSize: "12px", color: "#52665d", marginTop: "-8px" }}>{date}</Text>
           <Markdown options={{ overrides: buildMarkdownOverrides(fontFamily) }}>{bodyMarkdown}</Markdown>
           <Footer
             organizationName={organization.name}
@@ -59,7 +59,7 @@ OrganizationEmail.PreviewProps = {
   date: "2026-08-26",
   bodyMarkdown: "# What shipped this month\n\nSample content for preview.",
   organization: { name: "Engineering", logoUrl: "https://placehold.co/80x40" },
-  primaryColor: "#1a73e8",
+  primaryColor: "#145A45",
   footerText: "© 2026 {{organization}}",
   slogan: "Flowing intelligence across the network",
   fontFamily: DEFAULT_FONT_FAMILY,

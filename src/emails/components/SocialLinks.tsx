@@ -16,11 +16,11 @@ export function SocialLinks({ links, fontFamily }: SocialLinksProps) {
   if (links.length === 0) return null;
 
   return (
-    <Text style={{ fontFamily, fontSize: "12px", color: "#6b7280", margin: "8px 0 0" }}>
+    <Text style={{ fontFamily, fontSize: "12px", color: "#52665d", margin: "8px 0 0" }}>
       {links.map((link, index) => (
         <React.Fragment key={link.url}>
           {index > 0 ? " · " : null}
-          <Link href={link.url} style={{ fontFamily, color: "#6b7280" }}>
+          <Link href={link.url} style={{ fontFamily, color: "#52665d" }}>
             {link.label}
           </Link>
         </React.Fragment>

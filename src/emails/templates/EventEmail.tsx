@@ -91,10 +91,10 @@ export default function EventEmail({
           <Header
             organizationName={organization.name}
             organizationLogoUrl={organization.logoUrl}
-            height={40}
+            height={88}
             align="left"
           />
-          <Section style={{ marginTop: "24px" }}>
+          <Section style={{ marginTop: "32px" }}>
             {kicker ? (
               <Text
                 style={{
@@ -114,7 +114,7 @@ export default function EventEmail({
               {eventName}
             </Heading>
             {whenLine ? (
-              <Text style={{ fontFamily, fontSize: "14px", color: "#555555", margin: "8px 0 0" }}>{whenLine}</Text>
+              <Text style={{ fontFamily, fontSize: "14px", color: "#52665d", margin: "8px 0 0" }}>{whenLine}</Text>
             ) : null}
           </Section>
           <EventDetails items={details} fontFamily={fontFamily} />
@@ -215,8 +215,8 @@ EventEmail.PreviewProps = {
     ],
   },
   organization: { name: "Developer Relations", logoUrl: "https://placehold.co/80x40" },
-  primaryColor: "#1a73e8",
-  accentColor: "#1a73e8",
+  primaryColor: "#145A45",
+  accentColor: "#0F4938",
   footerText: "© 2026 {{organization}}",
   slogan: "Flowing intelligence across the network",
   fontFamily: DEFAULT_FONT_FAMILY,

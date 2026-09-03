@@ -1,10 +1,11 @@
 {
   "organization": {
-    "name": "Acme Corp",
-    "logoUrl": "assets/logos/logo-dark-with-letters.svg"
+    "name": "NAAD",
+    "logoUrl": "assets/logos/logo-dark.svg"
   },
   "theme": {
-    "primaryColor": "#1a73e8",
+    "primaryColor": "#145A45",
+    "accentColor": "#0F4938",
     "footerText": "© 2026 {{organization}}. Internal use only — please do not forward externally.",
     "slogan": "Flowing intelligence across the network.",
     "fontFamily": "\"Helvetica Neue\", Helvetica, Arial, \"PingFang SC\", \"Microsoft YaHei\", sans-serif"

@@ -37,11 +37,14 @@ export function Footer({
             alt={organizationName}
             width={20}
             height={20}
-            style={{ display: "block", objectFit: "contain" }}
+            style={{
+              display: "block",
+              objectFit: "contain",
+            }}
           />
         </Column>
         <Column style={{ verticalAlign: "middle", paddingLeft: "8px" }}>
-          <Text style={{ fontFamily, fontSize: "13px", fontWeight: 600, color: "#111827", margin: "0" }}>
+          <Text style={{ fontFamily, fontSize: "13px", fontWeight: 600, color: "#17352b", margin: "0" }}>
             {organizationName}
           </Text>
         </Column>
@@ -49,7 +52,7 @@ export function Footer({
       <Text
         style={{
           fontSize: "12px",
-          color: "#6b7280",
+          color: "#52665d",
           fontStyle: "italic",
           fontFamily: "Georgia, 'Times New Roman', serif",
           letterSpacing: "0.2px",
@@ -58,16 +61,16 @@ export function Footer({
       >
         {slogan}
       </Text>
-      <Text style={{ fontFamily, fontSize: "12px", color: "#8a8a8a", margin: "0" }}>
+      <Text style={{ fontFamily, fontSize: "12px", color: "#52665d", margin: "0" }}>
         {footerText.replaceAll("{{organization}}", organizationName)}
       </Text>
       {social && social.length > 0 ? <SocialLinks links={social} fontFamily={fontFamily} /> : null}
       {address ? (
-        <Text style={{ fontFamily, fontSize: "11px", color: "#8a8a8a", margin: "8px 0 0" }}>{address}</Text>
+        <Text style={{ fontFamily, fontSize: "11px", color: "#52665d", margin: "8px 0 0" }}>{address}</Text>
       ) : null}
       {unsubscribeUrl ? (
-        <Text style={{ fontFamily, fontSize: "11px", color: "#8a8a8a", margin: "4px 0 0" }}>
-          <Link href={unsubscribeUrl} style={{ fontFamily, color: "#8a8a8a" }}>
+        <Text style={{ fontFamily, fontSize: "11px", color: "#52665d", margin: "4px 0 0" }}>
+          <Link href={unsubscribeUrl} style={{ fontFamily, color: "#52665d" }}>
             Unsubscribe
           </Link>
         </Text>

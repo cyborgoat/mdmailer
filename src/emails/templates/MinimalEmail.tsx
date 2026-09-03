@@ -36,11 +36,11 @@ export default function MinimalEmail({
             {title}
           </Heading>
           {date ? (
-            <Text style={{ fontFamily, fontSize: "12px", color: "#8a8a8a", marginTop: "-8px" }}>{date}</Text>
+            <Text style={{ fontFamily, fontSize: "12px", color: "#52665d", marginTop: "-8px" }}>{date}</Text>
           ) : null}
           <Markdown options={{ overrides: buildMarkdownOverrides(fontFamily) }}>{bodyMarkdown}</Markdown>
           <Hr style={{ borderColor: "#e6e6e6", margin: "32px 0 16px" }} />
-          <Text style={{ fontFamily, fontSize: "12px", color: "#8a8a8a", margin: "0" }}>
+          <Text style={{ fontFamily, fontSize: "12px", color: "#52665d", margin: "0" }}>
             {footerText.replaceAll("{{organization}}", organizationName)}
           </Text>
         </Container>
@@ -56,7 +56,7 @@ MinimalEmail.PreviewProps = {
     "We're pushing the search reindex tonight at 22:00 UTC. Expect ~10 minutes of stale results; nothing else is affected.\n\nPing me if you see anything odd afterwards.",
   footerText: "© 2026 {{organization}}",
   organizationName: "Platform",
-  primaryColor: "#1a73e8",
+  primaryColor: "#145A45",
   fontFamily: DEFAULT_FONT_FAMILY,
 } satisfies MinimalEmailProps;
 
