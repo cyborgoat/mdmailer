@@ -5,7 +5,9 @@ import * as React from "react";
 import matter from "gray-matter";
 import { render } from "@react-email/render";
 import { configSchema } from "../config-schema.js";
-import OrganizationEmail from "../emails/templates/OrganizationEmail.js";
+import { templates, TEMPLATE_NAMES, resolveTemplateName, type TemplateEntry } from "../emails/registry.js";
+import type { TemplateContext } from "../emails/template-context.js";
+import { formatDate } from "../frontmatter.js";
 import { resolveBrandLogo } from "../resolve-logo.js";
 import { resolveContentImages } from "../resolve-content-images.js";
 
@@ -28,13 +30,6 @@ function parseArgs(argv: string[]) {
     }
   }
   return args;
-}
-
-function formatDate(value: unknown): string {
-  if (value instanceof Date) {
-    return value.toISOString().slice(0, 10);
-  }
-  return String(value ?? "");
 }
 
 function extensionForMime(mime: string): string {
@@ -115,7 +110,9 @@ export async function runGenerate(argv: string[]) {
   const configPath = args.get("config") ?? "mdmailer.config.json";
 
   if (!inputPath) {
-    console.error("Usage: mdmailer generate --input content/<file>.md [--config mdmailer.config.json]");
+    console.error(
+      "Usage: mdmailer generate --input content/<file>.md [--config mdmailer.config.json] [--template <name>]",
+    );
     process.exitCode = 1;
     return;
   }
@@ -131,16 +128,17 @@ export async function runGenerate(argv: string[]) {
   const date = formatDate(frontmatter.date);
   const { brand: organization, logoAttachment } = await resolveBrandLogo(config.organization);
 
-  const element = React.createElement(OrganizationEmail, {
-    title,
-    date,
-    bodyMarkdown,
-    organization,
-    primaryColor: config.theme.primaryColor,
-    footerText: config.theme.footerText,
-    slogan: config.theme.slogan,
-    fontFamily: config.theme.fontFamily,
-  });
+  const templateName = resolveTemplateName(args.get("template"), frontmatter.type);
+  if (!templateName) {
+    const supplied = args.get("template") ?? String(frontmatter.type ?? "");
+    console.error(`Unknown template "${supplied}". Valid templates: ${TEMPLATE_NAMES.join(", ")}`);
+    process.exitCode = 1;
+    return;
+  }
+
+  const ctx: TemplateContext = { frontmatter, bodyMarkdown, config, organization, title, date };
+  const { component, buildProps }: TemplateEntry = templates[templateName];
+  const element = React.createElement(component, buildProps(ctx));
 
   const html = await render(element);
   const text = await render(element, { plainText: true });

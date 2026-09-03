@@ -1,12 +1,15 @@
 import { runGenerate } from "./commands/generate.js";
 import { runInit } from "./commands/init.js";
+import { TEMPLATE_NAMES } from "./emails/registry.js";
 
 const HELP = `mdmailer — turn a Markdown file into a branded email, ready to send manually.
 
 Usage:
-  mdmailer init                          Scaffold mdmailer.config.json and content/example.md
+  mdmailer init                          Scaffold mdmailer.config.json and example content
   mdmailer generate --input <file.md>    Generate output/<name>.html and .eml from a Markdown file
     [--config <file>]                    Defaults to mdmailer.config.json
+    [--template <name>]                  One of: ${TEMPLATE_NAMES.join(", ")}
+                                         Overrides the frontmatter \`type:\` field (default: regular)
 
 Docs: https://github.com/cyborgoat/mailman
 `;

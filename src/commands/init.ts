@@ -10,7 +10,9 @@ const DEFAULT_CONFIG = `{
     "primaryColor": "#1a73e8",
     "footerText": "© 2026 {{organization}}. Internal use only.",
     "slogan": "Flowing intelligence across the network",
-    "fontFamily": "\\"Helvetica Neue\\", Helvetica, Arial, \\"PingFang SC\\", \\"Microsoft YaHei\\", sans-serif"
+    "fontFamily": "\\"Helvetica Neue\\", Helvetica, Arial, \\"PingFang SC\\", \\"Microsoft YaHei\\", sans-serif",
+    "accentColor": "#1a73e8",
+    "social": []
   }
 }
 `;
@@ -71,6 +73,72 @@ npx mdmailer generate --input content/example.md
 Questions? Reply to this email.
 `;
 
+const EXAMPLE_EVENT = `---
+title: "You're invited: Intro to the Design System"
+type: workshop
+eventName: "Intro to the Design System"
+startsAt: 2026-02-18
+time: "15:00–16:00 UTC"
+location: "Room 2A — or join on the call"
+joinUrl: "https://example.com/call/design-system"
+hosts:
+  - Jordan Lee
+registerUrl: "https://example.com/register/design-system"
+registerLabel: "Save my seat"
+agenda:
+  - time: "15:00"
+    title: "Tokens, components, and when to use which"
+  - time: "15:30"
+    title: "Hands-on: build a screen from the kit"
+  - time: "15:50"
+    title: "Q&A"
+---
+
+A one-hour intro for anyone building UI. We'll walk through the component library,
+then build a screen together so you leave knowing how the pieces fit.
+
+## Who it's for
+
+- Engineers and designers new to the system
+- Anyone copying old markup who wants the supported way
+
+> Bring a laptop. The recording goes out to everyone who registers.
+`;
+
+const EXAMPLE_ANNOUNCEMENT = `---
+title: "All-hands moves to Thursdays"
+type: announcement
+headline: "All-hands moves to Thursdays, starting March"
+banner: "Schedule change"
+ctaUrl: "https://example.com/all-hands"
+ctaLabel: "See the new calendar"
+date: 2026-02-24
+---
+
+Starting **March 5**, the company all-hands runs **Thursdays at 16:00 UTC** instead
+of Mondays. The format and length don't change.
+
+## Why
+
+Mondays collided with regional holidays too often, pushing recordings to Tuesday.
+Thursday keeps it live for more people.
+
+- Calendar invites update automatically — no action needed.
+- Can't attend live? The recording and notes post within the hour.
+`;
+
+const EXAMPLE_MINIMAL = `---
+title: "Heads up: brief API slowdown tonight"
+type: minimal
+date: 2026-01-06
+---
+
+We're migrating a database tonight at **23:00 UTC**. Expect slower API responses for
+about 15 minutes. No downtime is planned and no action is needed on your side.
+
+I'll reply here once it's done.
+`;
+
 async function exists(path: string): Promise<boolean> {
   try {
     await access(path);
@@ -92,13 +160,15 @@ async function writeIfMissing(path: string, contents: string) {
 export async function runInit() {
   const configPath = resolve("mdmailer.config.json");
   const contentDir = resolve("content");
-  const examplePath = resolve(contentDir, "example.md");
   const assetsDir = resolve("assets");
   const logoPath = resolve(assetsDir, "logo.svg");
 
   await writeIfMissing(configPath, DEFAULT_CONFIG);
   await mkdir(contentDir, { recursive: true });
-  await writeIfMissing(examplePath, EXAMPLE_CONTENT);
+  await writeIfMissing(resolve(contentDir, "example.md"), EXAMPLE_CONTENT);
+  await writeIfMissing(resolve(contentDir, "example-workshop.md"), EXAMPLE_EVENT);
+  await writeIfMissing(resolve(contentDir, "example-announcement.md"), EXAMPLE_ANNOUNCEMENT);
+  await writeIfMissing(resolve(contentDir, "example-minimal.md"), EXAMPLE_MINIMAL);
   await mkdir(assetsDir, { recursive: true });
   await writeIfMissing(logoPath, PLACEHOLDER_LOGO_SVG);
 
@@ -107,6 +177,13 @@ export async function runInit() {
       "  1. Replace assets/logo.svg with your real logo (or point logoUrl at a hosted image).\n" +
       "  2. Edit mdmailer.config.json with your organization's name, theme, and slogan.\n" +
       "  3. Edit content/example.md with your update.\n" +
-      "  4. Run: npx mdmailer generate --input content/example.md\n",
+      "  4. Run: npx mdmailer generate --input content/example.md\n" +
+      "\n" +
+      "There are more layouts than the default. Each example above shows one:\n" +
+      "  example.md              regular update (the default)\n" +
+      "  example-workshop.md     workshop / event invitation  (type: workshop)\n" +
+      "  example-announcement.md single high-impact notice     (type: announcement)\n" +
+      "  example-minimal.md      short plain-text note         (type: minimal)\n" +
+      "Set the layout with a `type:` line in the frontmatter, or pass --template <name>.\n",
   );
 }

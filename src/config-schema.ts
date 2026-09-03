@@ -15,6 +15,13 @@ const brandSchema = z.object({
   logoUrl: z.string().min(1),
 });
 
+// One entry in the event/announcement footer's social row. Rendered as a plain
+// text link (no icon image) so it survives blocked images and Outlook alike.
+const socialLinkSchema = z.object({
+  label: z.string(),
+  url: z.string().min(1),
+});
+
 export const configSchema = z.object({
   organization: brandSchema,
   theme: z.object({
@@ -25,8 +32,22 @@ export const configSchema = z.object({
     // load @font-face/web fonts. Defaults to a stack covering both Latin
     // and Simplified Chinese glyphs.
     fontFamily: z.string().default(DEFAULT_FONT_FAMILY),
+
+    // The keys below are optional and only used by the non-default templates
+    // (event/workshop, announcement). Existing configs without them keep working.
+
+    // Call-to-action button background for the event/announcement templates.
+    // Falls back to `primaryColor` when unset.
+    accentColor: z.string().optional(),
+    // Social links for the event/announcement footer. Empty renders nothing.
+    social: z.array(socialLinkSchema).default([]),
+    // Postal address line for the event footer.
+    address: z.string().optional(),
+    // "Unsubscribe" link target for the event footer.
+    unsubscribeUrl: z.string().optional(),
   }),
 });
 
 export type Config = z.infer<typeof configSchema>;
 export type Brand = z.infer<typeof brandSchema>;
+export type SocialLink = z.infer<typeof socialLinkSchema>;
