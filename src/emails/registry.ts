@@ -16,6 +16,7 @@ export const templates = {
   regular: { component: OrganizationEmail, buildProps: buildRegularProps },
   event: { component: EventEmail, buildProps: (ctx) => buildEventProps(ctx) },
   workshop: { component: EventEmail, buildProps: (ctx) => buildEventProps(ctx, { defaultKicker: "Workshop" }) },
+  webinar: { component: EventEmail, buildProps: (ctx) => buildEventProps(ctx, { defaultKicker: "Webinar" }) },
   announcement: { component: AnnouncementEmail, buildProps: buildAnnouncementProps },
   minimal: { component: MinimalEmail, buildProps: buildMinimalProps },
 } satisfies Record<string, TemplateEntry>;

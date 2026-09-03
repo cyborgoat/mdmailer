@@ -1,6 +1,7 @@
 {
   "name": "@cyborgoat/mdmailer",
   "version": "0.1.1",
+  "private": true,
   "description": "Turn a Markdown file into a branded HTML/EML email, ready to send manually. Configure your organization's name, logo, theme, and slogan once; write updates in plain Markdown.",
   "type": "module",
   "license": "MIT",
@@ -9,30 +10,18 @@
     "type": "git",
     "url": "git+https://github.com/cyborgoat/mailman.git"
   },
-  "keywords": [
-    "email",
-    "markdown",
-    "cli",
-    "react-email",
-    "branding"
-  ],
   "engines": {
     "node": ">=24"
   },
   "bin": {
     "mdmailer": "dist/cli.js"
   },
-  "files": [
-    "dist",
-    "README.md",
-    "LICENSE"
-  ],
   "scripts": {
     "generate": "tsx src/cli.ts generate",
+    "init": "tsx src/cli.ts init",
     "email:dev": "email dev --dir src/emails/templates",
     "typecheck": "tsc --noEmit",
-    "build": "tsup",
-    "prepublishOnly": "npm run build"
+    "build": "tsup"
   },
   "dependencies": {
     "@react-email/render": "^2.1.0",

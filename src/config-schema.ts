@@ -34,7 +34,7 @@ export const configSchema = z.object({
     fontFamily: z.string().default(DEFAULT_FONT_FAMILY),
 
     // The keys below are optional and only used by the non-default templates
-    // (event/workshop, announcement). Existing configs without them keep working.
+    // (event/workshop/webinar, announcement). Existing configs without them keep working.
 
     // Call-to-action button background for the event/announcement templates.
     // Falls back to `primaryColor` when unset.

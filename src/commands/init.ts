@@ -105,6 +105,40 @@ then build a screen together so you leave knowing how the pieces fit.
 > Bring a laptop. The recording goes out to everyone who registers.
 `;
 
+const EXAMPLE_WEBINAR = `---
+title: "You're invited: Shipping reliable APIs in 2026"
+type: webinar
+eventName: "Shipping reliable APIs in 2026"
+startsAt: 2026-10-15
+time: "16:00–17:00 UTC"
+location: "Online — Zoom"
+joinUrl: "https://example.com/zoom/api-webinar"
+hosts:
+  - Priya Nair
+  - Marcus Cole
+registerUrl: "https://example.com/register/api-webinar"
+registerLabel: "Register for the webinar"
+agenda:
+  - time: "16:00"
+    title: "What breaks at scale (and what doesn't)"
+  - time: "16:25"
+    title: "Patterns we use in production"
+  - time: "16:45"
+    title: "Live Q&A"
+---
+
+A one-hour online session on designing APIs that stay calm under load. We'll cover
+timeouts, retries, idempotency, and the observability signals that actually help
+on-call — then take questions live.
+
+## Who it's for
+
+- Backend and platform engineers shipping public or partner APIs
+- Anyone who's been burned by cascading timeouts and wants a clearer playbook
+
+> Nothing to install — join from a browser. The recording goes out to everyone who registers.
+`;
+
 const EXAMPLE_ANNOUNCEMENT = `---
 title: "All-hands moves to Thursdays"
 type: announcement
@@ -167,6 +201,7 @@ export async function runInit() {
   await mkdir(contentDir, { recursive: true });
   await writeIfMissing(resolve(contentDir, "example.md"), EXAMPLE_CONTENT);
   await writeIfMissing(resolve(contentDir, "example-workshop.md"), EXAMPLE_EVENT);
+  await writeIfMissing(resolve(contentDir, "example-webinar.md"), EXAMPLE_WEBINAR);
   await writeIfMissing(resolve(contentDir, "example-announcement.md"), EXAMPLE_ANNOUNCEMENT);
   await writeIfMissing(resolve(contentDir, "example-minimal.md"), EXAMPLE_MINIMAL);
   await mkdir(assetsDir, { recursive: true });
@@ -177,11 +212,12 @@ export async function runInit() {
       "  1. Replace assets/logo.svg with your real logo (or point logoUrl at a hosted image).\n" +
       "  2. Edit mdmailer.config.json with your organization's name, theme, and slogan.\n" +
       "  3. Edit content/example.md with your update.\n" +
-      "  4. Run: npx mdmailer generate --input content/example.md\n" +
+      "  4. Run: npm run generate -- --input content/example.md\n" +
       "\n" +
       "There are more layouts than the default. Each example above shows one:\n" +
       "  example.md              regular update (the default)\n" +
       "  example-workshop.md     workshop / event invitation  (type: workshop)\n" +
+      "  example-webinar.md      webinar invitation           (type: webinar)\n" +
       "  example-announcement.md single high-impact notice     (type: announcement)\n" +
       "  example-minimal.md      short plain-text note         (type: minimal)\n" +
       "Set the layout with a `type:` line in the frontmatter, or pass --template <name>.\n",

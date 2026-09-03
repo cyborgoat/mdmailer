@@ -150,6 +150,7 @@ content/*
 !content/2026-09-devtools-workshop.md
 !content/2026-09-policy-announcement.md
 !content/2026-09-quick-note.md
+!content/2026-10-platform-webinar.md
 
 # Local example logos (repo dogfooding) — only the default logo ships
 assets/*

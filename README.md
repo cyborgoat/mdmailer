@@ -19,7 +19,7 @@ npm install
 npm run init
 ```
 
-This scaffolds `mdmailer.config.json`, a placeholder `assets/logo.svg`, and a set of `content/example*.md` files — `example.md` demonstrates the full range of supported Markdown (headings, emphasis, lists, task lists, tables, blockquotes, code blocks, and more), and `example-workshop.md` / `example-announcement.md` / `example-minimal.md` show the other layouts (see [Email types](#email-types)). Edit the config and a content file, then generate:
+This scaffolds `mdmailer.config.json`, a placeholder `assets/logo.svg`, and a set of `content/example*.md` files — `example.md` demonstrates the full range of supported Markdown (headings, emphasis, lists, task lists, tables, blockquotes, code blocks, and more), and `example-workshop.md` / `example-webinar.md` / `example-announcement.md` / `example-minimal.md` show the other layouts (see [Email types](#email-types)). Edit the config and a content file, then generate:
 
 ```bash
 npm run generate -- --input content/example.md
@@ -56,18 +56,18 @@ npm run generate -- --input content/invite.md --template workshop
 | `type:` | Layout |
 | --- | --- |
 | `regular` (default) | Title, dateline, Markdown body, branded header and footer — the original layout. |
-| `event` / `workshop` | Event invitation: compact logo bar, a hero with the event name, a "When / Where / Join / Hosts" details card, a prominent register button, your Markdown as the description, and an optional agenda. `workshop` is `event` with the eyebrow label preset to "Workshop". |
+| `event` / `workshop` / `webinar` | Invitation layout: compact logo bar, a hero with the event name, a "When / Where / Join / Hosts" details card, a prominent register button, your Markdown as the description, and an optional agenda. `workshop` and `webinar` are `event` with the eyebrow label preset to "Workshop" or "Webinar". |
 | `announcement` | One high-impact message: a colored callout strip, a headline, a short Markdown body, and a single call-to-action button. |
 | `minimal` | Text-forward: no logo band, just a title, dateline, Markdown body, and a one-line footer. For short notes. |
 
 `type:` is a reserved frontmatter key. Beyond `title` and `date`, each layout reads a few optional fields — anything missing just drops its section:
 
-**`event` / `workshop`**
+**`event` / `workshop` / `webinar`**
 
 | field (aliases) | notes |
 | --- | --- |
 | `eventName` (`name`) | Hero heading. Falls back to `title`. |
-| `kicker` (`eyebrow`) | Small uppercase label above the heading. `workshop` defaults it to "Workshop". |
+| `kicker` (`eyebrow`) | Small uppercase label above the heading. `workshop` defaults to "Workshop"; `webinar` defaults to "Webinar". |
 | `startsAt` (`date`) | The "When" date. |
 | `time` | Clock time as a **quoted string**, e.g. `"14:00–15:30 UTC"` — an unquoted `18:00` is parsed as a time and loses its display form. |
 | `location` (`venue`) | The "Where" line. |
@@ -106,7 +106,7 @@ Edit `mdmailer.config.json`:
 }
 ```
 
-`accentColor`, `social`, `address`, and `unsubscribeUrl` are all optional and only used by the `event`/`workshop` and `announcement` layouts — `accentColor` is the call-to-action button colour (falls back to `primaryColor`), and the other three fill in the richer event footer (`social` renders as plain text links, so it works even where images are blocked). Configs without these keys keep working unchanged.
+`accentColor`, `social`, `address`, and `unsubscribeUrl` are all optional and only used by the `event`/`workshop`/`webinar` and `announcement` layouts — `accentColor` is the call-to-action button colour (falls back to `primaryColor`), and the other three fill in the richer event footer (`social` renders as plain text links, so it works even where images are blocked). Configs without these keys keep working unchanged.
 
 `logoUrl` accepts either a hosted `https://...` URL, or a path (relative to the current directory) to a local image file — local logos are automatically embedded at generation time (SVGs are rasterized to PNG first, since most email clients don't render inline SVG), so no image hosting is required. It's embedded differently depending on the output: in the `.html` preview it's a `data:` URI (browsers render those fine), while in the `.eml` it's attached as a proper inline image referenced by `Content-ID`/`cid:` — Outlook doesn't render `data:` URIs in `<img>` tags, so this keeps the logo visible there too.
 
@@ -116,7 +116,7 @@ Edit `mdmailer.config.json`:
 
 ## Local development
 
-Example content lives under `content/` (`2026-08-engineering.md`, `2026-06-monthly-digest.md`, `2026-06-monthly-digest-zh.md`, `2026-05-product-launch.md`, `2026-03-release-notes.md`, `2026-01-quarterly-review.md`, `2026-09-devtools-workshop.md`, `2026-09-policy-announcement.md`, and `2026-09-quick-note.md`). Matching generated `.html` / `.eml` previews for those examples are tracked under `output/`. Logo and image assets are under `assets/` — see `.gitignore` if you want to keep extra local files untracked.
+Example content lives under `content/` (`2026-08-engineering.md`, `2026-06-monthly-digest.md`, `2026-06-monthly-digest-zh.md`, `2026-05-product-launch.md`, `2026-03-release-notes.md`, `2026-01-quarterly-review.md`, `2026-09-devtools-workshop.md`, `2026-09-policy-announcement.md`, `2026-09-quick-note.md`, and `2026-10-platform-webinar.md`). Matching generated `.html` / `.eml` previews for those examples are tracked under `output/`. Logo and image assets are under `assets/` — see `.gitignore` if you want to keep extra local files untracked.
 
 ```bash
 npm install
