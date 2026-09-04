@@ -1,4 +1,6 @@
 import type { Brand, Config } from "../config-schema.js";
+import type { Locale } from "../i18n/index.js";
+import type { HostProfile } from "../resolve-hosts.js";
 
 /**
  * Everything a template's prop-builder needs, assembled once by `generate.ts`
@@ -14,4 +16,8 @@ export interface TemplateContext {
   organization: Brand;
   title: string;
   date: string;
+  /** From frontmatter `lang` / `locale` / `language`; defaults to `en`. */
+  locale: Locale;
+  /** Hosts with photos/bios already resolved (local photos → data URIs). */
+  hostProfiles: HostProfile[];
 }

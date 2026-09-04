@@ -4,6 +4,7 @@ import Markdown from "markdown-to-jsx";
 import { buildMarkdownOverrides } from "../markdown-overrides.js";
 import type { TemplateContext } from "../template-context.js";
 import { DEFAULT_FONT_FAMILY } from "../../config-schema.js";
+import type { Locale } from "../../i18n/index.js";
 
 export interface MinimalEmailProps {
   title: string;
@@ -13,6 +14,7 @@ export interface MinimalEmailProps {
   organizationName: string;
   primaryColor: string;
   fontFamily: string;
+  locale: Locale;
 }
 
 // A text-forward layout: no logo band, just a title, dateline, the Markdown
@@ -25,9 +27,10 @@ export default function MinimalEmail({
   organizationName,
   primaryColor,
   fontFamily,
+  locale,
 }: MinimalEmailProps) {
   return (
-    <Html>
+    <Html lang={locale}>
       <Head />
       <Preview>{title}</Preview>
       <Body style={{ backgroundColor: "#ffffff", fontFamily }}>
@@ -58,6 +61,7 @@ MinimalEmail.PreviewProps = {
   organizationName: "Platform",
   primaryColor: "#1A4B8C",
   fontFamily: DEFAULT_FONT_FAMILY,
+  locale: "en",
 } satisfies MinimalEmailProps;
 
 export function buildMinimalProps(ctx: TemplateContext): MinimalEmailProps {
@@ -69,5 +73,6 @@ export function buildMinimalProps(ctx: TemplateContext): MinimalEmailProps {
     organizationName: ctx.organization.name,
     primaryColor: ctx.config.theme.primaryColor,
     fontFamily: ctx.config.theme.fontFamily,
+    locale: ctx.locale,
   };
 }

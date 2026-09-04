@@ -151,6 +151,7 @@ content/*
 !content/2026-09-policy-announcement.md
 !content/2026-09-quick-note.md
 !content/2026-10-platform-webinar.md
+!content/2026-10-platform-webinar-zh.md
 
 # Local example logos (repo dogfooding) — only the default logo ships
 assets/*
@@ -162,6 +163,9 @@ assets/logos/*
 !assets/images
 assets/images/*
 !assets/images/team-offsite.jpg
+!assets/images/hosts
+!assets/images/hosts/priya-nair.jpg
+!assets/images/hosts/marcus-cole.jpg
 
 # macOS
 .DS_Store

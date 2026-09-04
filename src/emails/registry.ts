@@ -4,6 +4,7 @@ import OrganizationEmail, { buildRegularProps } from "./templates/OrganizationEm
 import EventEmail, { buildEventProps } from "./templates/EventEmail.js";
 import AnnouncementEmail, { buildAnnouncementProps } from "./templates/AnnouncementEmail.js";
 import MinimalEmail, { buildMinimalProps } from "./templates/MinimalEmail.js";
+import { t } from "../i18n/index.js";
 
 export interface TemplateEntry {
   component: ComponentType<any>;
@@ -15,8 +16,15 @@ export interface TemplateEntry {
 export const templates = {
   regular: { component: OrganizationEmail, buildProps: buildRegularProps },
   event: { component: EventEmail, buildProps: (ctx) => buildEventProps(ctx) },
-  workshop: { component: EventEmail, buildProps: (ctx) => buildEventProps(ctx, { defaultKicker: "Workshop" }) },
-  webinar: { component: EventEmail, buildProps: (ctx) => buildEventProps(ctx, { defaultKicker: "Webinar" }) },
+  workshop: {
+    component: EventEmail,
+    buildProps: (ctx) => buildEventProps(ctx, { defaultKicker: t(ctx.locale, "kicker.workshop") }),
+  },
+  webinar: {
+    component: EventEmail,
+    buildProps: (ctx) =>
+      buildEventProps(ctx, { defaultKicker: t(ctx.locale, "kicker.webinar"), hideRegister: true }),
+  },
   announcement: { component: AnnouncementEmail, buildProps: buildAnnouncementProps },
   minimal: { component: MinimalEmail, buildProps: buildMinimalProps },
 } satisfies Record<string, TemplateEntry>;

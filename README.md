@@ -33,6 +33,7 @@ Optional `--config` flag to point at a different config file (defaults to `mdmai
 ---
 title: "September Update"
 date: 2026-09-15
+lang: en
 ---
 
 # Headline
@@ -42,6 +43,8 @@ Your content here, in normal Markdown (headings, lists, tables, task lists, link
 ![Alt text](https://.../photo.jpg)
 ![Alt text](assets/images/photo.jpg)
 ```
+
+Set `lang:` to `en` (default) or `zh` to localize template chrome — detail labels, default kickers/CTAs, and the unsubscribe link. Aliases: `locale`, `language`. Markdown body, titles, and config slogan/footer stay author-written in whichever language you choose.
 
 Images work the same way the logo does: a hosted `https://...` URL is left as-is, while a local path (relative to the current directory) is automatically embedded at generation time — no image hosting required. As with the logo, it's a `data:` URI in the `.html` preview and a `cid:`-referenced inline attachment in the `.eml`, since Outlook doesn't render `data:` URIs; on the page itself, images are scaled down with CSS to fit the email width, but not re-encoded, so keep source files reasonably sized.
 
@@ -56,7 +59,7 @@ npm run generate -- --input content/invite.md --template workshop
 | `type:` | Layout |
 | --- | --- |
 | `regular` (default) | Title, dateline, Markdown body, branded header and footer — the original layout. |
-| `event` / `workshop` / `webinar` | Invitation layout: compact logo bar, a hero with the event name, a "When / Where / Join / Hosts" details card, a prominent register button, your Markdown as the description, and an optional agenda. `workshop` and `webinar` are `event` with the eyebrow label preset to "Workshop" or "Webinar". |
+| `event` / `workshop` / `webinar` | Invitation layout: compact logo bar, a hero with the event name, a details card (Where / Join / Hosts — localized), your Markdown as the description, and an optional agenda. `workshop` and `webinar` preset the eyebrow label. **Webinar** omits the registration button and shows a "Meet the hosts" section (photo + bio) when hosts are objects. |
 | `announcement` | One high-impact message: a colored callout strip, a headline, a short Markdown body, and a single call-to-action button. |
 | `minimal` | Text-forward: no logo band, just a title, dateline, Markdown body, and a one-line footer. For short notes. |
 
@@ -67,14 +70,14 @@ npm run generate -- --input content/invite.md --template workshop
 | field (aliases) | notes |
 | --- | --- |
 | `eventName` (`name`) | Hero heading. Falls back to `title`. |
-| `kicker` (`eyebrow`) | Small uppercase label above the heading. `workshop` defaults to "Workshop"; `webinar` defaults to "Webinar". |
+| `kicker` (`eyebrow`) | Small uppercase label above the heading. `workshop` / `webinar` supply a localized default when omitted. |
 | `startsAt` (`date`) | The "When" date. |
 | `time` | Clock time as a **quoted string**, e.g. `"14:00–15:30 UTC"` — an unquoted `18:00` is parsed as a time and loses its display form. |
 | `location` (`venue`) | The "Where" line. |
 | `joinUrl` (`onlineUrl`) | Online join link. |
-| `hosts` (`speakers`) | A YAML list (or a single value). |
-| `registerUrl` (`rsvpUrl`) | Button target. No URL, no button. |
-| `registerLabel` | Button text. Default "Register". |
+| `hosts` (`speakers`) | A YAML list of names, **or** a list of `{ name, photo, bio, role }` maps. Plain names fill the details card; object hosts (typical for `webinar`) render a photo + intro section instead. Local `photo` paths are embedded like content images. |
+| `registerUrl` (`rsvpUrl`) | Button target for `event` / `workshop`. No URL, no button. Ignored for `webinar`. |
+| `registerLabel` | Button text. Default is localized ("Register" / "报名"). Ignored for `webinar`. |
 | `agenda` | A Markdown string, a list of strings, or a list of `{ time, title }` entries. |
 
 **`announcement`**
@@ -82,9 +85,9 @@ npm run generate -- --input content/invite.md --template workshop
 | field (aliases) | notes |
 | --- | --- |
 | `headline` | Main heading. Falls back to `title`. |
-| `banner` (`bannerText`, `kicker`) | Text in the colored strip. Default "Announcement". |
+| `banner` (`bannerText`, `kicker`) | Text in the colored strip. Default is localized ("Announcement" / "公告"). |
 | `ctaUrl` (`url`) | Button target. No URL, no button. |
-| `ctaLabel` | Button text. Default "Learn more". |
+| `ctaLabel` | Button text. Default is localized ("Learn more" / "了解更多"). |
 
 ## Configuring branding
 
@@ -116,7 +119,7 @@ Edit `mdmailer.config.json`:
 
 ## Local development
 
-Example content lives under `content/` (`2026-08-engineering.md`, `2026-06-monthly-digest.md`, `2026-06-monthly-digest-zh.md`, `2026-05-product-launch.md`, `2026-03-release-notes.md`, `2026-01-quarterly-review.md`, `2026-09-devtools-workshop.md`, `2026-09-policy-announcement.md`, `2026-09-quick-note.md`, and `2026-10-platform-webinar.md`). Matching generated `.html` / `.eml` previews for those examples are tracked under `output/`. Logo and image assets are under `assets/` — see `.gitignore` if you want to keep extra local files untracked.
+Example content lives under `content/` (`2026-08-engineering.md`, `2026-06-monthly-digest.md`, `2026-06-monthly-digest-zh.md`, `2026-05-product-launch.md`, `2026-03-release-notes.md`, `2026-01-quarterly-review.md`, `2026-09-devtools-workshop.md`, `2026-09-policy-announcement.md`, `2026-09-quick-note.md`, `2026-10-platform-webinar.md`, and `2026-10-platform-webinar-zh.md`). Matching generated `.html` / `.eml` previews for those examples are tracked under `output/`. Logo and image assets are under `assets/` — see `.gitignore` if you want to keep extra local files untracked.
 
 ```bash
 npm install

@@ -6,6 +6,7 @@ import { Footer } from "../components/Footer.js";
 import { buildMarkdownOverrides } from "../markdown-overrides.js";
 import type { TemplateContext } from "../template-context.js";
 import { DEFAULT_FONT_FAMILY, type Brand } from "../../config-schema.js";
+import type { Locale } from "../../i18n/index.js";
 
 export interface OrganizationEmailProps {
   title: string;
@@ -16,6 +17,7 @@ export interface OrganizationEmailProps {
   footerText: string;
   slogan: string;
   fontFamily: string;
+  locale: Locale;
 }
 
 export default function OrganizationEmail({
@@ -27,9 +29,10 @@ export default function OrganizationEmail({
   footerText,
   slogan,
   fontFamily,
+  locale,
 }: OrganizationEmailProps) {
   return (
-    <Html>
+    <Html lang={locale}>
       <Head />
       <Preview>{title}</Preview>
       <Body style={{ backgroundColor: "#f4f4f4", fontFamily }}>
@@ -63,6 +66,7 @@ OrganizationEmail.PreviewProps = {
   footerText: "© 2026 {{organization}}",
   slogan: "Flowing intelligence across the network",
   fontFamily: DEFAULT_FONT_FAMILY,
+  locale: "en",
 } satisfies OrganizationEmailProps;
 
 // The default `regular` template: title, dateline, Markdown body, branded
@@ -77,5 +81,6 @@ export function buildRegularProps(ctx: TemplateContext): OrganizationEmailProps 
     footerText: ctx.config.theme.footerText,
     slogan: ctx.config.theme.slogan,
     fontFamily: ctx.config.theme.fontFamily,
+    locale: ctx.locale,
   };
 }

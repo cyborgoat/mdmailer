@@ -1,4 +1,4 @@
-import { Body, Column, Container, Head, Heading, Html, Link, Preview, Row, Section, Text } from "react-email";
+import { Body, Column, Container, Head, Heading, Html, Img, Link, Preview, Row, Section, Text } from "react-email";
 import * as React from "react";
 import Markdown from "markdown-to-jsx";
 import { Header } from "../components/Header.js";
@@ -6,9 +6,11 @@ import { Footer } from "../components/Footer.js";
 import { CtaButton } from "../components/Button.js";
 import { EventDetails, type EventDetailItem } from "../components/EventDetails.js";
 import { buildMarkdownOverrides } from "../markdown-overrides.js";
-import { fmList, fmString, fmStringOr, formatDate } from "../../frontmatter.js";
+import { fmString, fmStringOr, formatDate } from "../../frontmatter.js";
 import type { TemplateContext } from "../template-context.js";
 import { DEFAULT_FONT_FAMILY, type Brand, type SocialLink } from "../../config-schema.js";
+import { t, type Locale } from "../../i18n/index.js";
+import type { HostProfile } from "../../resolve-hosts.js";
 
 type AgendaEntry = { time?: string; title: string };
 type Agenda = { kind: "markdown"; markdown: string } | { kind: "list"; entries: AgendaEntry[] } | null;
@@ -22,9 +24,14 @@ export interface EventEmailProps {
   time?: string;
   location?: string;
   joinUrl?: string;
+  /** Plain host names for the details card (hidden when rich profiles are shown). */
   hosts: string[];
+  /** Rich host cards with photo + bio (webinar). */
+  hostProfiles: HostProfile[];
   registerUrl?: string;
   registerLabel: string;
+  /** When false, the registration CTA is omitted (webinar). */
+  showRegister: boolean;
   agenda: Agenda;
   organization: Brand;
   primaryColor: string;
@@ -35,11 +42,20 @@ export interface EventEmailProps {
   social: SocialLink[];
   address?: string;
   unsubscribeUrl?: string;
+  locale: Locale;
+  labels: {
+    where: string;
+    join: string;
+    hosts: string;
+    hostsSection: string;
+    agenda: string;
+    unsubscribe: string;
+  };
 }
 
 // Structure adapted from react.email's "01-Barebone/welcome": a compact top
-// logo bar, a hero, a details card, a prominent CTA, the free-form body, an
-// optional agenda, and a richer footer.
+// logo bar, a hero, a details card, an optional CTA, the free-form body,
+// optional host intros, an optional agenda, and a richer footer.
 export default function EventEmail({
   title,
   kicker,
@@ -50,8 +66,10 @@ export default function EventEmail({
   location,
   joinUrl,
   hosts,
+  hostProfiles,
   registerUrl,
   registerLabel,
+  showRegister,
   agenda,
   organization,
   primaryColor,
@@ -62,15 +80,18 @@ export default function EventEmail({
   social,
   address,
   unsubscribeUrl,
+  locale,
+  labels,
 }: EventEmailProps) {
   const whenLine = [startsAt, time].filter(Boolean).join(" · ");
+  const richHosts = hostProfiles.some((host) => host.photoUrl || host.bio || host.role);
 
-  // "When" isn't in the card — it's already the subline under the heading, and
-  // the render condition is identical, so listing it twice is pure duplication.
+  // "When" isn't in the card — it's already the subline under the heading.
+  // Rich host cards replace the plain "Hosts" row in the details card.
   const details: EventDetailItem[] = [
-    { label: "Where", value: location },
+    { label: labels.where, value: location },
     {
-      label: "Join",
+      label: labels.join,
       value: joinUrl ? (
         <Link href={joinUrl} style={{ fontFamily }}>
           {joinUrl}
@@ -79,11 +100,11 @@ export default function EventEmail({
         ""
       ),
     },
-    { label: "Hosts", value: hosts.join(", ") },
-  ].filter((item) => item.value);
+    ...(richHosts ? [] : [{ label: labels.hosts, value: hosts.join(", ") }]),
+  ].filter((item) => Boolean(item.value));
 
   return (
-    <Html>
+    <Html lang={locale}>
       <Head />
       <Preview>{title}</Preview>
       <Body style={{ backgroundColor: "#f4f4f4", fontFamily }}>
@@ -118,11 +139,16 @@ export default function EventEmail({
             ) : null}
           </Section>
           <EventDetails items={details} fontFamily={fontFamily} />
-          <CtaButton href={registerUrl} label={registerLabel} color={accentColor} fontFamily={fontFamily} />
+          {showRegister ? (
+            <CtaButton href={registerUrl} label={registerLabel} color={accentColor} fontFamily={fontFamily} />
+          ) : null}
           {bodyMarkdown.trim() ? (
             <Markdown options={{ overrides: buildMarkdownOverrides(fontFamily) }}>{bodyMarkdown}</Markdown>
           ) : null}
-          {agenda ? <AgendaSection agenda={agenda} fontFamily={fontFamily} /> : null}
+          {richHosts ? (
+            <HostsSection hosts={hostProfiles} sectionLabel={labels.hostsSection} fontFamily={fontFamily} />
+          ) : null}
+          {agenda ? <AgendaSection agenda={agenda} agendaLabel={labels.agenda} fontFamily={fontFamily} /> : null}
           <Footer
             organizationName={organization.name}
             organizationLogoUrl={organization.logoUrl}
@@ -132,6 +158,7 @@ export default function EventEmail({
             social={social}
             address={address}
             unsubscribeUrl={unsubscribeUrl}
+            unsubscribeLabel={labels.unsubscribe}
           />
         </Container>
       </Body>
@@ -139,13 +166,80 @@ export default function EventEmail({
   );
 }
 
-function AgendaSection({ agenda, fontFamily }: { agenda: Agenda; fontFamily: string }) {
+function HostsSection({
+  hosts,
+  sectionLabel,
+  fontFamily,
+}: {
+  hosts: HostProfile[];
+  sectionLabel: string;
+  fontFamily: string;
+}) {
+  return (
+    <Section style={{ marginTop: "8px" }}>
+      <Heading as="h2" style={{ fontFamily, fontSize: "18px", marginTop: "24px", marginBottom: "12px" }}>
+        {sectionLabel}
+      </Heading>
+      {hosts.map((host) => (
+        <Row key={host.name} style={{ marginBottom: "16px" }}>
+          <Column style={{ width: "72px", verticalAlign: "top", paddingRight: "12px" }}>
+            {host.photoUrl ? (
+              <Img
+                src={host.photoUrl}
+                alt={host.name}
+                width={64}
+                height={64}
+                style={{
+                  display: "block",
+                  borderRadius: "50%",
+                  objectFit: "cover",
+                }}
+              />
+            ) : (
+              <div
+                style={{
+                  width: 64,
+                  height: 64,
+                  borderRadius: "50%",
+                  backgroundColor: "#e6e6e6",
+                }}
+              />
+            )}
+          </Column>
+          <Column style={{ verticalAlign: "top" }}>
+            <Text style={{ fontFamily, fontSize: "15px", fontWeight: 600, color: "#111827", margin: "0" }}>
+              {host.name}
+            </Text>
+            {host.role ? (
+              <Text style={{ fontFamily, fontSize: "13px", color: "#1A4B8C", margin: "2px 0 0" }}>{host.role}</Text>
+            ) : null}
+            {host.bio ? (
+              <Text style={{ fontFamily, fontSize: "13px", color: "#333333", margin: "6px 0 0", lineHeight: "1.45" }}>
+                {host.bio}
+              </Text>
+            ) : null}
+          </Column>
+        </Row>
+      ))}
+    </Section>
+  );
+}
+
+function AgendaSection({
+  agenda,
+  agendaLabel,
+  fontFamily,
+}: {
+  agenda: Agenda;
+  agendaLabel: string;
+  fontFamily: string;
+}) {
   if (!agenda) return null;
 
   return (
     <Section style={{ marginTop: "8px" }}>
       <Heading as="h2" style={{ fontFamily, fontSize: "18px", marginTop: "24px" }}>
-        Agenda
+        {agendaLabel}
       </Heading>
       {agenda.kind === "markdown" ? (
         <Markdown options={{ overrides: buildMarkdownOverrides(fontFamily) }}>{agenda.markdown}</Markdown>
@@ -204,8 +298,10 @@ EventEmail.PreviewProps = {
   location: "Room 4B / Zoom",
   joinUrl: "https://example.com/zoom/cli-workshop",
   hosts: ["Alex Rivera", "Sam Chen"],
+  hostProfiles: [],
   registerUrl: "https://example.com/register/cli-workshop",
   registerLabel: "Register",
+  showRegister: true,
   agenda: {
     kind: "list",
     entries: [
@@ -223,14 +319,25 @@ EventEmail.PreviewProps = {
   social: [{ label: "GitHub", url: "https://example.com/gh" }],
   address: "123 Market Street, Floor 1, Tech City, CA 94102",
   unsubscribeUrl: "https://example.com/unsubscribe",
+  locale: "en",
+  labels: {
+    where: "Where",
+    join: "Join",
+    hosts: "Hosts",
+    hostsSection: "Meet the hosts",
+    agenda: "Agenda",
+    unsubscribe: "Unsubscribe",
+  },
 } satisfies EventEmailProps;
 
 export function buildEventProps(
   ctx: TemplateContext,
-  opts: { defaultKicker?: string } = {},
+  opts: { defaultKicker?: string; hideRegister?: boolean } = {},
 ): EventEmailProps {
   const fm = ctx.frontmatter;
   const theme = ctx.config.theme;
+  const { locale } = ctx;
+  const showRegister = !opts.hideRegister;
 
   return {
     title: ctx.title,
@@ -241,9 +348,11 @@ export function buildEventProps(
     time: fmString(fm.time),
     location: fmString(fm.location ?? fm.venue),
     joinUrl: fmString(fm.joinUrl ?? fm.onlineUrl),
-    hosts: fmList(fm.hosts ?? fm.speakers),
-    registerUrl: fmString(fm.registerUrl ?? fm.rsvpUrl),
-    registerLabel: fmStringOr(fm.registerLabel, "Register"),
+    hosts: ctx.hostProfiles.map((host) => host.name),
+    hostProfiles: ctx.hostProfiles,
+    registerUrl: showRegister ? fmString(fm.registerUrl ?? fm.rsvpUrl) : undefined,
+    registerLabel: fmStringOr(fm.registerLabel, t(locale, "cta.register")),
+    showRegister,
     agenda: normalizeAgenda(fm.agenda),
     organization: ctx.organization,
     primaryColor: theme.primaryColor,
@@ -254,5 +363,14 @@ export function buildEventProps(
     social: theme.social,
     address: theme.address,
     unsubscribeUrl: theme.unsubscribeUrl,
+    locale,
+    labels: {
+      where: t(locale, "detail.where"),
+      join: t(locale, "detail.join"),
+      hosts: t(locale, "detail.hosts"),
+      hostsSection: t(locale, "section.hosts"),
+      agenda: t(locale, "section.agenda"),
+      unsubscribe: t(locale, "footer.unsubscribe"),
+    },
   };
 }

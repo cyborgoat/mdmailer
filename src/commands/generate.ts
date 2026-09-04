@@ -8,8 +8,10 @@ import { configSchema } from "../config-schema.js";
 import { templates, TEMPLATE_NAMES, resolveTemplateName, type TemplateEntry } from "../emails/registry.js";
 import type { TemplateContext } from "../emails/template-context.js";
 import { formatDate } from "../frontmatter.js";
+import { resolveLocale, t } from "../i18n/index.js";
 import { resolveBrandLogo } from "../resolve-logo.js";
 import { resolveContentImages } from "../resolve-content-images.js";
+import { resolveHosts } from "../resolve-hosts.js";
 
 interface EmlAttachment {
   cid: string;
@@ -123,8 +125,14 @@ export async function runGenerate(argv: string[]) {
   const rawMarkdown = await readFile(resolve(inputPath), "utf-8");
   const { data: frontmatter, content: rawBodyMarkdown } = matter(rawMarkdown);
   const { markdown: bodyMarkdown, attachments: contentImages } = await resolveContentImages(rawBodyMarkdown);
+  const { profiles: hostProfiles, attachments: hostImages } = await resolveHosts(
+    frontmatter.hosts ?? frontmatter.speakers,
+  );
 
-  const title = frontmatter.title ?? "Untitled Email";
+  const locale = resolveLocale(frontmatter.lang ?? frontmatter.locale ?? frontmatter.language);
+  const title = typeof frontmatter.title === "string" && frontmatter.title.trim()
+    ? frontmatter.title
+    : t(locale, "fallback.untitled");
   const date = formatDate(frontmatter.date);
   const { brand: organization, logoAttachment } = await resolveBrandLogo(config.organization);
 
@@ -136,7 +144,16 @@ export async function runGenerate(argv: string[]) {
     return;
   }
 
-  const ctx: TemplateContext = { frontmatter, bodyMarkdown, config, organization, title, date };
+  const ctx: TemplateContext = {
+    frontmatter,
+    bodyMarkdown,
+    config,
+    organization,
+    title,
+    date,
+    locale,
+    hostProfiles,
+  };
   const { component, buildProps }: TemplateEntry = templates[templateName];
   const element = React.createElement(component, buildProps(ctx));
 
@@ -155,6 +172,7 @@ export async function runGenerate(argv: string[]) {
   const attachments: EmlAttachment[] = [
     ...(logoAttachment ? [{ ...logoAttachment, renderedSrc: organization.logoUrl }] : []),
     ...contentImages.map((image): EmlAttachment => ({ ...image, renderedSrc: image.dataUri })),
+    ...hostImages.map((image): EmlAttachment => ({ ...image, renderedSrc: image.dataUri })),
   ];
   const emlHtml = attachments.reduce((acc, att) => acc.split(att.renderedSrc).join(`cid:${att.cid}`), html);
 

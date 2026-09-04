@@ -76,6 +76,7 @@ Questions? Reply to this email.
 const EXAMPLE_EVENT = `---
 title: "You're invited: Intro to the Design System"
 type: workshop
+lang: en
 eventName: "Intro to the Design System"
 startsAt: 2026-02-18
 time: "15:00–16:00 UTC"
@@ -108,16 +109,21 @@ then build a screen together so you leave knowing how the pieces fit.
 const EXAMPLE_WEBINAR = `---
 title: "You're invited: Shipping reliable APIs in 2026"
 type: webinar
+lang: en
 eventName: "Shipping reliable APIs in 2026"
 startsAt: 2026-10-15
 time: "16:00–17:00 UTC"
 location: "Online — Zoom"
 joinUrl: "https://example.com/zoom/api-webinar"
 hosts:
-  - Priya Nair
-  - Marcus Cole
-registerUrl: "https://example.com/register/api-webinar"
-registerLabel: "Register for the webinar"
+  - name: Priya Nair
+    role: Staff Platform Engineer
+    photo: assets/images/hosts/priya-nair.jpg
+    bio: Leads API reliability work across our edge services.
+  - name: Marcus Cole
+    role: Principal Engineer, Observability
+    photo: assets/images/hosts/marcus-cole.jpg
+    bio: Designs the tracing and SLO tooling we use on-call.
 agenda:
   - time: "16:00"
     title: "What breaks at scale (and what doesn't)"
@@ -136,7 +142,7 @@ on-call — then take questions live.
 - Backend and platform engineers shipping public or partner APIs
 - Anyone who's been burned by cascading timeouts and wants a clearer playbook
 
-> Nothing to install — join from a browser. The recording goes out to everyone who registers.
+> Nothing to install — join from a browser when it's time.
 `;
 
 const EXAMPLE_ANNOUNCEMENT = `---
@@ -220,6 +226,7 @@ export async function runInit() {
       "  example-webinar.md      webinar invitation           (type: webinar)\n" +
       "  example-announcement.md single high-impact notice     (type: announcement)\n" +
       "  example-minimal.md      short plain-text note         (type: minimal)\n" +
-      "Set the layout with a `type:` line in the frontmatter, or pass --template <name>.\n",
+      "Set the layout with a `type:` line in the frontmatter, or pass --template <name>.\n" +
+      "Set language with `lang: en` or `lang: zh` (localizes labels / default CTAs).\n",
   );
 }

@@ -7,10 +7,14 @@ time: "16:00–17:00 UTC"
 location: "Online — Zoom"
 joinUrl: "https://example.com/zoom/api-webinar"
 hosts:
-  - Priya Nair
-  - Marcus Cole
-registerUrl: "https://example.com/register/api-webinar"
-registerLabel: "Register for the webinar"
+  - name: Priya Nair
+    role: Staff Platform Engineer
+    photo: assets/images/hosts/priya-nair.jpg
+    bio: Leads API reliability work across our edge services. Previously built timeout and retry libraries used by most product teams.
+  - name: Marcus Cole
+    role: Principal Engineer, Observability
+    photo: assets/images/hosts/marcus-cole.jpg
+    bio: Designs the tracing and SLO tooling we use on-call. Spends a lot of time turning noisy dashboards into signals people trust.
 agenda:
   - time: "16:00"
     title: "What breaks at scale (and what doesn't)"
@@ -31,7 +35,5 @@ on-call — then take questions live.
 
 ## What you'll need
 
-Nothing to install — join from a browser. Slides and the recording go out to
-everyone who registers within a day of the session.
-
-> Capacity is open; register so we can send the Zoom link and calendar invite.
+Nothing to install — join from a browser. Slides and the recording go out after
+the session. Use the Zoom link above when it's time.

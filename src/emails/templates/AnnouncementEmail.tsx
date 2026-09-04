@@ -9,6 +9,7 @@ import { buildMarkdownOverrides } from "../markdown-overrides.js";
 import { fmString, fmStringOr } from "../../frontmatter.js";
 import type { TemplateContext } from "../template-context.js";
 import { DEFAULT_FONT_FAMILY, type Brand, type SocialLink } from "../../config-schema.js";
+import { t, type Locale } from "../../i18n/index.js";
 
 export interface AnnouncementEmailProps {
   title: string;
@@ -24,6 +25,8 @@ export interface AnnouncementEmailProps {
   slogan: string;
   fontFamily: string;
   social: SocialLink[];
+  locale: Locale;
+  unsubscribeLabel: string;
 }
 
 // A single high-impact message: a colored callout strip, one headline, a short
@@ -42,9 +45,11 @@ export default function AnnouncementEmail({
   slogan,
   fontFamily,
   social,
+  locale,
+  unsubscribeLabel,
 }: AnnouncementEmailProps) {
   return (
-    <Html>
+    <Html lang={locale}>
       <Head />
       <Preview>{title}</Preview>
       <Body style={{ backgroundColor: "#f4f4f4", fontFamily }}>
@@ -63,6 +68,7 @@ export default function AnnouncementEmail({
             footerText={footerText}
             fontFamily={fontFamily}
             social={social}
+            unsubscribeLabel={unsubscribeLabel}
           />
         </Container>
       </Body>
@@ -85,19 +91,22 @@ AnnouncementEmail.PreviewProps = {
   slogan: "Flowing intelligence across the network",
   fontFamily: DEFAULT_FONT_FAMILY,
   social: [],
+  locale: "en",
+  unsubscribeLabel: "Unsubscribe",
 } satisfies AnnouncementEmailProps;
 
 export function buildAnnouncementProps(ctx: TemplateContext): AnnouncementEmailProps {
   const fm = ctx.frontmatter;
   const theme = ctx.config.theme;
+  const { locale } = ctx;
 
   return {
     title: ctx.title,
     headline: fmString(fm.headline) ?? ctx.title,
-    bannerText: fmStringOr(fm.banner ?? fm.bannerText ?? fm.kicker, "Announcement"),
+    bannerText: fmString(fm.banner ?? fm.bannerText ?? fm.kicker) ?? t(locale, "banner.announcement"),
     bodyMarkdown: ctx.bodyMarkdown,
     ctaUrl: fmString(fm.ctaUrl ?? fm.url),
-    ctaLabel: fmStringOr(fm.ctaLabel, "Learn more"),
+    ctaLabel: fmStringOr(fm.ctaLabel, t(locale, "cta.learnMore")),
     organization: ctx.organization,
     primaryColor: theme.primaryColor,
     accentColor: theme.accentColor ?? theme.primaryColor,
@@ -105,5 +114,7 @@ export function buildAnnouncementProps(ctx: TemplateContext): AnnouncementEmailP
     slogan: theme.slogan,
     fontFamily: theme.fontFamily,
     social: theme.social,
+    locale,
+    unsubscribeLabel: t(locale, "footer.unsubscribe"),
   };
 }

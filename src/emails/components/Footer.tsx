@@ -15,6 +15,8 @@ interface FooterProps {
   social?: SocialLink[];
   address?: string;
   unsubscribeUrl?: string;
+  /** Localized label for the unsubscribe link. Defaults to English. */
+  unsubscribeLabel?: string;
 }
 
 export function Footer({
@@ -26,6 +28,7 @@ export function Footer({
   social,
   address,
   unsubscribeUrl,
+  unsubscribeLabel = "Unsubscribe",
 }: FooterProps) {
   return (
     <>
@@ -71,7 +74,7 @@ export function Footer({
       {unsubscribeUrl ? (
         <Text style={{ fontFamily, fontSize: "11px", color: "#52665d", margin: "4px 0 0" }}>
           <Link href={unsubscribeUrl} style={{ fontFamily, color: "#52665d" }}>
-            Unsubscribe
+            {unsubscribeLabel}
           </Link>
         </Text>
       ) : null}
