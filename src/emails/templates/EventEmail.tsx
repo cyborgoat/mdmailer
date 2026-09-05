@@ -137,7 +137,6 @@ export default function EventEmail({
           {agenda ? <AgendaSection agenda={agenda} agendaLabel={labels.agenda} fontFamily={fontFamily} /> : null}
           <Footer
             organizationName={organization.name}
-            organizationLogoUrl={organization.logoUrl}
             tagline={tagline}
             footerText={footerText}
             fontFamily={fontFamily}

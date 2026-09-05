@@ -51,7 +51,6 @@ export default function OrganizationEmail({
           <Markdown options={{ overrides: buildMarkdownOverrides(fontFamily) }}>{bodyMarkdown}</Markdown>
           <Footer
             organizationName={organization.name}
-            organizationLogoUrl={organization.logoUrl}
             tagline={tagline}
             footerText={footerText}
             fontFamily={fontFamily}

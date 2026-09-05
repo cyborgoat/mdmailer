@@ -111,7 +111,7 @@ Edit `mdmailer.config.json`:
 
 `fontFamily` is optional and defaults to `"Helvetica Neue", Helvetica, Arial, "PingFang SC", "Microsoft YaHei", sans-serif` — a stack that covers both Latin and Simplified Chinese glyphs. Outlook desktop renders with the Word HTML engine, which only matches web-safe fonts already installed on the system (no `@font-face`/web fonts), so stick to fonts you know your recipients have — the default only uses fonts that ship with Windows and macOS.
 
-`organization.name`, a 64px version of `organization.logoUrl`, and `theme.tagline` form a centered footer brand stack. Optional links and address follow below, with the copyright and unsubscribe text in a separate legal group. `theme.footerText` can include the placeholder `{{organization}}`, which is replaced with `organization.name` at generation time.
+`organization.name` and `theme.tagline` form a centered footer brand stack. Optional links and address follow below, with the copyright and unsubscribe text in a separate legal group. The logo remains in the shared centered header rather than repeating in the footer. `theme.footerText` can include the placeholder `{{organization}}`, which is replaced with `organization.name` at generation time.
 
 ## Local development
 

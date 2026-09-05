@@ -1,11 +1,10 @@
-import { Hr, Img, Link, Section, Text } from "react-email";
+import { Hr, Link, Section, Text } from "react-email";
 import * as React from "react";
 import type { SocialLink } from "../../config-schema.js";
 import { SocialLinks } from "./SocialLinks.js";
 
 interface FooterProps {
   organizationName: string;
-  organizationLogoUrl: string;
   tagline: string;
   footerText: string;
   fontFamily: string;
@@ -20,7 +19,6 @@ interface FooterProps {
 
 export function Footer({
   organizationName,
-  organizationLogoUrl,
   tagline,
   footerText,
   fontFamily,
@@ -32,15 +30,17 @@ export function Footer({
   return (
     <Section style={{ textAlign: "center" }}>
       <Hr style={{ borderColor: "#e6e6e6", margin: "40px 0 24px" }} />
-      <Img
-        src={organizationLogoUrl}
-        alt={organizationName}
-        width={64}
-        height={64}
-        style={{ display: "block", objectFit: "contain", margin: "0 auto" }}
-      />
       <Text
-        style={{ fontFamily, fontSize: "13px", fontWeight: 600, color: "#17352b", textAlign: "center", margin: "12px 0 0" }}
+        style={{
+          fontFamily,
+          fontSize: "18px",
+          lineHeight: "24px",
+          fontWeight: 600,
+          letterSpacing: "2px",
+          color: "#17352b",
+          textAlign: "center",
+          margin: "0",
+        }}
       >
         {organizationName}
       </Text>
@@ -52,7 +52,7 @@ export function Footer({
           fontStyle: "italic",
           fontFamily: "Georgia, 'Times New Roman', serif",
           textAlign: "center",
-          margin: "6px 0 0",
+          margin: "8px 0 0",
         }}
       >
         {tagline}

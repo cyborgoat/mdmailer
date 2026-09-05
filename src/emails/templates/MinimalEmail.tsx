@@ -57,7 +57,6 @@ export default function MinimalEmail({
           <Markdown options={{ overrides: buildMarkdownOverrides(fontFamily) }}>{bodyMarkdown}</Markdown>
           <Footer
             organizationName={organizationName}
-            organizationLogoUrl={organizationLogoUrl}
             tagline={tagline}
             footerText={footerText}
             fontFamily={fontFamily}
