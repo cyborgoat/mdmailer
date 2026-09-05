@@ -60,7 +60,7 @@ npm run generate -- --input content/invite.md --template workshop
 | --- | --- |
 | `regular` (default) | Title, dateline, Markdown body, branded header and footer — the original layout. |
 | `event` / `workshop` / `webinar` | Invitation layout: compact logo bar, a hero with the event name, a details card (Where / Join / Hosts — localized), your Markdown as the description, and an optional agenda. `workshop` and `webinar` preset the eyebrow label. Workshops render hosts in a dedicated section; rich host objects add photos and bios. |
-| `announcement` | One high-impact message: a colored callout strip, a headline, a short Markdown body, and a single call-to-action button. |
+| `announcement` | One high-impact message: a colored callout strip, a headline, and a short Markdown body. Add links directly in Markdown. |
 | `minimal` | Text-forward: a compact title, dateline, Markdown body, and a one-line footer. For short notes. |
 
 `type:` is a reserved frontmatter key. Beyond `title` and `date`, each layout reads a few optional fields — anything missing just drops its section:
@@ -84,8 +84,7 @@ npm run generate -- --input content/invite.md --template workshop
 | --- | --- |
 | `headline` | Main heading. Falls back to `title`. |
 | `banner` (`bannerText`, `kicker`) | Text in the colored strip. Default is localized ("Announcement" / "公告"). |
-| `ctaUrl` (`url`) | Button target. No URL, no button. |
-| `ctaLabel` | Button text. Default is localized ("Learn more" / "了解更多"). |
+Add links directly in the Markdown body, for example `[Read the full policy](https://example.com/policy)`.
 
 ## Configuring branding
 
@@ -99,7 +98,6 @@ Edit `mdmailer.config.json`:
     "footerText": "© 2026 {{organization}}",
     "slogan": "Flowing intelligence across the network",
     "fontFamily": "\"Helvetica Neue\", Helvetica, Arial, \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
-    "accentColor": "#1a73e8",
     "social": [{ "label": "GitHub", "url": "https://github.com/your-org" }],
     "address": "123 Market Street, Tech City, CA 94102",
     "unsubscribeUrl": "https://.../unsubscribe"
@@ -107,7 +105,7 @@ Edit `mdmailer.config.json`:
 }
 ```
 
-`accentColor`, `social`, `address`, and `unsubscribeUrl` are all optional. `accentColor` sets the announcement call-to-action button colour (falling back to `primaryColor`); the other three fill in the richer event and announcement footers (`social` renders as plain text links, so it works even where images are blocked). Configs without these keys keep working unchanged.
+`social`, `address`, and `unsubscribeUrl` are optional and fill in the richer event and announcement footers (`social` renders as plain text links, so it works even where images are blocked). Configs without these keys keep working unchanged.
 
 `logoUrl` accepts either a hosted `https://...` URL, or a path (relative to the current directory) to a local image file — local logos are automatically embedded at generation time (SVGs are rasterized to PNG first, since most email clients don't render inline SVG), so no image hosting is required. It's embedded differently depending on the output: in the `.html` preview it's a `data:` URI (browsers render those fine), while in the `.eml` it's attached as a proper inline image referenced by `Content-ID`/`cid:` — Outlook doesn't render `data:` URIs in `<img>` tags, so this keeps the logo visible there too.
 

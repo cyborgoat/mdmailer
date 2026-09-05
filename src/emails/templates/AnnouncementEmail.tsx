@@ -4,9 +4,8 @@ import Markdown from "markdown-to-jsx";
 import { Header } from "../components/Header.js";
 import { Footer } from "../components/Footer.js";
 import { CalloutBanner } from "../components/CalloutBanner.js";
-import { CtaButton } from "../components/Button.js";
 import { buildMarkdownOverrides } from "../markdown-overrides.js";
-import { fmString, fmStringOr } from "../../frontmatter.js";
+import { fmString } from "../../frontmatter.js";
 import type { TemplateContext } from "../template-context.js";
 import { DEFAULT_FONT_FAMILY, type Brand, type SocialLink } from "../../config-schema.js";
 import { t, type Locale } from "../../i18n/index.js";
@@ -16,11 +15,8 @@ export interface AnnouncementEmailProps {
   headline: string;
   bannerText: string;
   bodyMarkdown: string;
-  ctaUrl?: string;
-  ctaLabel: string;
   organization: Brand;
   primaryColor: string;
-  accentColor: string;
   footerText: string;
   slogan: string;
   fontFamily: string;
@@ -29,18 +25,15 @@ export interface AnnouncementEmailProps {
   unsubscribeLabel: string;
 }
 
-// A single high-impact message: a colored callout strip, one headline, a short
-// Markdown body, and one call-to-action button.
+// A single high-impact message: a colored callout strip, one headline, and a
+// short Markdown body. Authors add links directly in Markdown when needed.
 export default function AnnouncementEmail({
   title,
   headline,
   bannerText,
   bodyMarkdown,
-  ctaUrl,
-  ctaLabel,
   organization,
   primaryColor,
-  accentColor,
   footerText,
   slogan,
   fontFamily,
@@ -60,7 +53,6 @@ export default function AnnouncementEmail({
             {headline}
           </Heading>
           <Markdown options={{ overrides: buildMarkdownOverrides(fontFamily) }}>{bodyMarkdown}</Markdown>
-          <CtaButton href={ctaUrl} label={ctaLabel} color={accentColor} fontFamily={fontFamily} />
           <Footer
             organizationName={organization.name}
             organizationLogoUrl={organization.logoUrl}
@@ -81,12 +73,9 @@ AnnouncementEmail.PreviewProps = {
   headline: "Office closed Monday, Sept 7",
   bannerText: "Announcement",
   bodyMarkdown:
-    "All offices are **closed Monday, September 7** for the public holiday. Support coverage runs as normal via the on-call rota.\n\nRegular hours resume Tuesday.",
-  ctaUrl: "https://example.com/holidays",
-  ctaLabel: "See the holiday calendar",
+    "All offices are **closed Monday, September 7** for the public holiday. Support coverage runs as normal via the on-call rota.\n\nRegular hours resume Tuesday.\n\n[See the holiday calendar](https://example.com/holidays)",
   organization: { name: "People Ops", logoUrl: "https://placehold.co/80x40" },
   primaryColor: "#1A4B8C",
-  accentColor: "#0F3468",
   footerText: "© 2026 {{organization}}",
   slogan: "Flowing intelligence across the network",
   fontFamily: DEFAULT_FONT_FAMILY,
@@ -105,11 +94,8 @@ export function buildAnnouncementProps(ctx: TemplateContext): AnnouncementEmailP
     headline: fmString(fm.headline) ?? ctx.title,
     bannerText: fmString(fm.banner ?? fm.bannerText ?? fm.kicker) ?? t(locale, "banner.announcement"),
     bodyMarkdown: ctx.bodyMarkdown,
-    ctaUrl: fmString(fm.ctaUrl ?? fm.url),
-    ctaLabel: fmStringOr(fm.ctaLabel, t(locale, "cta.learnMore")),
     organization: ctx.organization,
     primaryColor: theme.primaryColor,
-    accentColor: theme.accentColor ?? theme.primaryColor,
     footerText: theme.footerText,
     slogan: theme.slogan,
     fontFamily: theme.fontFamily,

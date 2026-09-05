@@ -3,8 +3,6 @@ title: "New expense policy takes effect October 1"
 type: announcement
 headline: "Expense policy update — effective Oct 1"
 banner: "Policy change"
-ctaUrl: "https://example.com/policies/expenses"
-ctaLabel: "Read the full policy"
 date: 2026-09-03
 ---
 
@@ -23,5 +21,7 @@ purchase date, and receipts are required for anything over **$25** (down from $7
 
 - Submit any outstanding reports from before October 1 under the **current** rules by September 30.
 - After that, the new thresholds apply automatically in the expense tool — no setup needed.
+
+[Read the full policy](https://example.com/policies/expenses)
 
 Questions go to the Finance channel or reply to this email.

@@ -11,7 +11,6 @@ const DEFAULT_CONFIG = `{
     "footerText": "© 2026 {{organization}}. Internal use only.",
     "slogan": "Flowing intelligence across the network",
     "fontFamily": "\\"Helvetica Neue\\", Helvetica, Arial, \\"PingFang SC\\", \\"Microsoft YaHei\\", sans-serif",
-    "accentColor": "#1a73e8",
     "social": []
   }
 }
@@ -150,8 +149,6 @@ title: "All-hands moves to Thursdays"
 type: announcement
 headline: "All-hands moves to Thursdays, starting March"
 banner: "Schedule change"
-ctaUrl: "https://example.com/all-hands"
-ctaLabel: "See the new calendar"
 date: 2026-02-24
 ---
 
@@ -165,6 +162,8 @@ Thursday keeps it live for more people.
 
 - Calendar invites update automatically — no action needed.
 - Can't attend live? The recording and notes post within the hour.
+
+[See the new calendar](https://example.com/all-hands)
 `;
 
 const EXAMPLE_MINIMAL = `---

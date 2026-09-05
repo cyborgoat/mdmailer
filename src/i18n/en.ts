@@ -6,7 +6,6 @@ export const en: Messages = {
   "detail.hosts": "Hosts",
   "section.agenda": "Agenda",
   "section.hosts": "Meet the hosts",
-  "cta.learnMore": "Learn more",
   "kicker.workshop": "Workshop",
   "kicker.webinar": "Webinar",
   "banner.announcement": "Announcement",

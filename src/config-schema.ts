@@ -33,12 +33,9 @@ export const configSchema = z.object({
     // and Simplified Chinese glyphs.
     fontFamily: z.string().default(DEFAULT_FONT_FAMILY),
 
-    // The keys below are optional and only used by the non-default templates
-    // (event/workshop/webinar, announcement). Existing configs without them keep working.
+    // The keys below are optional and used by richer non-default templates.
+    // Existing configs without them keep working.
 
-    // Call-to-action button background for the event/announcement templates.
-    // Falls back to `primaryColor` when unset.
-    accentColor: z.string().optional(),
     // Social links for the event/announcement footer. Empty renders nothing.
     social: z.array(socialLinkSchema).default([]),
     // Postal address line for the event footer.
