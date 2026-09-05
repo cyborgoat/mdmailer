@@ -63,7 +63,7 @@ lang: en
 - `date` is displayed by layouts that use a dateline.
 - `type` selects the layout.
 - `lang` accepts `en` or `zh`; aliases are `locale` and `language`.
-- Template chrome is localized. Titles, body content, slogan, and footer remain author-written.
+- Template chrome is localized. Titles, body content, tagline, and footer remain author-written.
 
 The body supports normal Markdown, including headings, emphasis, links, lists, task lists, tables, blockquotes, code, and images.
 
@@ -121,7 +121,7 @@ Configure branding in `mdmailer.config.json`:
 - `organization.logoUrl`: hosted HTTPS URL or local path.
 - `theme.primaryColor`: headings and accents.
 - `theme.footerText`: copyright text; `{{organization}}` expands to the organization name.
-- `theme.slogan`: footer slogan.
+- `theme.tagline`: footer department tagline.
 - `theme.fontFamily`: use an Outlook-compatible web-safe font stack.
 - `theme.social`, `theme.address`, and `theme.unsubscribeUrl`: optional rich-footer fields.
 

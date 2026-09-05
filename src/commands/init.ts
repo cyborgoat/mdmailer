@@ -9,7 +9,7 @@ const DEFAULT_CONFIG = `{
   "theme": {
     "primaryColor": "#1a73e8",
     "footerText": "© 2026 {{organization}}. Internal use only.",
-    "slogan": "Flowing intelligence across the network",
+    "tagline": "Flowing intelligence across the network.",
     "fontFamily": "\\"Helvetica Neue\\", Helvetica, Arial, \\"PingFang SC\\", \\"Microsoft YaHei\\", sans-serif",
     "social": []
   }
@@ -215,7 +215,7 @@ export async function runInit() {
   console.log(
     "\nNext steps:\n" +
       "  1. Replace assets/logo.svg with your real logo (or point logoUrl at a hosted image).\n" +
-      "  2. Edit mdmailer.config.json with your organization's name, theme, and slogan.\n" +
+      "  2. Edit mdmailer.config.json with your organization's name, theme, and tagline.\n" +
       "  3. Edit content/example.md with your update.\n" +
       "  4. Run: npm run generate -- --input content/example.md\n" +
       "\n" +

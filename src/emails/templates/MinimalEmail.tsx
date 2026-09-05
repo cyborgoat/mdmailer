@@ -1,11 +1,12 @@
-import { Body, Container, Head, Heading, Hr, Html, Preview, Text } from "react-email";
+import { Body, Container, Head, Heading, Html, Preview, Text } from "react-email";
 import * as React from "react";
 import Markdown from "markdown-to-jsx";
 import { Header } from "../components/Header.js";
+import { Footer } from "../components/Footer.js";
 import { buildMarkdownOverrides } from "../markdown-overrides.js";
 import type { TemplateContext } from "../template-context.js";
-import { DEFAULT_FONT_FAMILY } from "../../config-schema.js";
-import type { Locale } from "../../i18n/index.js";
+import { DEFAULT_FONT_FAMILY, type SocialLink } from "../../config-schema.js";
+import { t, type Locale } from "../../i18n/index.js";
 
 export interface MinimalEmailProps {
   title: string;
@@ -14,13 +15,17 @@ export interface MinimalEmailProps {
   footerText: string;
   organizationName: string;
   organizationLogoUrl: string;
+  tagline: string;
   primaryColor: string;
   fontFamily: string;
+  social: SocialLink[];
+  address?: string;
+  unsubscribeUrl?: string;
   locale: Locale;
 }
 
-// A text-forward layout: no logo band, just a title, dateline, the Markdown
-// body, and a one-line footer. For short, personal-feeling notes.
+// A text-forward layout with the shared brand header/footer, a title, a
+// dateline, and the Markdown body. For short, personal-feeling notes.
 export default function MinimalEmail({
   title,
   date,
@@ -28,8 +33,12 @@ export default function MinimalEmail({
   footerText,
   organizationName,
   organizationLogoUrl,
+  tagline,
   primaryColor,
   fontFamily,
+  social,
+  address,
+  unsubscribeUrl,
   locale,
 }: MinimalEmailProps) {
   return (
@@ -46,10 +55,17 @@ export default function MinimalEmail({
             <Text style={{ fontFamily, fontSize: "12px", color: "#52665d", marginTop: "-8px" }}>{date}</Text>
           ) : null}
           <Markdown options={{ overrides: buildMarkdownOverrides(fontFamily) }}>{bodyMarkdown}</Markdown>
-          <Hr style={{ borderColor: "#e6e6e6", margin: "32px 0 16px" }} />
-          <Text style={{ fontFamily, fontSize: "12px", color: "#52665d", margin: "0" }}>
-            {footerText.replaceAll("{{organization}}", organizationName)}
-          </Text>
+          <Footer
+            organizationName={organizationName}
+            organizationLogoUrl={organizationLogoUrl}
+            tagline={tagline}
+            footerText={footerText}
+            fontFamily={fontFamily}
+            social={social}
+            address={address}
+            unsubscribeUrl={unsubscribeUrl}
+            unsubscribeLabel={t(locale, "footer.unsubscribe")}
+          />
         </Container>
       </Body>
     </Html>
@@ -64,8 +80,10 @@ MinimalEmail.PreviewProps = {
   footerText: "© 2026 {{organization}}",
   organizationName: "Platform",
   organizationLogoUrl: "https://placehold.co/144x120",
+  tagline: "Flowing intelligence across the network.",
   primaryColor: "#1A4B8C",
   fontFamily: DEFAULT_FONT_FAMILY,
+  social: [],
   locale: "en",
 } satisfies MinimalEmailProps;
 
@@ -77,8 +95,12 @@ export function buildMinimalProps(ctx: TemplateContext): MinimalEmailProps {
     footerText: ctx.config.theme.footerText,
     organizationName: ctx.organization.name,
     organizationLogoUrl: ctx.organization.logoUrl,
+    tagline: ctx.config.theme.tagline,
     primaryColor: ctx.config.theme.primaryColor,
     fontFamily: ctx.config.theme.fontFamily,
+    social: ctx.config.theme.social,
+    address: ctx.config.theme.address,
+    unsubscribeUrl: ctx.config.theme.unsubscribeUrl,
     locale: ctx.locale,
   };
 }

@@ -15,7 +15,7 @@ const brandSchema = z.object({
   logoUrl: z.string().min(1),
 });
 
-// One entry in the event/announcement footer's social row. Rendered as a plain
+// One entry in the shared footer's social row. Rendered as a plain
 // text link (no icon image) so it survives blocked images and Outlook alike.
 const socialLinkSchema = z.object({
   label: z.string(),
@@ -27,20 +27,17 @@ export const configSchema = z.object({
   theme: z.object({
     primaryColor: z.string(),
     footerText: z.string(),
-    slogan: z.string().default("Flowing intelligence across the network"),
+    tagline: z.string().default("Flowing intelligence across the network."),
     // Web-safe fonts only — Outlook desktop's Word rendering engine can't
     // load @font-face/web fonts. Defaults to a stack covering both Latin
     // and Simplified Chinese glyphs.
     fontFamily: z.string().default(DEFAULT_FONT_FAMILY),
 
-    // The keys below are optional and used by richer non-default templates.
-    // Existing configs without them keep working.
-
-    // Social links for the event/announcement footer. Empty renders nothing.
+    // Optional shared-footer metadata. Existing configs without it keep working.
     social: z.array(socialLinkSchema).default([]),
-    // Postal address line for the event footer.
+    // Postal address line.
     address: z.string().optional(),
-    // "Unsubscribe" link target for the event footer.
+    // "Unsubscribe" link target.
     unsubscribeUrl: z.string().optional(),
   }),
 });

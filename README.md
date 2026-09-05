@@ -7,7 +7,7 @@ Requires Node.js 24 or later.
 ## How it works
 
 1. Write your update as Markdown, with frontmatter for `title` and `date`.
-2. Configure your organization's name, logo, theme, and slogan once in `mdmailer.config.json` — it's applied to every email you generate.
+2. Configure your organization's name, logo, theme, and tagline once in `mdmailer.config.json` — it's applied to every email you generate.
 3. Run the generator. It renders the email with [react.email](https://react.email/docs/introduction) and writes two files to `output/`:
    - `<name>.html` — open in a browser to preview.
    - `<name>.eml` — open it and your default mail client will pop up a compose window with the formatted email already in the body. Add recipients and hit send.
@@ -44,7 +44,7 @@ Your content here, in normal Markdown (headings, lists, tables, task lists, link
 ![Alt text](assets/images/photo.jpg)
 ```
 
-Set `lang:` to `en` (default) or `zh` to localize template chrome — detail labels, default kickers/CTAs, and the unsubscribe link. Aliases: `locale`, `language`. Markdown body, titles, and config slogan/footer stay author-written in whichever language you choose.
+Set `lang:` to `en` (default) or `zh` to localize template chrome — detail labels, default kickers, and the unsubscribe link. Aliases: `locale`, `language`. Markdown body, titles, and config tagline/footer stay author-written in whichever language you choose.
 
 Images work the same way the logo does: a hosted `https://...` URL is left as-is, while a local path (relative to the current directory) is automatically embedded at generation time — no image hosting required. As with the logo, it's a `data:` URI in the `.html` preview and a `cid:`-referenced inline attachment in the `.eml`, since Outlook doesn't render `data:` URIs; on the page itself, images are scaled down with CSS to fit the email width, but not re-encoded, so keep source files reasonably sized.
 
@@ -96,7 +96,7 @@ Edit `mdmailer.config.json`:
   "theme": {
     "primaryColor": "#1a73e8",
     "footerText": "© 2026 {{organization}}",
-    "slogan": "Flowing intelligence across the network",
+    "tagline": "Flowing intelligence across the network.",
     "fontFamily": "\"Helvetica Neue\", Helvetica, Arial, \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
     "social": [{ "label": "GitHub", "url": "https://github.com/your-org" }],
     "address": "123 Market Street, Tech City, CA 94102",
@@ -111,7 +111,7 @@ Edit `mdmailer.config.json`:
 
 `fontFamily` is optional and defaults to `"Helvetica Neue", Helvetica, Arial, "PingFang SC", "Microsoft YaHei", sans-serif` — a stack that covers both Latin and Simplified Chinese glyphs. Outlook desktop renders with the Word HTML engine, which only matches web-safe fonts already installed on the system (no `@font-face`/web fonts), so stick to fonts you know your recipients have — the default only uses fonts that ship with Windows and macOS.
 
-`organization.name`, a small version of `organization.logoUrl`, and `theme.slogan` are rendered together in the email's footer, below the body content — a small logo beside the bold org name, with the slogan in a smaller, italic serif underneath it. `theme.footerText` can include the placeholder `{{organization}}`, which is replaced with `organization.name` at generation time, so your copyright line always stays in sync with the configured org name.
+`organization.name`, a 64px version of `organization.logoUrl`, and `theme.tagline` form a centered footer brand stack. Optional links and address follow below, with the copyright and unsubscribe text in a separate legal group. `theme.footerText` can include the placeholder `{{organization}}`, which is replaced with `organization.name` at generation time.
 
 ## Local development
 

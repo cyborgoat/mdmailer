@@ -18,9 +18,11 @@ export interface AnnouncementEmailProps {
   organization: Brand;
   primaryColor: string;
   footerText: string;
-  slogan: string;
+  tagline: string;
   fontFamily: string;
   social: SocialLink[];
+  address?: string;
+  unsubscribeUrl?: string;
   locale: Locale;
   unsubscribeLabel: string;
 }
@@ -35,9 +37,11 @@ export default function AnnouncementEmail({
   organization,
   primaryColor,
   footerText,
-  slogan,
+  tagline,
   fontFamily,
   social,
+  address,
+  unsubscribeUrl,
   locale,
   unsubscribeLabel,
 }: AnnouncementEmailProps) {
@@ -56,10 +60,12 @@ export default function AnnouncementEmail({
           <Footer
             organizationName={organization.name}
             organizationLogoUrl={organization.logoUrl}
-            slogan={slogan}
+            tagline={tagline}
             footerText={footerText}
             fontFamily={fontFamily}
             social={social}
+            address={address}
+            unsubscribeUrl={unsubscribeUrl}
             unsubscribeLabel={unsubscribeLabel}
           />
         </Container>
@@ -77,7 +83,7 @@ AnnouncementEmail.PreviewProps = {
   organization: { name: "People Ops", logoUrl: "https://placehold.co/80x40" },
   primaryColor: "#1A4B8C",
   footerText: "© 2026 {{organization}}",
-  slogan: "Flowing intelligence across the network",
+  tagline: "Flowing intelligence across the network.",
   fontFamily: DEFAULT_FONT_FAMILY,
   social: [],
   locale: "en",
@@ -97,9 +103,11 @@ export function buildAnnouncementProps(ctx: TemplateContext): AnnouncementEmailP
     organization: ctx.organization,
     primaryColor: theme.primaryColor,
     footerText: theme.footerText,
-    slogan: theme.slogan,
+    tagline: theme.tagline,
     fontFamily: theme.fontFamily,
     social: theme.social,
+    address: theme.address,
+    unsubscribeUrl: theme.unsubscribeUrl,
     locale,
     unsubscribeLabel: t(locale, "footer.unsubscribe"),
   };

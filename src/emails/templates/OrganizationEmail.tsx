@@ -5,8 +5,8 @@ import { Header } from "../components/Header.js";
 import { Footer } from "../components/Footer.js";
 import { buildMarkdownOverrides } from "../markdown-overrides.js";
 import type { TemplateContext } from "../template-context.js";
-import { DEFAULT_FONT_FAMILY, type Brand } from "../../config-schema.js";
-import type { Locale } from "../../i18n/index.js";
+import { DEFAULT_FONT_FAMILY, type Brand, type SocialLink } from "../../config-schema.js";
+import { t, type Locale } from "../../i18n/index.js";
 
 export interface OrganizationEmailProps {
   title: string;
@@ -15,8 +15,11 @@ export interface OrganizationEmailProps {
   organization: Brand;
   primaryColor: string;
   footerText: string;
-  slogan: string;
+  tagline: string;
   fontFamily: string;
+  social: SocialLink[];
+  address?: string;
+  unsubscribeUrl?: string;
   locale: Locale;
 }
 
@@ -27,8 +30,11 @@ export default function OrganizationEmail({
   organization,
   primaryColor,
   footerText,
-  slogan,
+  tagline,
   fontFamily,
+  social,
+  address,
+  unsubscribeUrl,
   locale,
 }: OrganizationEmailProps) {
   return (
@@ -46,9 +52,13 @@ export default function OrganizationEmail({
           <Footer
             organizationName={organization.name}
             organizationLogoUrl={organization.logoUrl}
-            slogan={slogan}
+            tagline={tagline}
             footerText={footerText}
             fontFamily={fontFamily}
+            social={social}
+            address={address}
+            unsubscribeUrl={unsubscribeUrl}
+            unsubscribeLabel={t(locale, "footer.unsubscribe")}
           />
         </Container>
       </Body>
@@ -64,8 +74,9 @@ OrganizationEmail.PreviewProps = {
   organization: { name: "Engineering", logoUrl: "https://placehold.co/80x40" },
   primaryColor: "#1A4B8C",
   footerText: "© 2026 {{organization}}",
-  slogan: "Flowing intelligence across the network",
+  tagline: "Flowing intelligence across the network.",
   fontFamily: DEFAULT_FONT_FAMILY,
+  social: [],
   locale: "en",
 } satisfies OrganizationEmailProps;
 
@@ -79,8 +90,11 @@ export function buildRegularProps(ctx: TemplateContext): OrganizationEmailProps 
     organization: ctx.organization,
     primaryColor: ctx.config.theme.primaryColor,
     footerText: ctx.config.theme.footerText,
-    slogan: ctx.config.theme.slogan,
+    tagline: ctx.config.theme.tagline,
     fontFamily: ctx.config.theme.fontFamily,
+    social: ctx.config.theme.social,
+    address: ctx.config.theme.address,
+    unsubscribeUrl: ctx.config.theme.unsubscribeUrl,
     locale: ctx.locale,
   };
 }

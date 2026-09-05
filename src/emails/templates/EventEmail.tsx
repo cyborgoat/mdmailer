@@ -33,7 +33,7 @@ export interface EventEmailProps {
   organization: Brand;
   primaryColor: string;
   footerText: string;
-  slogan: string;
+  tagline: string;
   fontFamily: string;
   social: SocialLink[];
   address?: string;
@@ -68,7 +68,7 @@ export default function EventEmail({
   organization,
   primaryColor,
   footerText,
-  slogan,
+  tagline,
   fontFamily,
   social,
   address,
@@ -138,7 +138,7 @@ export default function EventEmail({
           <Footer
             organizationName={organization.name}
             organizationLogoUrl={organization.logoUrl}
-            slogan={slogan}
+            tagline={tagline}
             footerText={footerText}
             fontFamily={fontFamily}
             social={social}
@@ -238,7 +238,7 @@ EventEmail.PreviewProps = {
   organization: { name: "Developer Relations", logoUrl: "https://placehold.co/80x40" },
   primaryColor: "#1A4B8C",
   footerText: "© 2026 {{organization}}",
-  slogan: "Flowing intelligence across the network",
+  tagline: "Flowing intelligence across the network.",
   fontFamily: DEFAULT_FONT_FAMILY,
   social: [{ label: "GitHub", url: "https://example.com/gh" }],
   address: "123 Market Street, Floor 1, Tech City, CA 94102",
@@ -277,7 +277,7 @@ export function buildEventProps(
     organization: ctx.organization,
     primaryColor: theme.primaryColor,
     footerText: theme.footerText,
-    slogan: theme.slogan,
+    tagline: theme.tagline,
     fontFamily: theme.fontFamily,
     social: theme.social,
     address: theme.address,
