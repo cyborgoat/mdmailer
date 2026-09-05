@@ -6,7 +6,6 @@ export type MessageKey =
   | "detail.hosts"
   | "section.agenda"
   | "section.hosts"
-  | "cta.register"
   | "cta.learnMore"
   | "kicker.workshop"
   | "kicker.webinar"

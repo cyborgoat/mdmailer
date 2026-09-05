@@ -83,9 +83,9 @@ time: "15:00–16:00 UTC"
 location: "Room 2A — or join on the call"
 joinUrl: "https://example.com/call/design-system"
 hosts:
-  - Jordan Lee
-registerUrl: "https://example.com/register/design-system"
-registerLabel: "Save my seat"
+  - name: Jordan Lee
+    role: Design Systems Lead
+    bio: Leads the component library and helps product teams turn shared design patterns into accessible interfaces.
 agenda:
   - time: "15:00"
     title: "Tokens, components, and when to use which"
@@ -103,7 +103,7 @@ then build a screen together so you leave knowing how the pieces fit.
 - Engineers and designers new to the system
 - Anyone copying old markup who wants the supported way
 
-> Bring a laptop. The recording goes out to everyone who registers.
+> Bring a laptop. The recording and notes go out to all attendees.
 `;
 
 const EXAMPLE_WEBINAR = `---

@@ -1,12 +1,12 @@
-import { Body, Column, Container, Head, Heading, Html, Img, Link, Preview, Row, Section, Text } from "react-email";
+import { Body, Column, Container, Head, Heading, Html, Link, Preview, Row, Section, Text } from "react-email";
 import * as React from "react";
 import Markdown from "markdown-to-jsx";
 import { Header } from "../components/Header.js";
 import { Footer } from "../components/Footer.js";
-import { CtaButton } from "../components/Button.js";
 import { EventDetails, type EventDetailItem } from "../components/EventDetails.js";
+import { HostsSection } from "../components/HostsSection.js";
 import { buildMarkdownOverrides } from "../markdown-overrides.js";
-import { fmString, fmStringOr, formatDate } from "../../frontmatter.js";
+import { fmString, formatDate } from "../../frontmatter.js";
 import type { TemplateContext } from "../template-context.js";
 import { DEFAULT_FONT_FAMILY, type Brand, type SocialLink } from "../../config-schema.js";
 import { t, type Locale } from "../../i18n/index.js";
@@ -28,14 +28,10 @@ export interface EventEmailProps {
   hosts: string[];
   /** Rich host cards with photo + bio (webinar). */
   hostProfiles: HostProfile[];
-  registerUrl?: string;
-  registerLabel: string;
-  /** When false, the registration CTA is omitted (webinar). */
-  showRegister: boolean;
+  showHostsSection: boolean;
   agenda: Agenda;
   organization: Brand;
   primaryColor: string;
-  accentColor: string;
   footerText: string;
   slogan: string;
   fontFamily: string;
@@ -54,7 +50,7 @@ export interface EventEmailProps {
 }
 
 // Structure adapted from react.email's "01-Barebone/welcome": a compact top
-// logo bar, a hero, a details card, an optional CTA, the free-form body,
+// logo bar, a hero, a details card, the free-form body,
 // optional host intros, an optional agenda, and a richer footer.
 export default function EventEmail({
   title,
@@ -67,13 +63,10 @@ export default function EventEmail({
   joinUrl,
   hosts,
   hostProfiles,
-  registerUrl,
-  registerLabel,
-  showRegister,
+  showHostsSection,
   agenda,
   organization,
   primaryColor,
-  accentColor,
   footerText,
   slogan,
   fontFamily,
@@ -85,9 +78,10 @@ export default function EventEmail({
 }: EventEmailProps) {
   const whenLine = [startsAt, time].filter(Boolean).join(" · ");
   const richHosts = hostProfiles.some((host) => host.photoUrl || host.bio || host.role);
+  const renderHostsSection = hostProfiles.length > 0 && (showHostsSection || richHosts);
 
   // "When" isn't in the card — it's already the subline under the heading.
-  // Rich host cards replace the plain "Hosts" row in the details card.
+  // The dedicated host section replaces the plain "Hosts" row in the details card.
   const details: EventDetailItem[] = [
     { label: labels.where, value: location },
     {
@@ -100,7 +94,7 @@ export default function EventEmail({
         ""
       ),
     },
-    ...(richHosts ? [] : [{ label: labels.hosts, value: hosts.join(", ") }]),
+    ...(renderHostsSection ? [] : [{ label: labels.hosts, value: hosts.join(", ") }]),
   ].filter((item) => Boolean(item.value));
 
   return (
@@ -109,12 +103,7 @@ export default function EventEmail({
       <Preview>{title}</Preview>
       <Body style={{ backgroundColor: "#f4f4f4", fontFamily }}>
         <Container style={{ backgroundColor: "#ffffff", padding: "24px", maxWidth: "680px" }}>
-          <Header
-            organizationName={organization.name}
-            organizationLogoUrl={organization.logoUrl}
-            height={88}
-            align="left"
-          />
+          <Header organizationName={organization.name} organizationLogoUrl={organization.logoUrl} />
           <Section style={{ marginTop: "32px" }}>
             {kicker ? (
               <Text
@@ -139,13 +128,10 @@ export default function EventEmail({
             ) : null}
           </Section>
           <EventDetails items={details} fontFamily={fontFamily} />
-          {showRegister ? (
-            <CtaButton href={registerUrl} label={registerLabel} color={accentColor} fontFamily={fontFamily} />
-          ) : null}
           {bodyMarkdown.trim() ? (
             <Markdown options={{ overrides: buildMarkdownOverrides(fontFamily) }}>{bodyMarkdown}</Markdown>
           ) : null}
-          {richHosts ? (
+          {renderHostsSection ? (
             <HostsSection hosts={hostProfiles} sectionLabel={labels.hostsSection} fontFamily={fontFamily} />
           ) : null}
           {agenda ? <AgendaSection agenda={agenda} agendaLabel={labels.agenda} fontFamily={fontFamily} /> : null}
@@ -163,65 +149,6 @@ export default function EventEmail({
         </Container>
       </Body>
     </Html>
-  );
-}
-
-function HostsSection({
-  hosts,
-  sectionLabel,
-  fontFamily,
-}: {
-  hosts: HostProfile[];
-  sectionLabel: string;
-  fontFamily: string;
-}) {
-  return (
-    <Section style={{ marginTop: "8px" }}>
-      <Heading as="h2" style={{ fontFamily, fontSize: "18px", marginTop: "24px", marginBottom: "12px" }}>
-        {sectionLabel}
-      </Heading>
-      {hosts.map((host) => (
-        <Row key={host.name} style={{ marginBottom: "16px" }}>
-          <Column style={{ width: "72px", verticalAlign: "top", paddingRight: "12px" }}>
-            {host.photoUrl ? (
-              <Img
-                src={host.photoUrl}
-                alt={host.name}
-                width={64}
-                height={64}
-                style={{
-                  display: "block",
-                  borderRadius: "50%",
-                  objectFit: "cover",
-                }}
-              />
-            ) : (
-              <div
-                style={{
-                  width: 64,
-                  height: 64,
-                  borderRadius: "50%",
-                  backgroundColor: "#e6e6e6",
-                }}
-              />
-            )}
-          </Column>
-          <Column style={{ verticalAlign: "top" }}>
-            <Text style={{ fontFamily, fontSize: "15px", fontWeight: 600, color: "#111827", margin: "0" }}>
-              {host.name}
-            </Text>
-            {host.role ? (
-              <Text style={{ fontFamily, fontSize: "13px", color: "#1A4B8C", margin: "2px 0 0" }}>{host.role}</Text>
-            ) : null}
-            {host.bio ? (
-              <Text style={{ fontFamily, fontSize: "13px", color: "#333333", margin: "6px 0 0", lineHeight: "1.45" }}>
-                {host.bio}
-              </Text>
-            ) : null}
-          </Column>
-        </Row>
-      ))}
-    </Section>
   );
 }
 
@@ -298,10 +225,8 @@ EventEmail.PreviewProps = {
   location: "Room 4B / Zoom",
   joinUrl: "https://example.com/zoom/cli-workshop",
   hosts: ["Alex Rivera", "Sam Chen"],
-  hostProfiles: [],
-  registerUrl: "https://example.com/register/cli-workshop",
-  registerLabel: "Register",
-  showRegister: true,
+  hostProfiles: [{ name: "Alex Rivera" }, { name: "Sam Chen" }],
+  showHostsSection: true,
   agenda: {
     kind: "list",
     entries: [
@@ -312,7 +237,6 @@ EventEmail.PreviewProps = {
   },
   organization: { name: "Developer Relations", logoUrl: "https://placehold.co/80x40" },
   primaryColor: "#1A4B8C",
-  accentColor: "#0F3468",
   footerText: "© 2026 {{organization}}",
   slogan: "Flowing intelligence across the network",
   fontFamily: DEFAULT_FONT_FAMILY,
@@ -332,13 +256,11 @@ EventEmail.PreviewProps = {
 
 export function buildEventProps(
   ctx: TemplateContext,
-  opts: { defaultKicker?: string; hideRegister?: boolean } = {},
+  opts: { defaultKicker?: string; showHostsSection?: boolean } = {},
 ): EventEmailProps {
   const fm = ctx.frontmatter;
   const theme = ctx.config.theme;
   const { locale } = ctx;
-  const showRegister = !opts.hideRegister;
-
   return {
     title: ctx.title,
     kicker: fmString(fm.kicker ?? fm.eyebrow) ?? opts.defaultKicker ?? "",
@@ -350,13 +272,10 @@ export function buildEventProps(
     joinUrl: fmString(fm.joinUrl ?? fm.onlineUrl),
     hosts: ctx.hostProfiles.map((host) => host.name),
     hostProfiles: ctx.hostProfiles,
-    registerUrl: showRegister ? fmString(fm.registerUrl ?? fm.rsvpUrl) : undefined,
-    registerLabel: fmStringOr(fm.registerLabel, t(locale, "cta.register")),
-    showRegister,
+    showHostsSection: opts.showHostsSection ?? false,
     agenda: normalizeAgenda(fm.agenda),
     organization: ctx.organization,
     primaryColor: theme.primaryColor,
-    accentColor: theme.accentColor ?? theme.primaryColor,
     footerText: theme.footerText,
     slogan: theme.slogan,
     fontFamily: theme.fontFamily,

@@ -6,7 +6,6 @@ export const zh: Messages = {
   "detail.hosts": "嘉宾",
   "section.agenda": "议程",
   "section.hosts": "嘉宾介绍",
-  "cta.register": "报名",
   "cta.learnMore": "了解更多",
   "kicker.workshop": "工作坊",
   "kicker.webinar": "Webinar",

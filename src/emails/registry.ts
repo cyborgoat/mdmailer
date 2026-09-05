@@ -18,12 +18,12 @@ export const templates = {
   event: { component: EventEmail, buildProps: (ctx) => buildEventProps(ctx) },
   workshop: {
     component: EventEmail,
-    buildProps: (ctx) => buildEventProps(ctx, { defaultKicker: t(ctx.locale, "kicker.workshop") }),
+    buildProps: (ctx) =>
+      buildEventProps(ctx, { defaultKicker: t(ctx.locale, "kicker.workshop"), showHostsSection: true }),
   },
   webinar: {
     component: EventEmail,
-    buildProps: (ctx) =>
-      buildEventProps(ctx, { defaultKicker: t(ctx.locale, "kicker.webinar"), hideRegister: true }),
+    buildProps: (ctx) => buildEventProps(ctx, { defaultKicker: t(ctx.locale, "kicker.webinar") }),
   },
   announcement: { component: AnnouncementEmail, buildProps: buildAnnouncementProps },
   minimal: { component: MinimalEmail, buildProps: buildMinimalProps },

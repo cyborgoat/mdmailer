@@ -1,16 +1,20 @@
 ---
 title: "You're invited: Hands-on with the new CLI"
-type: event
+type: workshop
 eventName: "Hands-on with the new CLI"
 startsAt: 2026-09-24
 time: "14:00–15:30 UTC"
 location: "Room 4B, HQ — or join on Zoom"
 joinUrl: "https://example.com/zoom/cli-workshop"
 hosts:
-  - Alex Rivera
-  - Sam Chen
-registerUrl: "https://example.com/register/cli-workshop"
-registerLabel: "Save my seat"
+  - name: Alex Rivera
+    role: Developer Experience Lead
+    photo: assets/images/hosts/alex-rivera.jpg
+    bio: Builds the CLI workflows and integration patterns used across our engineering teams.
+  - name: Sam Chen
+    role: Senior Platform Engineer
+    photo: assets/images/hosts/sam-chen.jpg
+    bio: Maintains the internal toolchain and helps teams debug complex build and deployment issues.
 agenda:
   - time: "14:00"
     title: "Setup & orientation"
@@ -36,4 +40,4 @@ something that runs.
 3. Run `npm install` once so the first exercise isn't a waiting game.
 
 > Seats are capped at 20 so everyone gets hands-on time. Can't make it? The
-> recording and notes go out to everyone who registers.
+> recording and notes go out to all attendees.

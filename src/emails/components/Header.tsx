@@ -4,22 +4,20 @@ import * as React from "react";
 interface HeaderProps {
   organizationName: string;
   organizationLogoUrl: string;
-  // Defaults: roomy centered logo band; the event template passes a
-  // smaller left-aligned bar.
-  height?: number;
-  align?: "center" | "left";
 }
 
-export function Header({ organizationName, organizationLogoUrl, height = 120, align = "center" }: HeaderProps) {
+const LOGO_HEIGHT = 120;
+
+export function Header({ organizationName, organizationLogoUrl }: HeaderProps) {
   return (
-    <Section style={{ padding: "20px 0", borderBottom: "1px solid #e6e6e6", textAlign: align }}>
+    <Section style={{ padding: "20px 0", borderBottom: "1px solid #e6e6e6", textAlign: "center" }}>
       <Img
         src={organizationLogoUrl}
         alt={organizationName}
-        width={Math.round(height * 1.2)}
-        height={height}
+        width={Math.round(LOGO_HEIGHT * 1.2)}
+        height={LOGO_HEIGHT}
         style={{
-          margin: align === "center" ? "0 auto" : "0",
+          margin: "0 auto",
           borderRadius: "16px",
           display: "block",
         }}

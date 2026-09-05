@@ -1,6 +1,7 @@
 import { Body, Container, Head, Heading, Hr, Html, Preview, Text } from "react-email";
 import * as React from "react";
 import Markdown from "markdown-to-jsx";
+import { Header } from "../components/Header.js";
 import { buildMarkdownOverrides } from "../markdown-overrides.js";
 import type { TemplateContext } from "../template-context.js";
 import { DEFAULT_FONT_FAMILY } from "../../config-schema.js";
@@ -12,6 +13,7 @@ export interface MinimalEmailProps {
   bodyMarkdown: string;
   footerText: string;
   organizationName: string;
+  organizationLogoUrl: string;
   primaryColor: string;
   fontFamily: string;
   locale: Locale;
@@ -25,6 +27,7 @@ export default function MinimalEmail({
   bodyMarkdown,
   footerText,
   organizationName,
+  organizationLogoUrl,
   primaryColor,
   fontFamily,
   locale,
@@ -35,6 +38,7 @@ export default function MinimalEmail({
       <Preview>{title}</Preview>
       <Body style={{ backgroundColor: "#ffffff", fontFamily }}>
         <Container style={{ padding: "24px", maxWidth: "680px" }}>
+          <Header organizationName={organizationName} organizationLogoUrl={organizationLogoUrl} />
           <Heading as="h1" style={{ fontFamily, color: primaryColor }}>
             {title}
           </Heading>
@@ -59,6 +63,7 @@ MinimalEmail.PreviewProps = {
     "We're pushing the search reindex tonight at 22:00 UTC. Expect ~10 minutes of stale results; nothing else is affected.\n\nPing me if you see anything odd afterwards.",
   footerText: "© 2026 {{organization}}",
   organizationName: "Platform",
+  organizationLogoUrl: "https://placehold.co/144x120",
   primaryColor: "#1A4B8C",
   fontFamily: DEFAULT_FONT_FAMILY,
   locale: "en",
@@ -71,6 +76,7 @@ export function buildMinimalProps(ctx: TemplateContext): MinimalEmailProps {
     bodyMarkdown: ctx.bodyMarkdown,
     footerText: ctx.config.theme.footerText,
     organizationName: ctx.organization.name,
+    organizationLogoUrl: ctx.organization.logoUrl,
     primaryColor: ctx.config.theme.primaryColor,
     fontFamily: ctx.config.theme.fontFamily,
     locale: ctx.locale,

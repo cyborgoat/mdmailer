@@ -6,7 +6,7 @@
   "theme": {
     "primaryColor": "#1A4B8C",
     "accentColor": "#0F3468",
-    "footerText": "© 2026 {{organization}}. Internal use only — please do not forward externally.",
+    "footerText": "© 2026 NCE AI Agent Development Dept. Internal use only — please do not forward externally.",
     "slogan": "Flowing intelligence across the network.",
     "fontFamily": "\"Helvetica Neue\", Helvetica, Arial, \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
   }

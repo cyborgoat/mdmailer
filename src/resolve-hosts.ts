@@ -10,7 +10,7 @@ export interface HostProfile {
 }
 
 export interface ResolvedHosts {
-  /** Plain name list — used by event/workshop detail cards. */
+  /** Plain name list used by event detail cards. */
   names: string[];
   /** Rich profiles when frontmatter supplies objects (photo/bio). */
   profiles: HostProfile[];
