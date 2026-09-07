@@ -167,5 +167,8 @@ assets/images/*
 !assets/images/hosts/priya-nair.jpg
 !assets/images/hosts/marcus-cole.jpg
 
+# Generated email output (HTML/EML) — reproducible via `npm run generate`
+output/
+
 # macOS
 .DS_Store
