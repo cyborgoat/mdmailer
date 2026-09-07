@@ -5,7 +5,7 @@
   },
   "theme": {
     "primaryColor": "#1A4B8C",
-    "footerText": "© 2026 NCE AI Agent Development Dept. Internal use only — please do not forward externally.",
+    "footerText": "© 2026 NCE AI Agent Development Dept.",
     "tagline": "Flowing intelligence across the network.",
     "fontFamily": "\"Helvetica Neue\", Helvetica, Arial, \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
   }
