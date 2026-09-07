@@ -20,6 +20,7 @@ export interface AnnouncementEmailProps {
   footerText: string;
   tagline: string;
   fontFamily: string;
+  contentWidth: number;
   social: SocialLink[];
   address?: string;
   unsubscribeUrl?: string;
@@ -39,6 +40,7 @@ export default function AnnouncementEmail({
   footerText,
   tagline,
   fontFamily,
+  contentWidth,
   social,
   address,
   unsubscribeUrl,
@@ -49,8 +51,8 @@ export default function AnnouncementEmail({
     <Html lang={locale}>
       <Head />
       <Preview>{title}</Preview>
-      <Body style={{ backgroundColor: "#f4f4f4", fontFamily }}>
-        <Container style={{ backgroundColor: "#ffffff", padding: "24px", maxWidth: "680px" }}>
+      <Body style={{ backgroundColor: "#ffffff", fontFamily }}>
+        <Container style={{ backgroundColor: "#ffffff", padding: "24px", maxWidth: `${contentWidth}px` }}>
           <Header organizationName={organization.name} organizationLogoUrl={organization.logoUrl} />
           <CalloutBanner text={bannerText} color={primaryColor} fontFamily={fontFamily} />
           <Heading as="h1" style={{ fontFamily, color: primaryColor, marginTop: "24px" }}>
@@ -84,6 +86,7 @@ AnnouncementEmail.PreviewProps = {
   footerText: "© 2026 {{organization}}",
   tagline: "Flowing intelligence across the network.",
   fontFamily: DEFAULT_FONT_FAMILY,
+  contentWidth: 820,
   social: [],
   locale: "en",
   unsubscribeLabel: "Unsubscribe",
@@ -104,6 +107,7 @@ export function buildAnnouncementProps(ctx: TemplateContext): AnnouncementEmailP
     footerText: theme.footerText,
     tagline: theme.tagline,
     fontFamily: theme.fontFamily,
+    contentWidth: theme.contentWidth,
     social: theme.social,
     address: theme.address,
     unsubscribeUrl: theme.unsubscribeUrl,

@@ -18,6 +18,7 @@ export interface MinimalEmailProps {
   tagline: string;
   primaryColor: string;
   fontFamily: string;
+  contentWidth: number;
   social: SocialLink[];
   address?: string;
   unsubscribeUrl?: string;
@@ -36,6 +37,7 @@ export default function MinimalEmail({
   tagline,
   primaryColor,
   fontFamily,
+  contentWidth,
   social,
   address,
   unsubscribeUrl,
@@ -46,7 +48,7 @@ export default function MinimalEmail({
       <Head />
       <Preview>{title}</Preview>
       <Body style={{ backgroundColor: "#ffffff", fontFamily }}>
-        <Container style={{ padding: "24px", maxWidth: "680px" }}>
+        <Container style={{ padding: "24px", maxWidth: `${contentWidth}px` }}>
           <Header organizationName={organizationName} organizationLogoUrl={organizationLogoUrl} />
           <Heading as="h1" style={{ fontFamily, color: primaryColor }}>
             {title}
@@ -82,6 +84,7 @@ MinimalEmail.PreviewProps = {
   tagline: "Flowing intelligence across the network.",
   primaryColor: "#1A4B8C",
   fontFamily: DEFAULT_FONT_FAMILY,
+  contentWidth: 820,
   social: [],
   locale: "en",
 } satisfies MinimalEmailProps;
@@ -97,6 +100,7 @@ export function buildMinimalProps(ctx: TemplateContext): MinimalEmailProps {
     tagline: ctx.config.theme.tagline,
     primaryColor: ctx.config.theme.primaryColor,
     fontFamily: ctx.config.theme.fontFamily,
+    contentWidth: ctx.config.theme.contentWidth,
     social: ctx.config.theme.social,
     address: ctx.config.theme.address,
     unsubscribeUrl: ctx.config.theme.unsubscribeUrl,

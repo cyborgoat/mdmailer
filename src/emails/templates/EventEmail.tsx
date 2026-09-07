@@ -35,6 +35,7 @@ export interface EventEmailProps {
   footerText: string;
   tagline: string;
   fontFamily: string;
+  contentWidth: number;
   social: SocialLink[];
   address?: string;
   unsubscribeUrl?: string;
@@ -70,6 +71,7 @@ export default function EventEmail({
   footerText,
   tagline,
   fontFamily,
+  contentWidth,
   social,
   address,
   unsubscribeUrl,
@@ -101,8 +103,8 @@ export default function EventEmail({
     <Html lang={locale}>
       <Head />
       <Preview>{title}</Preview>
-      <Body style={{ backgroundColor: "#f4f4f4", fontFamily }}>
-        <Container style={{ backgroundColor: "#ffffff", padding: "24px", maxWidth: "680px" }}>
+      <Body style={{ backgroundColor: "#ffffff", fontFamily }}>
+        <Container style={{ backgroundColor: "#ffffff", padding: "24px", maxWidth: `${contentWidth}px` }}>
           <Header organizationName={organization.name} organizationLogoUrl={organization.logoUrl} />
           <Section style={{ marginTop: "32px" }}>
             {kicker ? (
@@ -239,6 +241,7 @@ EventEmail.PreviewProps = {
   footerText: "© 2026 {{organization}}",
   tagline: "Flowing intelligence across the network.",
   fontFamily: DEFAULT_FONT_FAMILY,
+  contentWidth: 820,
   social: [{ label: "GitHub", url: "https://example.com/gh" }],
   address: "123 Market Street, Floor 1, Tech City, CA 94102",
   unsubscribeUrl: "https://example.com/unsubscribe",
@@ -278,6 +281,7 @@ export function buildEventProps(
     footerText: theme.footerText,
     tagline: theme.tagline,
     fontFamily: theme.fontFamily,
+    contentWidth: theme.contentWidth,
     social: theme.social,
     address: theme.address,
     unsubscribeUrl: theme.unsubscribeUrl,

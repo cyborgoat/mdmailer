@@ -32,6 +32,8 @@ export const configSchema = z.object({
     // load @font-face/web fonts. Defaults to a stack covering both Latin
     // and Simplified Chinese glyphs.
     fontFamily: z.string().default(DEFAULT_FONT_FAMILY),
+    // Max width (px) of the email's content column. Applies to every template.
+    contentWidth: z.number().positive().default(820),
 
     // Optional shared-footer metadata. Existing configs without it keep working.
     social: z.array(socialLinkSchema).default([]),

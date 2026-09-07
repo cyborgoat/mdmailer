@@ -17,6 +17,7 @@ export interface OrganizationEmailProps {
   footerText: string;
   tagline: string;
   fontFamily: string;
+  contentWidth: number;
   social: SocialLink[];
   address?: string;
   unsubscribeUrl?: string;
@@ -32,6 +33,7 @@ export default function OrganizationEmail({
   footerText,
   tagline,
   fontFamily,
+  contentWidth,
   social,
   address,
   unsubscribeUrl,
@@ -41,8 +43,8 @@ export default function OrganizationEmail({
     <Html lang={locale}>
       <Head />
       <Preview>{title}</Preview>
-      <Body style={{ backgroundColor: "#f4f4f4", fontFamily }}>
-        <Container style={{ backgroundColor: "#ffffff", padding: "24px", maxWidth: "680px" }}>
+      <Body style={{ backgroundColor: "#ffffff", fontFamily }}>
+        <Container style={{ backgroundColor: "#ffffff", padding: "24px", maxWidth: `${contentWidth}px` }}>
           <Header organizationName={organization.name} organizationLogoUrl={organization.logoUrl} />
           <Heading as="h1" style={{ fontFamily, color: primaryColor, marginTop: "24px" }}>
             {title}
@@ -75,6 +77,7 @@ OrganizationEmail.PreviewProps = {
   footerText: "© 2026 {{organization}}",
   tagline: "Flowing intelligence across the network.",
   fontFamily: DEFAULT_FONT_FAMILY,
+  contentWidth: 820,
   social: [],
   locale: "en",
 } satisfies OrganizationEmailProps;
@@ -91,6 +94,7 @@ export function buildRegularProps(ctx: TemplateContext): OrganizationEmailProps 
     footerText: ctx.config.theme.footerText,
     tagline: ctx.config.theme.tagline,
     fontFamily: ctx.config.theme.fontFamily,
+    contentWidth: ctx.config.theme.contentWidth,
     social: ctx.config.theme.social,
     address: ctx.config.theme.address,
     unsubscribeUrl: ctx.config.theme.unsubscribeUrl,
