@@ -24,9 +24,9 @@ export function EventDetails({ items, theme }: EventDetailsProps) {
       style={{
         backgroundColor: theme.appearance === "contrast" ? theme.surface : undefined,
         border: `1px solid ${theme.border}`,
-        borderRadius: "8px",
-        padding: "8px 16px",
-        margin: "16px 0",
+        borderRadius: "12px",
+        padding: "10px 18px",
+        margin: "20px 0",
       }}
     >
       {items.map((item, index) => (

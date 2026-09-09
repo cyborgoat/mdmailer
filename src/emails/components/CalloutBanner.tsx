@@ -15,7 +15,8 @@ export function CalloutBanner({ text, theme }: CalloutBannerProps) {
     <Section style={{
       backgroundColor: isContrast ? theme.surface : theme.accent,
       border: isContrast ? `1px solid ${theme.border}` : undefined,
-      padding: "16px 24px",
+      borderRadius: "10px",
+      padding: "14px 18px",
       margin: "24px 0 0",
     }}>
       <Text

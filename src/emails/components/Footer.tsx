@@ -30,7 +30,7 @@ export function Footer({
 }: FooterProps) {
   return (
     <Section style={{ textAlign: "center" }}>
-      <Hr style={{ borderTop: `1px solid ${theme.border}`, margin: "40px 0 24px" }} />
+      <Hr style={{ borderTop: `1px solid ${theme.border}`, margin: "44px 0 24px" }} />
       <Text
         style={{
           fontFamily: theme.fontFamily,

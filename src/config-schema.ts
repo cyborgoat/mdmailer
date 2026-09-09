@@ -148,7 +148,7 @@ const themeSchema = z.object({
   // and Simplified Chinese glyphs.
   fontFamily: z.string().default(DEFAULT_FONT_FAMILY),
   // Max width (px) of the email's content column. Applies to every template.
-  contentWidth: z.number().positive().default(820),
+  contentWidth: z.number().positive().default(680),
 
   // Optional shared-footer metadata. Existing configs without it keep working.
   social: z.array(socialLinkSchema).default([]),

@@ -3,7 +3,7 @@ import test from "node:test";
 import { render } from "@react-email/render";
 import * as React from "react";
 import { configSchema, contrastRatio, frontmatterThemeSchema, THEME_PRESET_NAMES } from "../config-schema.js";
-import OrganizationEmail from "./templates/OrganizationEmail.js";
+import ContentEmail from "./templates/ContentEmail.js";
 import { normalizeThemeSelection, resolveEmailTheme, selectLogoUrl } from "./theme.js";
 
 const baseConfig = {
@@ -85,7 +85,8 @@ test("contrast rendering applies semantic colors throughout the shell", async ()
     config.theme,
     normalizeThemeSelection(frontmatterThemeSchema.parse("cobalt-mint")),
   );
-  const html = await render(React.createElement(OrganizationEmail, {
+  const html = await render(React.createElement(ContentEmail, {
+    variant: "regular",
     title: "Contrast preview",
     date: "2026-09-09",
     bodyMarkdown: "Read the [details](https://example.com).",
@@ -98,6 +99,7 @@ test("contrast rendering applies semantic colors throughout the shell", async ()
     tagline: config.theme.tagline,
     social: [],
     locale: "en",
+    unsubscribeLabel: "Unsubscribe",
   }));
 
   assert.match(html, /background-color:#1A4B8C/);
@@ -112,7 +114,8 @@ test("contrast rendering adds a white plate when no dark logo exists", async () 
     config.theme,
     normalizeThemeSelection(frontmatterThemeSchema.parse("cobalt-mint")),
   );
-  const html = await render(React.createElement(OrganizationEmail, {
+  const html = await render(React.createElement(ContentEmail, {
+    variant: "regular",
     title: "Fallback logo preview",
     date: "2026-09-09",
     bodyMarkdown: "Body",
@@ -122,8 +125,9 @@ test("contrast rendering adds a white plate when no dark logo exists", async () 
     tagline: config.theme.tagline,
     social: [],
     locale: "en",
+    unsubscribeLabel: "Unsubscribe",
   }));
 
-  assert.match(html, /background-color:#ffffff;border-radius:16px/);
-  assert.match(html, /<td style="padding:12px"><img alt="Example"/);
+  assert.match(html, /background-color:#ffffff;border-radius:12px/);
+  assert.match(html, /<td style="padding:10px"><img alt="Example"/);
 });

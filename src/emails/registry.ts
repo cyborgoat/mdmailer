@@ -1,9 +1,7 @@
 import type { ComponentType } from "react";
 import type { TemplateContext } from "./template-context.js";
-import OrganizationEmail, { buildRegularProps } from "./templates/OrganizationEmail.js";
+import ContentEmail, { buildContentProps } from "./templates/ContentEmail.js";
 import EventEmail, { buildEventProps } from "./templates/EventEmail.js";
-import AnnouncementEmail, { buildAnnouncementProps } from "./templates/AnnouncementEmail.js";
-import MinimalEmail, { buildMinimalProps } from "./templates/MinimalEmail.js";
 import { t } from "../i18n/index.js";
 
 export interface TemplateEntry {
@@ -14,7 +12,7 @@ export interface TemplateEntry {
 }
 
 export const templates = {
-  regular: { component: OrganizationEmail, buildProps: buildRegularProps },
+  regular: { component: ContentEmail, buildProps: (ctx) => buildContentProps(ctx, "regular") },
   event: { component: EventEmail, buildProps: (ctx) => buildEventProps(ctx) },
   workshop: {
     component: EventEmail,
@@ -25,8 +23,8 @@ export const templates = {
     component: EventEmail,
     buildProps: (ctx) => buildEventProps(ctx, { defaultKicker: t(ctx.locale, "kicker.webinar") }),
   },
-  announcement: { component: AnnouncementEmail, buildProps: buildAnnouncementProps },
-  minimal: { component: MinimalEmail, buildProps: buildMinimalProps },
+  announcement: { component: ContentEmail, buildProps: (ctx) => buildContentProps(ctx, "announcement") },
+  minimal: { component: ContentEmail, buildProps: (ctx) => buildContentProps(ctx, "minimal") },
 } satisfies Record<string, TemplateEntry>;
 
 export type TemplateName = keyof typeof templates;

@@ -25,7 +25,7 @@ export const DEFAULT_EMAIL_PREVIEW_THEME: EmailTheme = {
   ...LIGHT_THEME_DEFAULTS,
   accent: "#1A4B8C",
   fontFamily: '"Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, "PingFang SC", sans-serif',
-  contentWidth: 820,
+  contentWidth: 680,
 };
 
 export interface ThemeSelection {

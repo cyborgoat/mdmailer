@@ -15,7 +15,7 @@ interface HeaderProps {
   useLogoPlate?: boolean;
 }
 
-const LOGO_HEIGHT = 156;
+const LOGO_HEIGHT = 96;
 const FALLBACK_ASPECT_RATIO = 1.2;
 
 export function Header({ organizationName, organizationLogoUrl, logoAspectRatio, theme, useLogoPlate }: HeaderProps) {
@@ -29,20 +29,20 @@ export function Header({ organizationName, organizationLogoUrl, logoAspectRatio,
       height={LOGO_HEIGHT}
       style={{
         margin: "0 auto",
-        borderRadius: "16px",
+        borderRadius: "12px",
         display: "block",
       }}
     />
   );
 
   return (
-    <Section style={{ padding: "20px 0", borderBottom: `1px solid ${theme.border}`, textAlign: "center" }}>
+    <Section style={{ padding: "16px 0 20px", borderBottom: `1px solid ${theme.border}`, textAlign: "center" }}>
       {useLogoPlate ? (
         <Container style={{
           backgroundColor: "#ffffff",
-          borderRadius: "16px",
-          padding: "12px",
-          maxWidth: `${Math.round(LOGO_HEIGHT * aspectRatio) + 24}px`,
+          borderRadius: "12px",
+          padding: "10px",
+          maxWidth: `${Math.round(LOGO_HEIGHT * aspectRatio) + 20}px`,
         }}>
           {logo}
         </Container>

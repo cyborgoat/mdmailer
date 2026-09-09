@@ -11,12 +11,12 @@ interface HostsSectionProps {
 
 export function HostsSection({ hosts, sectionLabel, theme }: HostsSectionProps) {
   return (
-    <Section style={{ marginTop: "8px" }}>
-      <Heading as="h2" style={{ fontFamily: theme.fontFamily, color: theme.foreground, fontSize: "18px", marginTop: "24px", marginBottom: "12px" }}>
+    <Section style={{ marginTop: "12px" }}>
+      <Heading as="h2" style={{ fontFamily: theme.fontFamily, color: theme.foreground, fontSize: "20px", lineHeight: "26px", marginTop: "28px", marginBottom: "16px" }}>
         {sectionLabel}
       </Heading>
       {hosts.map((host) => (
-        <Row key={host.name} style={{ marginBottom: "16px" }}>
+        <Row key={host.name} style={{ marginBottom: "20px" }}>
           {host.photoUrl ? (
             <Column style={{ width: "72px", verticalAlign: "top", paddingRight: "12px" }}>
               <Img

@@ -51,6 +51,8 @@ This creates missing config, asset, and example files without overwriting existi
 
 ## Common frontmatter
 
+Frontmatter is YAML between `---` delimiters at the start of the Markdown file. Everything after the closing delimiter is the rendered Markdown body.
+
 ```yaml
 ---
 title: "September Update"
@@ -61,14 +63,32 @@ theme: cobalt-mint
 ---
 ```
 
-- `title` is the email title and subject.
-- `date` is displayed by layouts that use a dateline.
-- `type` selects the layout.
-- `lang` accepts `en` or `zh`; aliases are `locale` and `language`.
-- `theme` selects `classic`, `cobalt-mint`, `navy-gold`, `forest-cream`, or `plum-rose`. It may also be an object with `preset` and `colors` fields.
-- Template chrome is localized. Titles, body content, tagline, and footer remain author-written.
+- `title` supplies the email subject, preview text, and default heading. If it is absent, mdmailer uses a localized untitled fallback; normally provide it explicitly.
+- `date` is the dateline for `regular` and `minimal`, and the fallback for an event without `startsAt`. Announcements do not display it. Prefer `YYYY-MM-DD`.
+- `type` selects `regular`, `minimal`, `announcement`, `event`, `workshop`, or `webinar`; it defaults to `regular`.
+- `lang` selects the generated template language. mdmailer supports exactly English (`en`) and Simplified Chinese (`zh`). Aliases are `locale` and `language`; accepted compatibility values include `en-US`, `english`, `zh-CN`, `zh-Hans`, and `chinese`. Missing or unknown values fall back to English.
+- Language localizes only mdmailer-generated labels and defaults: event details, section headings, workshop/webinar kickers, announcement banner, unsubscribe text, and untitled fallback. Never imply that it translates titles, Markdown, hosts, tagline, footer, or other author-written content.
+- `theme` selects `classic`, `cobalt-mint`, `navy-gold`, `forest-cream`, or `plum-rose`. It defaults to `classic` and may instead be an object with `preset` plus optional `colors` overrides.
+- Supported color keys are `background`, `foreground`, `mutedForeground`, `accent`, `surface`, and `border`. Values must be quoted six-digit hex colors. Contrast presets must pass the enforced WCAG AA 4.5:1 checks.
+- Unknown frontmatter keys are ignored. Prefer canonical field names over aliases when writing new content.
+
+Use the object form only when a preset needs per-email color changes:
+
+```yaml
+theme:
+  preset: forest-cream
+  colors:
+    accent: "#FFD166"
+    surface: "#0F3028"
+```
 
 The body supports normal Markdown, including headings, emphasis, links, lists, task lists, tables, blockquotes, code, and images.
+
+Precedence is deterministic:
+
+- Template: CLI `--template` → frontmatter `type` → `regular`.
+- Theme: CLI `--theme` → frontmatter theme preset → `classic`. A CLI preset override retains any frontmatter `colors` overrides.
+- Language: `lang` → `locale` → `language` → English. There is no language CLI option.
 
 ## Template fields
 
@@ -104,8 +124,9 @@ agenda:
 - Quote `time` so YAML preserves its display form.
 - `location` aliases `venue`; `joinUrl` aliases `onlineUrl`.
 - `hosts` aliases `speakers` and accepts names or `{ name, photo, bio, role }` objects.
+- Within host objects, compatibility aliases are `host`/`speaker` for `name`, `image`/`avatar` for `photo`, `intro`/`about` for `bio`, and `title` for `role`. Prefer the canonical keys in new files.
 - Rich host objects render through the shared host-introduction component. Workshop hosts always use the dedicated host section.
-- `agenda` accepts Markdown, strings, or `{ time, title }` objects.
+- `agenda` accepts a YAML multiline Markdown string, a list of strings, or `{ time, title }` objects. Quote agenda and event times.
 - Templates do not render buttons. Add links directly to the Markdown body.
 
 ### Announcement
@@ -114,7 +135,7 @@ Use `headline` and optional `banner`/`bannerText`/`kicker`. Add calls to action 
 
 ### Minimal
 
-Use for short notes. It renders the shared centered brand header, title, optional dateline, Markdown body, and compact copyright footer.
+Use for short notes. It renders the shared centered brand header, a compact title, optional dateline, Markdown body, and shared branded footer.
 
 ## Branding
 
@@ -127,11 +148,12 @@ Configure branding in `mdmailer.config.json`:
 - `theme.footerText`: copyright text; `{{organization}}` expands to the organization name.
 - `theme.tagline`: footer department tagline.
 - `theme.fontFamily`: use an Outlook-compatible web-safe font stack.
+- `theme.contentWidth`: positive pixel width shared by all layouts; defaults to `680`.
 - `theme.social`, `theme.address`, and `theme.unsubscribeUrl`: optional rich-footer fields.
 
 Visual theme presets and optional semantic `colors` overrides belong in Markdown frontmatter, not `mdmailer.config.json`. The `--theme` CLI flag overrides the frontmatter preset for one generation. Contrast text pairs must meet WCAG AA (4.5:1) or generation fails.
 
-All layouts use the shared `src/emails/components/Header.tsx`. Keep logo dimensions and centering in that component rather than adding per-template overrides. Host introductions use `src/emails/components/HostsSection.tsx`; change that shared component rather than duplicating host markup.
+All layouts use the shared `EmailShell`, header, and footer components. Content types share `ContentEmail`; event types share `EventEmail`. Keep shared chrome and logo behavior in those components rather than adding per-type overrides. Host introductions use `HostsSection`; change that shared component rather than duplicating host markup.
 
 ## Images
 

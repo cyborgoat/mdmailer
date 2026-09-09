@@ -1,8 +1,7 @@
-import { Body, Column, Container, Head, Heading, Html, Link, Preview, Row, Section, Text } from "react-email";
+import { Column, Heading, Link, Row, Section, Text } from "react-email";
 import * as React from "react";
 import Markdown from "markdown-to-jsx";
-import { Header } from "../components/Header.js";
-import { Footer } from "../components/Footer.js";
+import { EmailShell } from "../components/EmailShell.js";
 import { EventDetails, type EventDetailItem } from "../components/EventDetails.js";
 import { HostsSection } from "../components/HostsSection.js";
 import { buildMarkdownOverrides } from "../markdown-overrides.js";
@@ -87,7 +86,7 @@ export default function EventEmail({
     {
       label: labels.join,
       value: joinUrl ? (
-        <Link href={joinUrl} style={{ fontFamily: theme.fontFamily, color: theme.accent }}>
+        <Link href={joinUrl} style={{ fontFamily: theme.fontFamily, color: theme.accent, wordBreak: "break-word" }}>
           {joinUrl}
         </Link>
       ) : (
@@ -98,19 +97,19 @@ export default function EventEmail({
   ].filter((item) => Boolean(item.value));
 
   return (
-    <Html lang={locale}>
-      <Head />
-      <Preview>{title}</Preview>
-      <Body style={{ backgroundColor: theme.background, color: theme.foreground, fontFamily: theme.fontFamily }}>
-        <Container style={{ backgroundColor: theme.background, padding: "24px", maxWidth: `${theme.contentWidth}px` }}>
-          <Header
-            organizationName={organization.name}
-            organizationLogoUrl={organization.logoUrl}
-            logoAspectRatio={organization.logoAspectRatio}
-            theme={theme}
-            useLogoPlate={theme.appearance === "contrast" && !organization.logoUrlOnDark}
-          />
-          <Section style={{ marginTop: "32px" }}>
+    <EmailShell
+      previewText={title}
+      organization={organization}
+      theme={theme}
+      footerText={footerText}
+      tagline={tagline}
+      social={social}
+      address={address}
+      unsubscribeUrl={unsubscribeUrl}
+      locale={locale}
+      unsubscribeLabel={labels.unsubscribe}
+    >
+          <Section style={{ marginTop: "28px" }}>
             {kicker ? (
               <Text
                 style={{
@@ -126,7 +125,16 @@ export default function EventEmail({
                 {kicker}
               </Text>
             ) : null}
-            <Heading as="h1" style={{ fontFamily: theme.fontFamily, color: headingColor(theme), margin: "0" }}>
+            <Heading
+              as="h1"
+              style={{
+                fontFamily: theme.fontFamily,
+                color: headingColor(theme),
+                fontSize: "30px",
+                lineHeight: "38px",
+                margin: "0",
+              }}
+            >
               {eventName}
             </Heading>
             {whenLine ? (
@@ -141,19 +149,7 @@ export default function EventEmail({
             <HostsSection hosts={hostProfiles} sectionLabel={labels.hostsSection} theme={theme} />
           ) : null}
           {agenda ? <AgendaSection agenda={agenda} agendaLabel={labels.agenda} theme={theme} /> : null}
-          <Footer
-            organizationName={organization.name}
-            tagline={tagline}
-            footerText={footerText}
-            theme={theme}
-            social={social}
-            address={address}
-            unsubscribeUrl={unsubscribeUrl}
-            unsubscribeLabel={labels.unsubscribe}
-          />
-        </Container>
-      </Body>
-    </Html>
+    </EmailShell>
   );
 }
 
@@ -170,7 +166,7 @@ function AgendaSection({
 
   return (
     <Section style={{ marginTop: "8px" }}>
-      <Heading as="h2" style={{ fontFamily: theme.fontFamily, color: theme.foreground, fontSize: "18px", marginTop: "24px" }}>
+      <Heading as="h2" style={{ fontFamily: theme.fontFamily, color: theme.foreground, fontSize: "20px", lineHeight: "26px", marginTop: "28px" }}>
         {agendaLabel}
       </Heading>
       {agenda.kind === "markdown" ? (
