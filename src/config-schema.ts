@@ -5,7 +5,7 @@ import { z } from "zod";
 // sticks to fonts that ship with Windows and macOS and covers both Latin
 // and Simplified Chinese glyphs.
 export const DEFAULT_FONT_FAMILY =
-  '"Helvetica Neue", Helvetica, Arial, "PingFang SC", "Microsoft YaHei", sans-serif';
+  '"Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, "PingFang SC", sans-serif';
 
 const brandSchema = z.object({
   name: z.string(),

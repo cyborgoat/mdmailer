@@ -97,7 +97,7 @@ Edit `mdmailer.config.json`:
     "primaryColor": "#1a73e8",
     "footerText": "© 2026 {{organization}}",
     "tagline": "Flowing intelligence across the network.",
-    "fontFamily": "\"Helvetica Neue\", Helvetica, Arial, \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "fontFamily": "\"Microsoft YaHei\", \"Helvetica Neue\", Helvetica, Arial, \"PingFang SC\", sans-serif",
     "social": [{ "label": "GitHub", "url": "https://github.com/your-org" }],
     "address": "123 Market Street, Tech City, CA 94102",
     "unsubscribeUrl": "https://.../unsubscribe"
@@ -109,7 +109,7 @@ Edit `mdmailer.config.json`:
 
 `logoUrl` accepts either a hosted `https://...` URL, or a path (relative to the current directory) to a local image file — local logos are automatically embedded at generation time (SVGs are rasterized to PNG first, since most email clients don't render inline SVG), so no image hosting is required. It's embedded differently depending on the output: in the `.html` preview it's a `data:` URI (browsers render those fine), while in the `.eml` it's attached as a proper inline image referenced by `Content-ID`/`cid:` — Outlook doesn't render `data:` URIs in `<img>` tags, so this keeps the logo visible there too.
 
-`fontFamily` is optional and defaults to `"Helvetica Neue", Helvetica, Arial, "PingFang SC", "Microsoft YaHei", sans-serif` — a stack that covers both Latin and Simplified Chinese glyphs. Outlook desktop renders with the Word HTML engine, which only matches web-safe fonts already installed on the system (no `@font-face`/web fonts), so stick to fonts you know your recipients have — the default only uses fonts that ship with Windows and macOS.
+`fontFamily` is optional and defaults to `"Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, "PingFang SC", sans-serif` — a stack that covers both Latin and Simplified Chinese glyphs. Outlook desktop renders with the Word HTML engine, which only matches web-safe fonts already installed on the system (no `@font-face`/web fonts), so stick to fonts you know your recipients have — the default only uses fonts that ship with Windows and macOS.
 
 `organization.name` and `theme.tagline` form a centered footer brand stack. Optional links and address follow below, with the copyright and unsubscribe text in a separate legal group. The logo remains in the shared centered header rather than repeating in the footer. `theme.footerText` can include the placeholder `{{organization}}`, which is replaced with `organization.name` at generation time.
 

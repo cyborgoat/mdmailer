@@ -15,6 +15,7 @@ export interface MinimalEmailProps {
   footerText: string;
   organizationName: string;
   organizationLogoUrl: string;
+  logoAspectRatio?: number;
   tagline: string;
   primaryColor: string;
   fontFamily: string;
@@ -34,6 +35,7 @@ export default function MinimalEmail({
   footerText,
   organizationName,
   organizationLogoUrl,
+  logoAspectRatio,
   tagline,
   primaryColor,
   fontFamily,
@@ -49,7 +51,11 @@ export default function MinimalEmail({
       <Preview>{title}</Preview>
       <Body style={{ backgroundColor: "#ffffff", fontFamily }}>
         <Container style={{ padding: "24px", maxWidth: `${contentWidth}px` }}>
-          <Header organizationName={organizationName} organizationLogoUrl={organizationLogoUrl} />
+          <Header
+            organizationName={organizationName}
+            organizationLogoUrl={organizationLogoUrl}
+            logoAspectRatio={logoAspectRatio}
+          />
           <Heading as="h1" style={{ fontFamily, color: primaryColor }}>
             {title}
           </Heading>
@@ -97,6 +103,7 @@ export function buildMinimalProps(ctx: TemplateContext): MinimalEmailProps {
     footerText: ctx.config.theme.footerText,
     organizationName: ctx.organization.name,
     organizationLogoUrl: ctx.organization.logoUrl,
+    logoAspectRatio: ctx.organization.logoAspectRatio,
     tagline: ctx.config.theme.tagline,
     primaryColor: ctx.config.theme.primaryColor,
     fontFamily: ctx.config.theme.fontFamily,

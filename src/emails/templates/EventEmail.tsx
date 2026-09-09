@@ -8,7 +8,8 @@ import { HostsSection } from "../components/HostsSection.js";
 import { buildMarkdownOverrides } from "../markdown-overrides.js";
 import { fmString, formatDate } from "../../frontmatter.js";
 import type { TemplateContext } from "../template-context.js";
-import { DEFAULT_FONT_FAMILY, type Brand, type SocialLink } from "../../config-schema.js";
+import type { ResolvedOrganization } from "../../resolve-logo.js";
+import { DEFAULT_FONT_FAMILY, type SocialLink } from "../../config-schema.js";
 import { t, type Locale } from "../../i18n/index.js";
 import type { HostProfile } from "../../resolve-hosts.js";
 
@@ -30,7 +31,7 @@ export interface EventEmailProps {
   hostProfiles: HostProfile[];
   showHostsSection: boolean;
   agenda: Agenda;
-  organization: Brand;
+  organization: ResolvedOrganization;
   primaryColor: string;
   footerText: string;
   tagline: string;
@@ -105,7 +106,11 @@ export default function EventEmail({
       <Preview>{title}</Preview>
       <Body style={{ backgroundColor: "#ffffff", fontFamily }}>
         <Container style={{ backgroundColor: "#ffffff", padding: "24px", maxWidth: `${contentWidth}px` }}>
-          <Header organizationName={organization.name} organizationLogoUrl={organization.logoUrl} />
+          <Header
+            organizationName={organization.name}
+            organizationLogoUrl={organization.logoUrl}
+            logoAspectRatio={organization.logoAspectRatio}
+          />
           <Section style={{ marginTop: "32px" }}>
             {kicker ? (
               <Text

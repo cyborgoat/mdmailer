@@ -153,20 +153,6 @@ content/*
 !content/2026-10-platform-webinar.md
 !content/2026-10-platform-webinar-zh.md
 
-# Local example logos (repo dogfooding) — only the default logo ships
-assets/*
-!assets/logos
-assets/logos/*
-!assets/logos/logo-dark-with-letters.svg
-
-# Local example content images (repo dogfooding) — only the default image ships
-!assets/images
-assets/images/*
-!assets/images/team-offsite.jpg
-!assets/images/hosts
-!assets/images/hosts/priya-nair.jpg
-!assets/images/hosts/marcus-cole.jpg
-
 # Generated email output (HTML/EML) — reproducible via `npm run generate`
 output/
 

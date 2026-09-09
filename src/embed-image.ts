@@ -16,6 +16,9 @@ export interface EmbeddedImage {
   mime: string;
   buffer: Buffer;
   dataUri: string;
+  /** Pixel dimensions of the embedded raster — post-rasterize/resize for SVGs. */
+  width: number;
+  height: number;
 }
 
 export function isRemoteRef(ref: string): boolean {
@@ -39,9 +42,16 @@ export async function embedLocalImage(ref: string, opts: { resizeHeight?: number
     if (opts.resizeHeight) {
       pipeline = pipeline.resize({ height: opts.resizeHeight });
     }
-    const buffer = await pipeline.png().toBuffer();
+    const { data: buffer, info } = await pipeline.png().toBuffer({ resolveWithObject: true });
     const mime = "image/png";
-    return { cid, mime, buffer, dataUri: `data:${mime};base64,${buffer.toString("base64")}` };
+    return {
+      cid,
+      mime,
+      buffer,
+      dataUri: `data:${mime};base64,${buffer.toString("base64")}`,
+      width: info.width,
+      height: info.height,
+    };
   }
 
   const mime = RASTER_MIME[ext];
@@ -50,5 +60,6 @@ export async function embedLocalImage(ref: string, opts: { resizeHeight?: number
   }
 
   const buffer = await readFile(absolutePath);
-  return { cid, mime, buffer, dataUri: `data:${mime};base64,${buffer.toString("base64")}` };
+  const { width = 0, height = 0 } = await sharp(buffer).metadata();
+  return { cid, mime, buffer, dataUri: `data:${mime};base64,${buffer.toString("base64")}`, width, height };
 }

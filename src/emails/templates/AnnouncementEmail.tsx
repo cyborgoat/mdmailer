@@ -7,7 +7,8 @@ import { CalloutBanner } from "../components/CalloutBanner.js";
 import { buildMarkdownOverrides } from "../markdown-overrides.js";
 import { fmString } from "../../frontmatter.js";
 import type { TemplateContext } from "../template-context.js";
-import { DEFAULT_FONT_FAMILY, type Brand, type SocialLink } from "../../config-schema.js";
+import type { ResolvedOrganization } from "../../resolve-logo.js";
+import { DEFAULT_FONT_FAMILY, type SocialLink } from "../../config-schema.js";
 import { t, type Locale } from "../../i18n/index.js";
 
 export interface AnnouncementEmailProps {
@@ -15,7 +16,7 @@ export interface AnnouncementEmailProps {
   headline: string;
   bannerText: string;
   bodyMarkdown: string;
-  organization: Brand;
+  organization: ResolvedOrganization;
   primaryColor: string;
   footerText: string;
   tagline: string;
@@ -53,7 +54,11 @@ export default function AnnouncementEmail({
       <Preview>{title}</Preview>
       <Body style={{ backgroundColor: "#ffffff", fontFamily }}>
         <Container style={{ backgroundColor: "#ffffff", padding: "24px", maxWidth: `${contentWidth}px` }}>
-          <Header organizationName={organization.name} organizationLogoUrl={organization.logoUrl} />
+          <Header
+            organizationName={organization.name}
+            organizationLogoUrl={organization.logoUrl}
+            logoAspectRatio={organization.logoAspectRatio}
+          />
           <CalloutBanner text={bannerText} color={primaryColor} fontFamily={fontFamily} />
           <Heading as="h1" style={{ fontFamily, color: primaryColor, marginTop: "24px" }}>
             {headline}

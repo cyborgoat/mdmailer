@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="478" height="370" viewBox="-24 0 478 370" role="img" aria-labelledby="title desc">
+  <title id="title">NAAD — Deep Blue Mono</title>
+  <desc id="desc">Rotationally symmetric isosceles A forms with flat plateaus and equal rail clearance on a transparent background.</desc>
+  <defs>
+    <clipPath id="outer-clip"><rect x="0" y="35" width="430" height="133"/></clipPath>
+    <clipPath id="center-clip"><rect x="0" y="35" width="430" height="300"/></clipPath>
+    <g id="outer-leg" clip-path="url(#outer-clip)">
+      <path d="M 149.675070 -2 L 60.575070 196"/>
+      <path d="M 143.095556 -2 L 53.995556 196"/>
+      <path d="M 136.516043 -2 L 47.416043 196"/>
+      <path d="M 129.936529 -2 L 40.836529 196"/>
+    </g>
+    <g id="upper-rails">
+      <path d="M -8 176 H 196.476900 M 225.423100 176 H 438"/>
+      <path d="M -8 182 H 199.176900 M 228.123100 182 H 438"/>
+    </g>
+    <g id="center-pair">
+      <path d="M 121.880730 0 L 288.380730 370"/>
+      <path d="M 128.460243 0 L 294.960243 370"/>
+    </g>
+  </defs>
+  <g fill="none" stroke="#1A4B8C" stroke-width="4.2" stroke-linecap="butt">
+    <use href="#upper-rails"/>
+    <use href="#upper-rails" transform="rotate(180 215 185)"/>
+    <use href="#outer-leg"/>
+    <use href="#outer-leg" transform="rotate(180 215 185)"/>
+    <g clip-path="url(#center-clip)">
+      <use href="#center-pair"/>
+      <use href="#center-pair" transform="rotate(180 215 185)"/>
+    </g>
+  </g>
+</svg>

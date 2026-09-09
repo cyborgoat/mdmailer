@@ -1,12 +1,12 @@
 {
   "organization": {
     "name": "NAAD",
-    "logoUrl": "assets/logos/logo-dark.svg"
+    "logoUrl": "assets/logos/naad-cobalt-bg-transparent.svg"
   },
   "theme": {
     "primaryColor": "#1A4B8C",
     "footerText": "© 2026 NCE AI Agent Development Dept.",
     "tagline": "Flowing intelligence across the network.",
-    "fontFamily": "\"Helvetica Neue\", Helvetica, Arial, \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    "fontFamily": "\"Microsoft YaHei\", \"Helvetica Neue\", Helvetica, Arial, \"PingFang SC\", sans-serif"
   }
 }

@@ -10,7 +10,7 @@ const DEFAULT_CONFIG = `{
     "primaryColor": "#1a73e8",
     "footerText": "© 2026 {{organization}}. Internal use only.",
     "tagline": "Flowing intelligence across the network.",
-    "fontFamily": "\\"Helvetica Neue\\", Helvetica, Arial, \\"PingFang SC\\", \\"Microsoft YaHei\\", sans-serif",
+    "fontFamily": "\\"Microsoft YaHei\\", \\"Helvetica Neue\\", Helvetica, Arial, \\"PingFang SC\\", sans-serif",
     "social": []
   }
 }

@@ -5,14 +5,15 @@ import { Header } from "../components/Header.js";
 import { Footer } from "../components/Footer.js";
 import { buildMarkdownOverrides } from "../markdown-overrides.js";
 import type { TemplateContext } from "../template-context.js";
-import { DEFAULT_FONT_FAMILY, type Brand, type SocialLink } from "../../config-schema.js";
+import type { ResolvedOrganization } from "../../resolve-logo.js";
+import { DEFAULT_FONT_FAMILY, type SocialLink } from "../../config-schema.js";
 import { t, type Locale } from "../../i18n/index.js";
 
 export interface OrganizationEmailProps {
   title: string;
   date: string;
   bodyMarkdown: string;
-  organization: Brand;
+  organization: ResolvedOrganization;
   primaryColor: string;
   footerText: string;
   tagline: string;
@@ -45,7 +46,11 @@ export default function OrganizationEmail({
       <Preview>{title}</Preview>
       <Body style={{ backgroundColor: "#ffffff", fontFamily }}>
         <Container style={{ backgroundColor: "#ffffff", padding: "24px", maxWidth: `${contentWidth}px` }}>
-          <Header organizationName={organization.name} organizationLogoUrl={organization.logoUrl} />
+          <Header
+            organizationName={organization.name}
+            organizationLogoUrl={organization.logoUrl}
+            logoAspectRatio={organization.logoAspectRatio}
+          />
           <Heading as="h1" style={{ fontFamily, color: primaryColor, marginTop: "24px" }}>
             {title}
           </Heading>
