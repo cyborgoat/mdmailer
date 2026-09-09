@@ -32,8 +32,3 @@ on-call — then take questions live.
 
 - Backend and platform engineers shipping public or partner APIs
 - Anyone who's been burned by cascading timeouts and wants a clearer playbook
-
-## What you'll need
-
-Nothing to install — join from a browser. Slides and the recording go out after
-the session. Use the Zoom link above when it's time.
