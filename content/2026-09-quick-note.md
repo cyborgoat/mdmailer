@@ -2,7 +2,7 @@
 title: "Heads up: search reindex tonight"
 type: news
 lang: en
-theme: cobalt-mint
+theme: classic
 date: 2026-09-04
 ---
 
