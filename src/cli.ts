@@ -9,8 +9,10 @@ Usage:
   mdmailer generate --input <file.md>    Generate output/<name>.html and .eml from a Markdown file
     --theme <preset>                     Override theme preset for this generation
     [--config <file>]                    Defaults to mdmailer.config.json
-    [--template <name>]                  One of: ${TEMPLATE_NAMES.join(", ")}
-                                         Overrides the frontmatter \`type:\` field (default: regular)
+
+Required Markdown frontmatter:
+  type                                   One of: ${TEMPLATE_NAMES.join(", ")}
+  lang                                   English (en) or Chinese (zh)
 
 Docs: https://github.com/cyborgoat/mailman
 `;

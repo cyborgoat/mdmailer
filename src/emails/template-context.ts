@@ -20,7 +20,7 @@ export interface TemplateContext {
   organization: ResolvedOrganization;
   title: string;
   date: string;
-  /** From frontmatter `lang` / `locale` / `language`; defaults to `en`. */
+  /** Required frontmatter `lang` / `locale` / `language`, already validated. */
   locale: Locale;
   /** Hosts with photos/bios already resolved (local photos → data URIs). */
   hostProfiles: HostProfile[];

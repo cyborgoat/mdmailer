@@ -25,6 +25,8 @@ const PLACEHOLDER_LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="240
 const EXAMPLE_CONTENT = `---
 title: "Example Update"
 date: 2026-01-01
+type: regular
+lang: en
 theme: classic
 ---
 
@@ -150,6 +152,7 @@ on-call — then take questions live.
 const EXAMPLE_ANNOUNCEMENT = `---
 title: "All-hands moves to Thursdays"
 type: announcement
+lang: en
 theme: plum-rose
 headline: "All-hands moves to Thursdays, starting March"
 banner: "Schedule change"
@@ -173,6 +176,7 @@ Thursday keeps it live for more people.
 const EXAMPLE_MINIMAL = `---
 title: "Heads up: brief API slowdown tonight"
 type: minimal
+lang: en
 date: 2026-01-06
 theme: cobalt-mint
 ---
@@ -224,13 +228,13 @@ export async function runInit() {
       "  3. Edit content/example.md with your update.\n" +
       "  4. Run: npm run generate -- --input content/example.md\n" +
       "\n" +
-      "There are more layouts than the default. Each example above shows one:\n" +
-      "  example.md              regular update (the default)\n" +
+      "Every Markdown file must declare its layout and language in frontmatter. Each example above shows one:\n" +
+      "  example.md              regular update              (type: regular)\n" +
       "  example-workshop.md     workshop / event invitation  (type: workshop)\n" +
       "  example-webinar.md      webinar invitation           (type: webinar)\n" +
       "  example-announcement.md single high-impact notice     (type: announcement)\n" +
       "  example-minimal.md      short plain-text note         (type: minimal)\n" +
-      "Set the layout with a `type:` line in the frontmatter, or pass --template <name>.\n" +
-      "Set language with `lang: en` or `lang: zh` (localizes labels / default CTAs).\n",
+      "Set the required layout with `type:` in frontmatter.\n" +
+      "Set the required language with `lang: en` or `lang: zh` (English or Chinese).\n",
   );
 }

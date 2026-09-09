@@ -19,11 +19,12 @@ test("event type aliases share one physical template", () => {
   assert.equal(templates.webinar.component, EventEmail);
 });
 
-test("template resolution preserves aliases and precedence", () => {
-  assert.equal(resolveTemplateName(undefined, undefined), "regular");
-  assert.equal(resolveTemplateName(undefined, "minimal"), "minimal");
-  assert.equal(resolveTemplateName("event", "announcement"), "event");
-  assert.equal(resolveTemplateName(undefined, "unknown"), null);
+test("template resolution requires a valid frontmatter type", () => {
+  assert.equal(resolveTemplateName(undefined), null);
+  assert.equal(resolveTemplateName(""), null);
+  assert.equal(resolveTemplateName("minimal"), "minimal");
+  assert.equal(resolveTemplateName(" WORKSHOP "), "workshop");
+  assert.equal(resolveTemplateName("unknown"), null);
 });
 
 test("workshop and webinar aliases preserve their event defaults", () => {

@@ -1,6 +1,8 @@
 ---
 title: "June Monthly Digest"
 date: 2026-06-18
+type: regular
+lang: en
 theme: cobalt-mint
 ---
 

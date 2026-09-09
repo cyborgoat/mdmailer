@@ -1,6 +1,8 @@
 ---
 title: "Product Launch: Workspaces 2.0"
 date: 2026-05-14
+type: regular
+lang: en
 theme: cobalt-mint
 ---
 

@@ -114,8 +114,20 @@ export async function runGenerate(argv: string[]) {
 
   if (!inputPath) {
     console.error(
-      "Usage: mdmailer generate --input content/<file>.md [--config mdmailer.config.json] [--template <name>] [--theme <preset>]",
+      "Usage: mdmailer generate --input content/<file>.md [--config mdmailer.config.json] [--theme <preset>]",
     );
+    process.exitCode = 1;
+    return;
+  }
+
+  if (args.has("template") || args.has("type")) {
+    console.error('Email type cannot be set from the CLI. Add it to Markdown frontmatter, for example: type: workshop');
+    process.exitCode = 1;
+    return;
+  }
+
+  if (args.has("lang") || args.has("locale") || args.has("language")) {
+    console.error('Email language cannot be set from the CLI. Add it to Markdown frontmatter as lang: en or lang: zh.');
     process.exitCode = 1;
     return;
   }
@@ -133,6 +145,32 @@ export async function runGenerate(argv: string[]) {
 
   const rawMarkdown = await readFile(resolve(inputPath), "utf-8");
   const { data: frontmatter, content: rawBodyMarkdown } = matter(rawMarkdown);
+  const rawTemplateName = frontmatter.type;
+  if (typeof rawTemplateName !== "string" || !rawTemplateName.trim()) {
+    console.error(`Missing required frontmatter field "type". Valid types: ${TEMPLATE_NAMES.join(", ")}`);
+    process.exitCode = 1;
+    return;
+  }
+  const templateName = resolveTemplateName(rawTemplateName);
+  if (!templateName) {
+    console.error(`Unknown frontmatter type "${String(rawTemplateName)}". Valid types: ${TEMPLATE_NAMES.join(", ")}`);
+    process.exitCode = 1;
+    return;
+  }
+
+  const rawLocale = frontmatter.lang ?? frontmatter.locale ?? frontmatter.language;
+  if (typeof rawLocale !== "string" || !rawLocale.trim()) {
+    console.error('Missing required frontmatter field "lang". Available languages: English (en) and Chinese (zh).');
+    process.exitCode = 1;
+    return;
+  }
+  const locale = resolveLocale(rawLocale);
+  if (!locale) {
+    console.error(`Unsupported frontmatter language "${String(rawLocale)}". Available languages: English (en) and Chinese (zh).`);
+    process.exitCode = 1;
+    return;
+  }
+
   const frontmatterTheme = normalizeThemeSelection(frontmatterThemeSchema.parse(frontmatter.theme));
   const themeSelection = frontmatterThemeSchema.parse(themeFlag
     ? { ...frontmatterTheme, preset: themeFlag }
@@ -142,7 +180,6 @@ export async function runGenerate(argv: string[]) {
     frontmatter.hosts ?? frontmatter.speakers,
   );
 
-  const locale = resolveLocale(frontmatter.lang ?? frontmatter.locale ?? frontmatter.language);
   const title = typeof frontmatter.title === "string" && frontmatter.title.trim()
     ? frontmatter.title
     : t(locale, "fallback.untitled");
@@ -153,14 +190,6 @@ export async function runGenerate(argv: string[]) {
     ...config.organization,
     logoUrl: selectedLogoUrl,
   });
-
-  const templateName = resolveTemplateName(args.get("template"), frontmatter.type);
-  if (!templateName) {
-    const supplied = args.get("template") ?? String(frontmatter.type ?? "");
-    console.error(`Unknown template "${supplied}". Valid templates: ${TEMPLATE_NAMES.join(", ")}`);
-    process.exitCode = 1;
-    return;
-  }
 
   const ctx: TemplateContext = {
     frontmatter,

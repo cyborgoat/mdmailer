@@ -6,7 +6,7 @@ Requires Node.js 24 or later.
 
 ## How it works
 
-1. Write your update as Markdown, with frontmatter for `title` and `date`.
+1. Write your update as Markdown, with required `type` and `lang` frontmatter plus a recommended `title` and relevant dates.
 2. Configure your organization's name, logo, typography, and footer once in `mdmailer.config.json`; choose the visual theme in each Markdown file.
 3. Run the generator. It renders the email with [react.email](https://react.email/docs/introduction) and writes two files to `output/`:
    - `<name>.html` — open in a browser to preview.
@@ -25,26 +25,11 @@ This scaffolds `mdmailer.config.json`, a placeholder `assets/logo.svg`, and a se
 npm run generate -- --input content/example.md
 ```
 
-Optional `--config` flag to point at a different config file (defaults to `mdmailer.config.json`).
-
-Choose a named theme in the Markdown frontmatter, or override it for one generation from the CLI:
-
-```yaml
----
-title: "September Update"
-theme: cobalt-mint
----
-```
-
-```bash
-npm run generate -- --input content/example.md --theme navy-gold
-```
-
-Available presets are `classic`, `cobalt-mint`, `navy-gold`, `forest-cream`, and `plum-rose`. The CLI flag takes precedence over frontmatter.
+Generation accepts `--config <file>` to use a non-default config and `--theme <preset>` to override the email's frontmatter theme once. Email type and language must come from frontmatter. See [Themes](#themes) for preset details.
 
 ## Writing an email
 
-Every input is a Markdown file with an optional YAML frontmatter block at the very top. Put metadata between the opening and closing `---`; everything after it is the email body.
+Every input is a Markdown file with a YAML frontmatter block at the very top. Put metadata between the opening and closing `---`; everything after it is the email body. At minimum, frontmatter must contain `type` and `lang`.
 
 ```markdown
 ---
@@ -69,8 +54,8 @@ Your content here, in normal Markdown (headings, lists, tables, task lists, link
 | --- | --- |
 | `title` | Email subject, preview text, and default visible heading. A missing or blank title becomes `Untitled Email` in English or `未命名邮件` in Chinese. Supplying a meaningful title is strongly recommended. |
 | `date` | Dateline for `regular` and `minimal`; fallback event date when `startsAt` is absent. `announcement` does not display a date. Use an ISO date such as `2026-09-15` for predictable output. |
-| `type` | `regular` (default), `minimal`, `announcement`, `event`, `workshop`, or `webinar`. See [Email types](#email-types). |
-| `lang` | `en` for English (default) or `zh` for Simplified Chinese. See [Language](#language). Aliases: `locale`, `language`. |
+| `type` | **Required.** `regular`, `minimal`, `announcement`, `event`, `workshop`, or `webinar`. There is no CLI override. See [Email types](#email-types). |
+| `lang` | **Required.** `en` for English or `zh` for Simplified Chinese. See [Language](#language). Aliases: `locale`, `language`. |
 | `theme` | A preset name or an object containing `preset` and optional semantic `colors`. See [Themes](#themes). |
 
 Unknown frontmatter fields are ignored. Prefer the canonical names above; aliases exist mainly for compatibility.
@@ -84,18 +69,9 @@ mdmailer supports exactly two template languages:
 | English | `en` | `en-US`, `english` |
 | Simplified Chinese | `zh` | `zh-CN`, `zh-Hans`, `chinese` |
 
-Language values are case-insensitive. Missing or unrecognized values fall back to English, so use `lang: en` or `lang: zh` explicitly when the language matters.
+Language values are case-insensitive. Missing or unrecognized values stop generation with an error. Every email must explicitly use `lang: en` or `lang: zh` (or a recognized alias).
 
 The language setting localizes mdmailer-generated interface text: event detail labels, agenda and host headings, default workshop/webinar kickers, the default announcement banner, the unsubscribe label, and the untitled fallback. It does **not** translate `title`, Markdown body text, host information, `tagline`, `footerText`, or other author-written values. Write those in the intended language yourself.
-
-```yaml
----
-title: "六月月度简报"
-date: 2026-06-18
-lang: zh
-theme: forest-cream
----
-```
 
 ### Themes
 
@@ -127,12 +103,7 @@ Colors must be quoted six-digit hexadecimal values. Contrast themes are validate
 
 The `--theme <preset>` CLI option replaces the selected preset for one generation. Existing `colors` overrides in frontmatter are retained and applied over that preset.
 
-### Frontmatter precedence
-
-- Template: `--template` CLI option → frontmatter `type` → `regular`.
-- Theme: `--theme` CLI option → frontmatter `theme` preset → `classic`.
-- Language: frontmatter `lang` → `locale` → `language` → English. There is no language CLI option.
-- When a canonical field and one of its aliases are both present, the canonical field takes precedence. Do not specify both in new content.
+When both a canonical field and one of its aliases are present, the canonical field takes precedence. Do not specify both in new content.
 
 ### Markdown and images
 
@@ -142,20 +113,16 @@ Images work the same way the logo does: a hosted `https://...` URL is left as-is
 
 ## Email types
 
-The same branding and Markdown pipeline use two underlying layout families: content (`regular`, `minimal`, `announcement`) and events (`event`, `workshop`, `webinar`). Pick a type in frontmatter or with `--template <name>` on the command line (the flag wins if both are set). With neither, you get `regular`.
-
-```bash
-npm run generate -- --input content/invite.md --template workshop
-```
+The six email types use two underlying layout families: content (`regular`, `minimal`, `announcement`) and events (`event`, `workshop`, `webinar`). Missing or unknown frontmatter types stop generation with an error.
 
 | `type:` | Layout |
 | --- | --- |
-| `regular` (default) | Title, dateline, Markdown body, branded header and footer — the original layout. |
+| `regular` | Title, dateline, Markdown body, branded header and footer — the general-purpose layout. |
 | `event` / `workshop` / `webinar` | Invitation layout: compact logo bar, a hero with the event name, a details card (Where / Join / Hosts — localized), your Markdown as the description, and an optional agenda. `workshop` and `webinar` preset the eyebrow label. Workshops render hosts in a dedicated section; rich host objects add photos and bios. |
 | `announcement` | One high-impact message: a colored callout strip, a headline, and a short Markdown body. Add links directly in Markdown. |
 | `minimal` | Text-forward: a compact title, dateline, Markdown body, and the shared branded footer. For short notes. |
 
-`type:` is a reserved frontmatter key. Beyond `title` and `date`, each layout reads a few optional fields — anything missing just drops its section:
+Event and announcement layouts read additional optional fields; missing values simply omit the corresponding section:
 
 **`event` / `workshop` / `webinar`**
 
@@ -218,7 +185,7 @@ The global config holds organization-wide branding, typography, width, and foote
 
 ## Local development
 
-Example content lives under `content/` (`2026-08-engineering.md`, `2026-06-monthly-digest.md`, `2026-06-monthly-digest-zh.md`, `2026-05-product-launch.md`, `2026-03-release-notes.md`, `2026-01-quarterly-review.md`, `2026-09-devtools-workshop.md`, `2026-09-policy-announcement.md`, `2026-09-quick-note.md`, `2026-10-platform-webinar.md`, and `2026-10-platform-webinar-zh.md`). Matching generated `.html` / `.eml` previews for those examples are tracked under `output/`. Logo and image assets are under `assets/` — see `.gitignore` if you want to keep extra local files untracked.
+Example Markdown lives under `content/`, matching generated previews under `output/`, and reusable images under `assets/`.
 
 ```bash
 npm install

@@ -30,13 +30,9 @@ export const templates = {
 export type TemplateName = keyof typeof templates;
 export const TEMPLATE_NAMES = Object.keys(templates) as TemplateName[];
 
-/**
- * Resolves the template to render. Precedence: `--template` flag, then the
- * frontmatter `type:` field, then `regular`. Returns `null` for an unknown
- * name so the caller can report it.
- */
-export function resolveTemplateName(flag: string | undefined, frontmatterType: unknown): TemplateName | null {
-  const raw = (flag ?? (typeof frontmatterType === "string" ? frontmatterType : "")).toString().toLowerCase().trim();
-  if (!raw) return "regular";
+/** Resolves the required frontmatter `type:` value. */
+export function resolveTemplateName(frontmatterType: unknown): TemplateName | null {
+  const raw = typeof frontmatterType === "string" ? frontmatterType.toLowerCase().trim() : "";
+  if (!raw) return null;
   return raw in templates ? (raw as TemplateName) : null;
 }

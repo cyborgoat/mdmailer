@@ -10,11 +10,11 @@ export const DEFAULT_LOCALE: Locale = "en";
 const catalogs: Record<Locale, Messages> = { en, zh };
 
 /**
- * Resolves a locale from frontmatter `lang` / `locale` / `language`.
- * Unknown or missing values fall back to English.
+ * Resolves a required locale value from frontmatter `lang` / `locale` /
+ * `language`. The caller reports missing or unsupported values.
  */
-export function resolveLocale(raw: unknown): Locale {
-  if (typeof raw !== "string") return DEFAULT_LOCALE;
+export function resolveLocale(raw: unknown): Locale | null {
+  if (typeof raw !== "string") return null;
   const normalized = raw.toLowerCase().trim();
   if (normalized === "zh" || normalized === "zh-cn" || normalized === "zh-hans" || normalized === "chinese") {
     return "zh";
@@ -22,7 +22,7 @@ export function resolveLocale(raw: unknown): Locale {
   if (normalized === "en" || normalized === "en-us" || normalized === "english") {
     return "en";
   }
-  return DEFAULT_LOCALE;
+  return null;
 }
 
 export function t(locale: Locale, key: MessageKey): string {
