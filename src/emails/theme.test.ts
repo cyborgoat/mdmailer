@@ -86,7 +86,8 @@ test("contrast rendering applies semantic colors throughout the shell", async ()
     normalizeThemeSelection(frontmatterThemeSchema.parse("cobalt-mint")),
   );
   const html = await render(React.createElement(ContentEmail, {
-    variant: "regular",
+    variant: "news",
+    categoryLabel: "News",
     title: "Contrast preview",
     date: "2026-09-09",
     bodyMarkdown: "Read the [details](https://example.com).",
@@ -115,7 +116,8 @@ test("contrast rendering adds a white plate when no dark logo exists", async () 
     normalizeThemeSelection(frontmatterThemeSchema.parse("cobalt-mint")),
   );
   const html = await render(React.createElement(ContentEmail, {
-    variant: "regular",
+    variant: "news",
+    categoryLabel: "News",
     title: "Fallback logo preview",
     date: "2026-09-09",
     bodyMarkdown: "Body",

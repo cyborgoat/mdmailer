@@ -8,6 +8,9 @@ export type MessageKey =
   | "section.hosts"
   | "kicker.workshop"
   | "kicker.webinar"
+  | "kicker.news"
+  | "kicker.releaseNotes"
+  | "kicker.digest"
   | "banner.announcement"
   | "footer.unsubscribe"
   | "fallback.untitled";

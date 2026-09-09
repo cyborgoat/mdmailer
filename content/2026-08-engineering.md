@@ -1,7 +1,7 @@
 ---
 title: "August Engineering Update"
 date: 2026-08-26
-type: regular
+type: news
 lang: en
 theme: cobalt-mint
 ---

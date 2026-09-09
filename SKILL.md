@@ -17,7 +17,7 @@ Use this project to turn Markdown with YAML frontmatter into a browser-previewab
 ## Standard workflow
 
 1. Read `mdmailer.config.json` and the relevant file under `content/`.
-2. Choose a template from `regular`, `event`, `workshop`, `webinar`, `announcement`, or `minimal`.
+2. Choose a template from `news`, `release-notes`, `digest`, `announcement`, `event`, `workshop`, or `webinar`.
 3. Edit or create the Markdown input. Keep author-written body text in the requested language.
 4. Put reusable local images under `assets/` and reference them with repository-relative paths.
 5. Generate the email:
@@ -53,9 +53,9 @@ This creates missing config, asset, and example files without overwriting existi
 Read the README's frontmatter and relevant email-type sections before creating or changing content. The invariants that must not be missed are:
 
 - Frontmatter is YAML at the start of the Markdown file. `type` and `lang` are required; neither has a CLI override or implicit default.
-- Valid types are `regular`, `minimal`, `announcement`, `event`, `workshop`, and `webinar`.
+- Valid types are `news`, `release-notes`, `digest`, `announcement`, `event`, `workshop`, and `webinar`.
 - Supported languages are English (`en`) and Simplified Chinese (`zh`). Compatibility aliases are documented in README, but use canonical `lang` values in new files.
-- Language affects generated labels and defaults only. Keep titles, body, hosts, tagline, and footer in the user's requested language; mdmailer does not translate them.
+- Language affects generated category labels, template labels, and defaults only. Keep titles, body, hosts, tagline, and footer in the user's requested language; mdmailer does not translate them.
 - `theme` is optional and defaults to `classic`. The other presets are `cobalt-mint`, `navy-gold`, `forest-cream`, and `plum-rose`; `--theme` may override only the preset for one run.
 - Prefer canonical field names, ISO dates, and quoted times and hex colors. Use Markdown links for calls to action.
 

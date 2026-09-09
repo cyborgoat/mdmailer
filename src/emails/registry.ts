@@ -12,7 +12,9 @@ export interface TemplateEntry {
 }
 
 export const templates = {
-  regular: { component: ContentEmail, buildProps: (ctx) => buildContentProps(ctx, "regular") },
+  news: { component: ContentEmail, buildProps: (ctx) => buildContentProps(ctx, "news") },
+  "release-notes": { component: ContentEmail, buildProps: (ctx) => buildContentProps(ctx, "release-notes") },
+  digest: { component: ContentEmail, buildProps: (ctx) => buildContentProps(ctx, "digest") },
   event: { component: EventEmail, buildProps: (ctx) => buildEventProps(ctx) },
   workshop: {
     component: EventEmail,
@@ -24,7 +26,6 @@ export const templates = {
     buildProps: (ctx) => buildEventProps(ctx, { defaultKicker: t(ctx.locale, "kicker.webinar") }),
   },
   announcement: { component: ContentEmail, buildProps: (ctx) => buildContentProps(ctx, "announcement") },
-  minimal: { component: ContentEmail, buildProps: (ctx) => buildContentProps(ctx, "minimal") },
 } satisfies Record<string, TemplateEntry>;
 
 export type TemplateName = keyof typeof templates;

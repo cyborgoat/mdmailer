@@ -9,7 +9,7 @@ import { DEFAULT_EMAIL_PREVIEW_THEME, headingColor } from "../theme.js";
 import { CalloutBanner } from "../components/CalloutBanner.js";
 import { EmailShell, type EmailChromeProps } from "../components/EmailShell.js";
 
-export type ContentVariant = "regular" | "minimal" | "announcement";
+export type ContentVariant = "news" | "release-notes" | "digest" | "announcement";
 
 interface ContentEmailBaseProps extends EmailChromeProps {
   title: string;
@@ -17,7 +17,8 @@ interface ContentEmailBaseProps extends EmailChromeProps {
 }
 
 interface DatedContentEmailProps extends ContentEmailBaseProps {
-  variant: "regular" | "minimal";
+  variant: "news" | "release-notes" | "digest";
+  categoryLabel: string;
   date: string;
 }
 
@@ -31,19 +32,33 @@ export type ContentEmailProps = DatedContentEmailProps | AnnouncementContentEmai
 
 export default function ContentEmail(props: ContentEmailProps) {
   const { variant, title, bodyMarkdown, theme } = props;
-  const isMinimal = variant === "minimal";
 
   return (
     <EmailShell {...props} previewText={title}>
       {variant === "announcement" ? <CalloutBanner text={props.bannerText} theme={theme} /> : null}
+      {variant !== "announcement" ? (
+        <Text
+          style={{
+            color: theme.accent,
+            fontFamily: theme.fontFamily,
+            fontSize: "12px",
+            fontWeight: 600,
+            letterSpacing: "1px",
+            margin: "28px 0 4px",
+            textTransform: "uppercase",
+          }}
+        >
+          {props.categoryLabel}
+        </Text>
+      ) : null}
       <Heading
         as="h1"
         style={{
           color: headingColor(theme),
           fontFamily: theme.fontFamily,
-          fontSize: isMinimal ? "26px" : "30px",
-          lineHeight: isMinimal ? "32px" : "38px",
-          margin: variant === "announcement" ? "24px 0 0" : isMinimal ? "24px 0 0" : "28px 0 0",
+          fontSize: "30px",
+          lineHeight: "38px",
+          margin: variant === "announcement" ? "24px 0 0" : "0",
         }}
       >
         {variant === "announcement" ? props.headline : title}
@@ -67,7 +82,8 @@ export default function ContentEmail(props: ContentEmailProps) {
 }
 
 ContentEmail.PreviewProps = {
-  variant: "regular",
+  variant: "news",
+  categoryLabel: "News",
   title: "August Engineering Update",
   date: "2026-08-26",
   bodyMarkdown: "# What shipped this month\n\nSample content for preview.",
@@ -106,5 +122,11 @@ export function buildContentProps(ctx: TemplateContext, variant: ContentVariant)
     };
   }
 
-  return { ...common, variant, date: ctx.date };
+  const categoryLabel = {
+    news: t(ctx.locale, "kicker.news"),
+    "release-notes": t(ctx.locale, "kicker.releaseNotes"),
+    digest: t(ctx.locale, "kicker.digest"),
+  }[variant];
+
+  return { ...common, variant, categoryLabel, date: ctx.date };
 }

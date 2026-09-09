@@ -21,9 +21,10 @@ async function renderContent(props: ContentEmailProps): Promise<string> {
   return render(React.createElement(ContentEmail, props));
 }
 
-test("regular variant renders its title and dateline", async () => {
-  const html = await renderContent({ ...common, variant: "regular", date: "2026-09-09" });
+test("news variant renders its category, title, and dateline", async () => {
+  const html = await renderContent({ ...common, variant: "news", categoryLabel: "News", date: "2026-09-09" });
 
+  assert.match(html, />News<\/p>/);
   assert.match(html, />Example title<\/h1>/);
   assert.match(html, />2026-09-09<\/p>/);
   assert.match(html, /font-size:30px/);
@@ -31,11 +32,17 @@ test("regular variant renders its title and dateline", async () => {
   assert.match(html, /content="width=device-width, initial-scale=1"/);
 });
 
-test("minimal variant uses compact title typography", async () => {
-  const html = await renderContent({ ...common, variant: "minimal", date: "2026-09-09" });
+test("release notes and digest variants render their semantic categories", async () => {
+  const releaseNotes = await renderContent({
+    ...common,
+    variant: "release-notes",
+    categoryLabel: "Release notes",
+    date: "2026-09-09",
+  });
+  const digest = await renderContent({ ...common, variant: "digest", categoryLabel: "Digest", date: "2026-09-09" });
 
-  assert.match(html, /font-size:26px/);
-  assert.doesNotMatch(html, /Announcement label/);
+  assert.match(releaseNotes, />Release notes<\/p>/);
+  assert.match(digest, />Digest<\/p>/);
 });
 
 test("announcement variant renders banner and headline without a dateline", async () => {

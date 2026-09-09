@@ -19,7 +19,7 @@ npm install
 npm run init
 ```
 
-This scaffolds `mdmailer.config.json`, a placeholder `assets/logo.svg`, and a set of `content/example*.md` files — `example.md` demonstrates the full range of supported Markdown (headings, emphasis, lists, task lists, tables, blockquotes, code blocks, and more), and `example-workshop.md` / `example-webinar.md` / `example-announcement.md` / `example-minimal.md` show the other layouts (see [Email types](#email-types)). Edit the config and a content file, then generate:
+This scaffolds `mdmailer.config.json`, a placeholder logo, and Markdown examples for every email type. Edit the config and an example, then generate:
 
 ```bash
 npm run generate -- --input content/example.md
@@ -35,7 +35,7 @@ Every input is a Markdown file with a YAML frontmatter block at the very top. Pu
 ---
 title: "September Update"
 date: 2026-09-15
-type: regular
+type: news
 lang: en
 theme: cobalt-mint
 ---
@@ -53,8 +53,8 @@ Your content here, in normal Markdown (headings, lists, tables, task lists, link
 | Field | Values and behavior |
 | --- | --- |
 | `title` | Email subject, preview text, and default visible heading. A missing or blank title becomes `Untitled Email` in English or `未命名邮件` in Chinese. Supplying a meaningful title is strongly recommended. |
-| `date` | Dateline for `regular` and `minimal`; fallback event date when `startsAt` is absent. `announcement` does not display a date. Use an ISO date such as `2026-09-15` for predictable output. |
-| `type` | **Required.** `regular`, `minimal`, `announcement`, `event`, `workshop`, or `webinar`. There is no CLI override. See [Email types](#email-types). |
+| `date` | Dateline for `news`, `release-notes`, and `digest`; fallback event date when `startsAt` is absent. `announcement` does not display a date. Use an ISO date such as `2026-09-15` for predictable output. |
+| `type` | **Required.** `news`, `release-notes`, `digest`, `announcement`, `event`, `workshop`, or `webinar`. There is no CLI override. See [Email types](#email-types). |
 | `lang` | **Required.** `en` for English or `zh` for Simplified Chinese. See [Language](#language). Aliases: `locale`, `language`. |
 | `theme` | A preset name or an object containing `preset` and optional semantic `colors`. See [Themes](#themes). |
 
@@ -71,7 +71,7 @@ mdmailer supports exactly two template languages:
 
 Language values are case-insensitive. Missing or unrecognized values stop generation with an error. Every email must explicitly use `lang: en` or `lang: zh` (or a recognized alias).
 
-The language setting localizes mdmailer-generated interface text: event detail labels, agenda and host headings, default workshop/webinar kickers, the default announcement banner, the unsubscribe label, and the untitled fallback. It does **not** translate `title`, Markdown body text, host information, `tagline`, `footerText`, or other author-written values. Write those in the intended language yourself.
+The language setting localizes mdmailer-generated interface text: content category labels, event details, section headings, default kickers and announcement banner, the unsubscribe label, and the untitled fallback. It does **not** translate `title`, Markdown body text, host information, `tagline`, `footerText`, or other author-written values. Write those in the intended language yourself.
 
 ### Themes
 
@@ -113,14 +113,15 @@ Images work the same way the logo does: a hosted `https://...` URL is left as-is
 
 ## Email types
 
-The six email types use two underlying layout families: content (`regular`, `minimal`, `announcement`) and events (`event`, `workshop`, `webinar`). Missing or unknown frontmatter types stop generation with an error.
+The seven email types use two underlying layout families: content (`news`, `release-notes`, `digest`, `announcement`) and events (`event`, `workshop`, `webinar`). Content types receive a localized category label. Missing or unknown frontmatter types stop generation with an error.
 
 | `type:` | Layout |
 | --- | --- |
-| `regular` | Title, dateline, Markdown body, branded header and footer — the general-purpose layout. |
+| `news` | Company, team, or product news with a title, date, and free-form Markdown body. |
+| `release-notes` | Versioned product changes organized as additions, improvements, and fixes. |
+| `digest` | A recurring roundup of highlights, links, metrics, or updates. |
 | `event` / `workshop` / `webinar` | Invitation layout: compact logo bar, a hero with the event name, a details card (Where / Join / Hosts — localized), your Markdown as the description, and an optional agenda. `workshop` and `webinar` preset the eyebrow label. Workshops render hosts in a dedicated section; rich host objects add photos and bios. |
 | `announcement` | One high-impact message: a colored callout strip, a headline, and a short Markdown body. Add links directly in Markdown. |
-| `minimal` | Text-forward: a compact title, dateline, Markdown body, and the shared branded footer. For short notes. |
 
 Event and announcement layouts read additional optional fields; missing values simply omit the corresponding section:
 

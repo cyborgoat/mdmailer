@@ -1,7 +1,7 @@
 ---
 title: "六月月度简报"
 date: 2026-06-18
-type: regular
+type: digest
 lang: zh
 theme: cobalt-mint
 ---

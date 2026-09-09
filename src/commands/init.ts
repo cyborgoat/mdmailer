@@ -25,14 +25,14 @@ const PLACEHOLDER_LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="240
 const EXAMPLE_CONTENT = `---
 title: "Example Update"
 date: 2026-01-01
-type: regular
+type: news
 lang: en
 theme: classic
 ---
 
 # Headline
 
-Write your update here using regular Markdown. This example touches every element mdmailer knows how to style — replace it with your own content.
+Write your update here using normal Markdown. This example touches every element mdmailer knows how to style — replace it with your own content.
 
 ## Text formatting
 
@@ -173,18 +173,39 @@ Thursday keeps it live for more people.
 [See the new calendar](https://example.com/all-hands)
 `;
 
-const EXAMPLE_MINIMAL = `---
-title: "Heads up: brief API slowdown tonight"
-type: minimal
+const EXAMPLE_RELEASE_NOTES = `---
+title: "Release notes — v1.0"
+type: release-notes
 lang: en
 date: 2026-01-06
 theme: cobalt-mint
 ---
 
-We're migrating a database tonight at **23:00 UTC**. Expect slower API responses for
-about 15 minutes. No downtime is planned and no action is needed on your side.
+## Added
 
-I'll reply here once it's done.
+- A faster setup flow
+- Clearer validation messages
+
+## Fixed
+
+- Images now scale correctly on mobile clients
+`;
+
+const EXAMPLE_DIGEST = `---
+title: "January digest"
+type: digest
+lang: en
+date: 2026-01-31
+theme: forest-cream
+---
+
+## Highlights
+
+- Shipped the new onboarding experience
+- Welcomed three new teammates
+- Published the next-quarter roadmap
+
+Read on for the details and useful links from this month.
 `;
 
 async function exists(path: string): Promise<boolean> {
@@ -214,26 +235,28 @@ export async function runInit() {
   await writeIfMissing(configPath, DEFAULT_CONFIG);
   await mkdir(contentDir, { recursive: true });
   await writeIfMissing(resolve(contentDir, "example.md"), EXAMPLE_CONTENT);
+  await writeIfMissing(resolve(contentDir, "example-release-notes.md"), EXAMPLE_RELEASE_NOTES);
+  await writeIfMissing(resolve(contentDir, "example-digest.md"), EXAMPLE_DIGEST);
   await writeIfMissing(resolve(contentDir, "example-workshop.md"), EXAMPLE_EVENT);
   await writeIfMissing(resolve(contentDir, "example-webinar.md"), EXAMPLE_WEBINAR);
   await writeIfMissing(resolve(contentDir, "example-announcement.md"), EXAMPLE_ANNOUNCEMENT);
-  await writeIfMissing(resolve(contentDir, "example-minimal.md"), EXAMPLE_MINIMAL);
   await mkdir(assetsDir, { recursive: true });
   await writeIfMissing(logoPath, PLACEHOLDER_LOGO_SVG);
 
   console.log(
     "\nNext steps:\n" +
       "  1. Replace assets/logo.svg with your real logo (or point logoUrl at a hosted image).\n" +
-      "  2. Edit mdmailer.config.json with your organization's name, theme, and tagline.\n" +
+      "  2. Edit mdmailer.config.json with your organization's branding and footer.\n" +
       "  3. Edit content/example.md with your update.\n" +
       "  4. Run: npm run generate -- --input content/example.md\n" +
       "\n" +
       "Every Markdown file must declare its layout and language in frontmatter. Each example above shows one:\n" +
-      "  example.md              regular update              (type: regular)\n" +
+      "  example.md              news update                 (type: news)\n" +
+      "  example-release-notes.md product changes             (type: release-notes)\n" +
+      "  example-digest.md       recurring roundup           (type: digest)\n" +
       "  example-workshop.md     workshop / event invitation  (type: workshop)\n" +
       "  example-webinar.md      webinar invitation           (type: webinar)\n" +
       "  example-announcement.md single high-impact notice     (type: announcement)\n" +
-      "  example-minimal.md      short plain-text note         (type: minimal)\n" +
       "Set the required layout with `type:` in frontmatter.\n" +
       "Set the required language with `lang: en` or `lang: zh` (English or Chinese).\n",
   );

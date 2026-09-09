@@ -1,7 +1,7 @@
 ---
 title: "Q4 Quarterly Review"
 date: 2026-01-12
-type: regular
+type: digest
 lang: en
 theme: cobalt-mint
 ---
