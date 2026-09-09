@@ -1,6 +1,7 @@
 ---
 title: "Q4 Quarterly Review"
 date: 2026-01-12
+theme: cobalt-mint
 ---
 
 # Q4 in review

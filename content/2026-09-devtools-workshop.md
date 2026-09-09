@@ -1,6 +1,7 @@
 ---
 title: "You're invited: Hands-on with the new CLI"
 type: workshop
+theme: cobalt-mint
 eventName: "Hands-on with the new CLI"
 startsAt: 2026-09-24
 time: "14:00–15:30 UTC"

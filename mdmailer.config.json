@@ -1,7 +1,8 @@
 {
   "organization": {
     "name": "NAAD",
-    "logoUrl": "assets/logos/naad-cobalt-bg-transparent.svg"
+    "logoUrl": "assets/logos/naad-cobalt-bg-transparent.svg",
+    "logoUrlOnDark": "assets/logos/naad-white-bg-transparent.svg"
   },
   "theme": {
     "primaryColor": "#1A4B8C",

@@ -9,9 +9,10 @@ import { buildMarkdownOverrides } from "../markdown-overrides.js";
 import { fmString, formatDate } from "../../frontmatter.js";
 import type { TemplateContext } from "../template-context.js";
 import type { ResolvedOrganization } from "../../resolve-logo.js";
-import { DEFAULT_FONT_FAMILY, type SocialLink } from "../../config-schema.js";
+import type { SocialLink } from "../../config-schema.js";
 import { t, type Locale } from "../../i18n/index.js";
 import type { HostProfile } from "../../resolve-hosts.js";
+import { DEFAULT_EMAIL_PREVIEW_THEME, headingColor, type EmailTheme } from "../theme.js";
 
 type AgendaEntry = { time?: string; title: string };
 type Agenda = { kind: "markdown"; markdown: string } | { kind: "list"; entries: AgendaEntry[] } | null;
@@ -32,11 +33,9 @@ export interface EventEmailProps {
   showHostsSection: boolean;
   agenda: Agenda;
   organization: ResolvedOrganization;
-  primaryColor: string;
+  theme: EmailTheme;
   footerText: string;
   tagline: string;
-  fontFamily: string;
-  contentWidth: number;
   social: SocialLink[];
   address?: string;
   unsubscribeUrl?: string;
@@ -68,11 +67,9 @@ export default function EventEmail({
   showHostsSection,
   agenda,
   organization,
-  primaryColor,
+  theme,
   footerText,
   tagline,
-  fontFamily,
-  contentWidth,
   social,
   address,
   unsubscribeUrl,
@@ -90,7 +87,7 @@ export default function EventEmail({
     {
       label: labels.join,
       value: joinUrl ? (
-        <Link href={joinUrl} style={{ fontFamily }}>
+        <Link href={joinUrl} style={{ fontFamily: theme.fontFamily, color: theme.accent }}>
           {joinUrl}
         </Link>
       ) : (
@@ -104,49 +101,51 @@ export default function EventEmail({
     <Html lang={locale}>
       <Head />
       <Preview>{title}</Preview>
-      <Body style={{ backgroundColor: "#ffffff", fontFamily }}>
-        <Container style={{ backgroundColor: "#ffffff", padding: "24px", maxWidth: `${contentWidth}px` }}>
+      <Body style={{ backgroundColor: theme.background, color: theme.foreground, fontFamily: theme.fontFamily }}>
+        <Container style={{ backgroundColor: theme.background, padding: "24px", maxWidth: `${theme.contentWidth}px` }}>
           <Header
             organizationName={organization.name}
             organizationLogoUrl={organization.logoUrl}
             logoAspectRatio={organization.logoAspectRatio}
+            theme={theme}
+            useLogoPlate={theme.appearance === "contrast" && !organization.logoUrlOnDark}
           />
           <Section style={{ marginTop: "32px" }}>
             {kicker ? (
               <Text
                 style={{
-                  fontFamily,
+                  fontFamily: theme.fontFamily,
                   fontSize: "12px",
                   fontWeight: 600,
                   letterSpacing: "1px",
                   textTransform: "uppercase",
-                  color: primaryColor,
+                  color: theme.accent,
                   margin: "0 0 4px",
                 }}
               >
                 {kicker}
               </Text>
             ) : null}
-            <Heading as="h1" style={{ fontFamily, color: primaryColor, margin: "0" }}>
+            <Heading as="h1" style={{ fontFamily: theme.fontFamily, color: headingColor(theme), margin: "0" }}>
               {eventName}
             </Heading>
             {whenLine ? (
-              <Text style={{ fontFamily, fontSize: "14px", color: "#52665d", margin: "8px 0 0" }}>{whenLine}</Text>
+              <Text style={{ fontFamily: theme.fontFamily, fontSize: "14px", color: theme.mutedForeground, margin: "8px 0 0" }}>{whenLine}</Text>
             ) : null}
           </Section>
-          <EventDetails items={details} fontFamily={fontFamily} />
+          <EventDetails items={details} theme={theme} />
           {bodyMarkdown.trim() ? (
-            <Markdown options={{ overrides: buildMarkdownOverrides(fontFamily) }}>{bodyMarkdown}</Markdown>
+            <Markdown options={{ overrides: buildMarkdownOverrides(theme) }}>{bodyMarkdown}</Markdown>
           ) : null}
           {renderHostsSection ? (
-            <HostsSection hosts={hostProfiles} sectionLabel={labels.hostsSection} fontFamily={fontFamily} />
+            <HostsSection hosts={hostProfiles} sectionLabel={labels.hostsSection} theme={theme} />
           ) : null}
-          {agenda ? <AgendaSection agenda={agenda} agendaLabel={labels.agenda} fontFamily={fontFamily} /> : null}
+          {agenda ? <AgendaSection agenda={agenda} agendaLabel={labels.agenda} theme={theme} /> : null}
           <Footer
             organizationName={organization.name}
             tagline={tagline}
             footerText={footerText}
-            fontFamily={fontFamily}
+            theme={theme}
             social={social}
             address={address}
             unsubscribeUrl={unsubscribeUrl}
@@ -161,33 +160,33 @@ export default function EventEmail({
 function AgendaSection({
   agenda,
   agendaLabel,
-  fontFamily,
+  theme,
 }: {
   agenda: Agenda;
   agendaLabel: string;
-  fontFamily: string;
+  theme: EmailTheme;
 }) {
   if (!agenda) return null;
 
   return (
     <Section style={{ marginTop: "8px" }}>
-      <Heading as="h2" style={{ fontFamily, fontSize: "18px", marginTop: "24px" }}>
+      <Heading as="h2" style={{ fontFamily: theme.fontFamily, color: theme.foreground, fontSize: "18px", marginTop: "24px" }}>
         {agendaLabel}
       </Heading>
       {agenda.kind === "markdown" ? (
-        <Markdown options={{ overrides: buildMarkdownOverrides(fontFamily) }}>{agenda.markdown}</Markdown>
+        <Markdown options={{ overrides: buildMarkdownOverrides(theme) }}>{agenda.markdown}</Markdown>
       ) : (
         agenda.entries.map((entry, index) => (
           <Row key={index} style={{ marginBottom: "4px" }}>
             {entry.time ? (
               <Column style={{ width: "88px", verticalAlign: "top", padding: "4px 0" }}>
-                <Text style={{ fontFamily, fontSize: "13px", fontWeight: "bold", color: "#111827", margin: "0" }}>
+                <Text style={{ fontFamily: theme.fontFamily, fontSize: "13px", fontWeight: "bold", color: theme.foreground, margin: "0" }}>
                   {entry.time}
                 </Text>
               </Column>
             ) : null}
             <Column style={{ verticalAlign: "top", padding: "4px 0" }}>
-              <Text style={{ fontFamily, fontSize: "13px", color: "#333333", margin: "0" }}>{entry.title}</Text>
+              <Text style={{ fontFamily: theme.fontFamily, fontSize: "13px", color: theme.foreground, margin: "0" }}>{entry.title}</Text>
             </Column>
           </Row>
         ))
@@ -242,11 +241,9 @@ EventEmail.PreviewProps = {
     ],
   },
   organization: { name: "Developer Relations", logoUrl: "https://placehold.co/80x40" },
-  primaryColor: "#1A4B8C",
+  theme: DEFAULT_EMAIL_PREVIEW_THEME,
   footerText: "© 2026 {{organization}}",
   tagline: "Flowing intelligence across the network.",
-  fontFamily: DEFAULT_FONT_FAMILY,
-  contentWidth: 820,
   social: [{ label: "GitHub", url: "https://example.com/gh" }],
   address: "123 Market Street, Floor 1, Tech City, CA 94102",
   unsubscribeUrl: "https://example.com/unsubscribe",
@@ -282,11 +279,9 @@ export function buildEventProps(
     showHostsSection: opts.showHostsSection ?? false,
     agenda: normalizeAgenda(fm.agenda),
     organization: ctx.organization,
-    primaryColor: theme.primaryColor,
+    theme: ctx.theme,
     footerText: theme.footerText,
     tagline: theme.tagline,
-    fontFamily: theme.fontFamily,
-    contentWidth: theme.contentWidth,
     social: theme.social,
     address: theme.address,
     unsubscribeUrl: theme.unsubscribeUrl,

@@ -1,17 +1,18 @@
 import { Column, Heading, Img, Row, Section, Text } from "react-email";
 import * as React from "react";
 import type { HostProfile } from "../../resolve-hosts.js";
+import type { EmailTheme } from "../theme.js";
 
 interface HostsSectionProps {
   hosts: HostProfile[];
   sectionLabel: string;
-  fontFamily: string;
+  theme: EmailTheme;
 }
 
-export function HostsSection({ hosts, sectionLabel, fontFamily }: HostsSectionProps) {
+export function HostsSection({ hosts, sectionLabel, theme }: HostsSectionProps) {
   return (
     <Section style={{ marginTop: "8px" }}>
-      <Heading as="h2" style={{ fontFamily, fontSize: "18px", marginTop: "24px", marginBottom: "12px" }}>
+      <Heading as="h2" style={{ fontFamily: theme.fontFamily, color: theme.foreground, fontSize: "18px", marginTop: "24px", marginBottom: "12px" }}>
         {sectionLabel}
       </Heading>
       {hosts.map((host) => (
@@ -28,14 +29,14 @@ export function HostsSection({ hosts, sectionLabel, fontFamily }: HostsSectionPr
             </Column>
           ) : null}
           <Column style={{ verticalAlign: "top" }}>
-            <Text style={{ fontFamily, fontSize: "15px", fontWeight: 600, color: "#111827", margin: "0" }}>
+            <Text style={{ fontFamily: theme.fontFamily, fontSize: "15px", fontWeight: 600, color: theme.foreground, margin: "0" }}>
               {host.name}
             </Text>
             {host.role ? (
-              <Text style={{ fontFamily, fontSize: "13px", color: "#1A4B8C", margin: "2px 0 0" }}>{host.role}</Text>
+              <Text style={{ fontFamily: theme.fontFamily, fontSize: "13px", color: theme.accent, margin: "2px 0 0" }}>{host.role}</Text>
             ) : null}
             {host.bio ? (
-              <Text style={{ fontFamily, fontSize: "13px", color: "#333333", margin: "6px 0 0", lineHeight: "1.45" }}>
+              <Text style={{ fontFamily: theme.fontFamily, fontSize: "13px", color: theme.foreground, margin: "6px 0 0", lineHeight: "1.45" }}>
                 {host.bio}
               </Text>
             ) : null}

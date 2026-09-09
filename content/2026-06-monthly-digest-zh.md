@@ -2,6 +2,7 @@
 title: "六月月度简报"
 date: 2026-06-18
 lang: zh
+theme: cobalt-mint
 ---
 
 # 六月月度简报

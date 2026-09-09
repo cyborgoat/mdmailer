@@ -1,6 +1,7 @@
 ---
 title: "You're invited: Shipping reliable APIs in 2026"
 type: webinar
+theme: cobalt-mint
 eventName: "Shipping reliable APIs in 2026"
 startsAt: 2026-10-15
 time: "16:00–17:00 UTC"

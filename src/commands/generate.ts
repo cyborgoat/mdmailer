@@ -4,7 +4,7 @@ import { basename, extname, resolve } from "node:path";
 import * as React from "react";
 import matter from "gray-matter";
 import { render } from "@react-email/render";
-import { configSchema } from "../config-schema.js";
+import { configSchema, frontmatterThemeSchema, THEME_PRESET_NAMES, type ThemePresetName } from "../config-schema.js";
 import { templates, TEMPLATE_NAMES, resolveTemplateName, type TemplateEntry } from "../emails/registry.js";
 import type { TemplateContext } from "../emails/template-context.js";
 import { formatDate } from "../frontmatter.js";
@@ -12,6 +12,7 @@ import { resolveLocale, t } from "../i18n/index.js";
 import { resolveBrandLogo } from "../resolve-logo.js";
 import { resolveContentImages } from "../resolve-content-images.js";
 import { resolveHosts } from "../resolve-hosts.js";
+import { normalizeThemeSelection, resolveEmailTheme, selectLogoUrl } from "../emails/theme.js";
 
 interface EmlAttachment {
   cid: string;
@@ -113,7 +114,7 @@ export async function runGenerate(argv: string[]) {
 
   if (!inputPath) {
     console.error(
-      "Usage: mdmailer generate --input content/<file>.md [--config mdmailer.config.json] [--template <name>]",
+      "Usage: mdmailer generate --input content/<file>.md [--config mdmailer.config.json] [--template <name>] [--theme <preset>]",
     );
     process.exitCode = 1;
     return;
@@ -121,9 +122,21 @@ export async function runGenerate(argv: string[]) {
 
   const rawConfig = JSON.parse(await readFile(resolve(configPath), "utf-8"));
   const config = configSchema.parse(rawConfig);
+  const themeFlag = args.get("theme")?.toLowerCase().trim();
+  if (themeFlag) {
+    if (!THEME_PRESET_NAMES.includes(themeFlag as ThemePresetName)) {
+      console.error(`Unknown theme "${themeFlag}". Valid themes: ${THEME_PRESET_NAMES.join(", ")}`);
+      process.exitCode = 1;
+      return;
+    }
+  }
 
   const rawMarkdown = await readFile(resolve(inputPath), "utf-8");
   const { data: frontmatter, content: rawBodyMarkdown } = matter(rawMarkdown);
+  const frontmatterTheme = normalizeThemeSelection(frontmatterThemeSchema.parse(frontmatter.theme));
+  const themeSelection = frontmatterThemeSchema.parse(themeFlag
+    ? { ...frontmatterTheme, preset: themeFlag }
+    : frontmatterTheme);
   const { markdown: bodyMarkdown, attachments: contentImages } = await resolveContentImages(rawBodyMarkdown);
   const { profiles: hostProfiles, attachments: hostImages } = await resolveHosts(
     frontmatter.hosts ?? frontmatter.speakers,
@@ -134,7 +147,12 @@ export async function runGenerate(argv: string[]) {
     ? frontmatter.title
     : t(locale, "fallback.untitled");
   const date = formatDate(frontmatter.date);
-  const { brand: organization, logoAttachment } = await resolveBrandLogo(config.organization);
+  const theme = resolveEmailTheme(config.theme, normalizeThemeSelection(themeSelection));
+  const selectedLogoUrl = selectLogoUrl(config.organization, theme.appearance);
+  const { brand: organization, logoAttachment } = await resolveBrandLogo({
+    ...config.organization,
+    logoUrl: selectedLogoUrl,
+  });
 
   const templateName = resolveTemplateName(args.get("template"), frontmatter.type);
   if (!templateName) {
@@ -148,6 +166,7 @@ export async function runGenerate(argv: string[]) {
     frontmatter,
     bodyMarkdown,
     config,
+    theme,
     organization,
     title,
     date,

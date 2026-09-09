@@ -1,6 +1,7 @@
 ---
 title: "August Engineering Update"
 date: 2026-08-26
+theme: cobalt-mint
 ---
 
 # What shipped this month

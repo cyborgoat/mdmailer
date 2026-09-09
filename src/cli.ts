@@ -7,6 +7,7 @@ const HELP = `mdmailer — turn a Markdown file into a branded email, ready to s
 Usage:
   mdmailer init                          Scaffold mdmailer.config.json and example content
   mdmailer generate --input <file.md>    Generate output/<name>.html and .eml from a Markdown file
+    --theme <preset>                     Override theme preset for this generation
     [--config <file>]                    Defaults to mdmailer.config.json
     [--template <name>]                  One of: ${TEMPLATE_NAMES.join(", ")}
                                          Overrides the frontmatter \`type:\` field (default: regular)

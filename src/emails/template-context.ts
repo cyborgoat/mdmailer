@@ -2,6 +2,7 @@ import type { Config } from "../config-schema.js";
 import type { Locale } from "../i18n/index.js";
 import type { HostProfile } from "../resolve-hosts.js";
 import type { ResolvedOrganization } from "../resolve-logo.js";
+import type { EmailTheme } from "./theme.js";
 
 /**
  * Everything a template's prop-builder needs, assembled once by `generate.ts`
@@ -14,6 +15,8 @@ export interface TemplateContext {
   frontmatter: Record<string, unknown>;
   bodyMarkdown: string;
   config: Config;
+  /** Fully resolved light/contrast colors and layout values. */
+  theme: EmailTheme;
   organization: ResolvedOrganization;
   title: string;
   date: string;

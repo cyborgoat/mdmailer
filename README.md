@@ -27,6 +27,21 @@ npm run generate -- --input content/example.md
 
 Optional `--config` flag to point at a different config file (defaults to `mdmailer.config.json`).
 
+Choose a named theme in the Markdown frontmatter, or override it for one generation from the CLI:
+
+```yaml
+---
+title: "September Update"
+theme: cobalt-mint
+---
+```
+
+```bash
+npm run generate -- --input content/example.md --theme navy-gold
+```
+
+Available presets are `classic`, `cobalt-mint`, `navy-gold`, `forest-cream`, and `plum-rose`. The CLI flag takes precedence over frontmatter.
+
 ## Writing an update
 
 ```markdown
@@ -34,6 +49,7 @@ Optional `--config` flag to point at a different config file (defaults to `mdmai
 title: "September Update"
 date: 2026-09-15
 lang: en
+theme: cobalt-mint
 ---
 
 # Headline
@@ -92,7 +108,11 @@ Edit `mdmailer.config.json`:
 
 ```json
 {
-  "organization": { "name": "Your Organization", "logoUrl": "https://.../logo.png" },
+  "organization": {
+    "name": "Your Organization",
+    "logoUrl": "https://.../logo.png",
+    "logoUrlOnDark": "https://.../logo-white.png"
+  },
   "theme": {
     "primaryColor": "#1a73e8",
     "footerText": "© 2026 {{organization}}",
@@ -107,7 +127,28 @@ Edit `mdmailer.config.json`:
 
 `social`, `address`, and `unsubscribeUrl` are optional and fill in the richer event and announcement footers (`social` renders as plain text links, so it works even where images are blocked). Configs without these keys keep working unchanged.
 
+The global config holds organization-wide branding, typography, width, and footer metadata. Visual theme selection belongs to each Markdown file. `classic` preserves the original light email; the other presets use colored canvases with light text. Use the object form for per-email semantic color overrides:
+
+```yaml
+---
+title: "September Update"
+theme:
+  preset: cobalt-mint
+  colors:
+    background: "#1A4B8C"
+    foreground: "#FFFFFF"
+    mutedForeground: "#D9E5F2"
+    accent: "#A7F3D0"
+    surface: "#143B70"
+    border: "#6F91BC"
+---
+```
+
+Color overrides use six-digit hex values. The generator checks every text/background pairing used by contrast presets and rejects combinations below the WCAG AA ratio of 4.5:1 with an actionable validation error. When frontmatter omits `theme`, the email uses `classic`; `theme.primaryColor` in the global config remains its heading/accent color.
+
 `logoUrl` accepts either a hosted `https://...` URL, or a path (relative to the current directory) to a local image file — local logos are automatically embedded at generation time (SVGs are rasterized to PNG first, since most email clients don't render inline SVG), so no image hosting is required. It's embedded differently depending on the output: in the `.html` preview it's a `data:` URI (browsers render those fine), while in the `.eml` it's attached as a proper inline image referenced by `Content-ID`/`cid:` — Outlook doesn't render `data:` URIs in `<img>` tags, so this keeps the logo visible there too.
+
+`logoUrlOnDark` is optional artwork for contrast mode, typically a white or light-stroke logo. It follows the same hosted/local embedding rules as `logoUrl`. When it is omitted, mdmailer keeps the normal logo legible by placing it on a compact white plate; it does not use CSS filters or rewrite third-party artwork.
 
 `fontFamily` is optional and defaults to `"Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, "PingFang SC", sans-serif` — a stack that covers both Latin and Simplified Chinese glyphs. Outlook desktop renders with the Word HTML engine, which only matches web-safe fonts already installed on the system (no `@font-face`/web fonts), so stick to fonts you know your recipients have — the default only uses fonts that ship with Windows and macOS.
 

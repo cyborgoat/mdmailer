@@ -2,12 +2,13 @@ import { Hr, Link, Section, Text } from "react-email";
 import * as React from "react";
 import type { SocialLink } from "../../config-schema.js";
 import { SocialLinks } from "./SocialLinks.js";
+import type { EmailTheme } from "../theme.js";
 
 interface FooterProps {
   organizationName: string;
   tagline: string;
   footerText: string;
-  fontFamily: string;
+  theme: EmailTheme;
   // Optional metadata shared by every template. Each block only renders when
   // its corresponding config value is provided.
   social?: SocialLink[];
@@ -21,7 +22,7 @@ export function Footer({
   organizationName,
   tagline,
   footerText,
-  fontFamily,
+  theme,
   social,
   address,
   unsubscribeUrl,
@@ -29,15 +30,15 @@ export function Footer({
 }: FooterProps) {
   return (
     <Section style={{ textAlign: "center" }}>
-      <Hr style={{ borderColor: "#e6e6e6", margin: "40px 0 24px" }} />
+      <Hr style={{ borderTop: `1px solid ${theme.border}`, margin: "40px 0 24px" }} />
       <Text
         style={{
-          fontFamily,
+          fontFamily: theme.fontFamily,
           fontSize: "18px",
           lineHeight: "24px",
           fontWeight: 600,
           letterSpacing: "2px",
-          color: "#17352b",
+          color: theme.appearance === "contrast" ? theme.foreground : "#17352b",
           textAlign: "center",
           margin: "0",
         }}
@@ -48,7 +49,7 @@ export function Footer({
         style={{
           fontSize: "13px",
           lineHeight: "20px",
-          color: "#52665d",
+          color: theme.mutedForeground,
           fontStyle: "italic",
           fontFamily: "Georgia, 'Times New Roman', serif",
           textAlign: "center",
@@ -57,18 +58,18 @@ export function Footer({
       >
         {tagline}
       </Text>
-      {social && social.length > 0 ? <SocialLinks links={social} fontFamily={fontFamily} /> : null}
+      {social && social.length > 0 ? <SocialLinks links={social} theme={theme} /> : null}
       {address ? (
-        <Text style={{ fontFamily, fontSize: "11px", lineHeight: "17px", color: "#52665d", textAlign: "center", margin: "16px 0 0" }}>
+        <Text style={{ fontFamily: theme.fontFamily, fontSize: "11px", lineHeight: "17px", color: theme.mutedForeground, textAlign: "center", margin: "16px 0 0" }}>
           {address}
         </Text>
       ) : null}
-      <Text style={{ fontFamily, fontSize: "12px", lineHeight: "18px", color: "#52665d", textAlign: "center", margin: "24px 0 0" }}>
+      <Text style={{ fontFamily: theme.fontFamily, fontSize: "12px", lineHeight: "18px", color: theme.mutedForeground, textAlign: "center", margin: "24px 0 0" }}>
         {footerText.replaceAll("{{organization}}", organizationName)}
       </Text>
       {unsubscribeUrl ? (
-        <Text style={{ fontFamily, fontSize: "11px", lineHeight: "17px", color: "#52665d", textAlign: "center", margin: "8px 0 0" }}>
-          <Link href={unsubscribeUrl} style={{ fontFamily, color: "#52665d" }}>
+        <Text style={{ fontFamily: theme.fontFamily, fontSize: "11px", lineHeight: "17px", color: theme.mutedForeground, textAlign: "center", margin: "8px 0 0" }}>
+          <Link href={unsubscribeUrl} style={{ fontFamily: theme.fontFamily, color: theme.accent }}>
             {unsubscribeLabel}
           </Link>
         </Text>

@@ -8,8 +8,9 @@ import { buildMarkdownOverrides } from "../markdown-overrides.js";
 import { fmString } from "../../frontmatter.js";
 import type { TemplateContext } from "../template-context.js";
 import type { ResolvedOrganization } from "../../resolve-logo.js";
-import { DEFAULT_FONT_FAMILY, type SocialLink } from "../../config-schema.js";
+import type { SocialLink } from "../../config-schema.js";
 import { t, type Locale } from "../../i18n/index.js";
+import { DEFAULT_EMAIL_PREVIEW_THEME, headingColor, type EmailTheme } from "../theme.js";
 
 export interface AnnouncementEmailProps {
   title: string;
@@ -17,11 +18,9 @@ export interface AnnouncementEmailProps {
   bannerText: string;
   bodyMarkdown: string;
   organization: ResolvedOrganization;
-  primaryColor: string;
+  theme: EmailTheme;
   footerText: string;
   tagline: string;
-  fontFamily: string;
-  contentWidth: number;
   social: SocialLink[];
   address?: string;
   unsubscribeUrl?: string;
@@ -37,11 +36,9 @@ export default function AnnouncementEmail({
   bannerText,
   bodyMarkdown,
   organization,
-  primaryColor,
+  theme,
   footerText,
   tagline,
-  fontFamily,
-  contentWidth,
   social,
   address,
   unsubscribeUrl,
@@ -52,23 +49,25 @@ export default function AnnouncementEmail({
     <Html lang={locale}>
       <Head />
       <Preview>{title}</Preview>
-      <Body style={{ backgroundColor: "#ffffff", fontFamily }}>
-        <Container style={{ backgroundColor: "#ffffff", padding: "24px", maxWidth: `${contentWidth}px` }}>
+      <Body style={{ backgroundColor: theme.background, color: theme.foreground, fontFamily: theme.fontFamily }}>
+        <Container style={{ backgroundColor: theme.background, padding: "24px", maxWidth: `${theme.contentWidth}px` }}>
           <Header
             organizationName={organization.name}
             organizationLogoUrl={organization.logoUrl}
             logoAspectRatio={organization.logoAspectRatio}
+            theme={theme}
+            useLogoPlate={theme.appearance === "contrast" && !organization.logoUrlOnDark}
           />
-          <CalloutBanner text={bannerText} color={primaryColor} fontFamily={fontFamily} />
-          <Heading as="h1" style={{ fontFamily, color: primaryColor, marginTop: "24px" }}>
+          <CalloutBanner text={bannerText} theme={theme} />
+          <Heading as="h1" style={{ fontFamily: theme.fontFamily, color: headingColor(theme), marginTop: "24px" }}>
             {headline}
           </Heading>
-          <Markdown options={{ overrides: buildMarkdownOverrides(fontFamily) }}>{bodyMarkdown}</Markdown>
+          <Markdown options={{ overrides: buildMarkdownOverrides(theme) }}>{bodyMarkdown}</Markdown>
           <Footer
             organizationName={organization.name}
             tagline={tagline}
             footerText={footerText}
-            fontFamily={fontFamily}
+            theme={theme}
             social={social}
             address={address}
             unsubscribeUrl={unsubscribeUrl}
@@ -87,11 +86,9 @@ AnnouncementEmail.PreviewProps = {
   bodyMarkdown:
     "All offices are **closed Monday, September 7** for the public holiday. Support coverage runs as normal via the on-call rota.\n\nRegular hours resume Tuesday.\n\n[See the holiday calendar](https://example.com/holidays)",
   organization: { name: "People Ops", logoUrl: "https://placehold.co/80x40" },
-  primaryColor: "#1A4B8C",
+  theme: DEFAULT_EMAIL_PREVIEW_THEME,
   footerText: "© 2026 {{organization}}",
   tagline: "Flowing intelligence across the network.",
-  fontFamily: DEFAULT_FONT_FAMILY,
-  contentWidth: 820,
   social: [],
   locale: "en",
   unsubscribeLabel: "Unsubscribe",
@@ -108,11 +105,9 @@ export function buildAnnouncementProps(ctx: TemplateContext): AnnouncementEmailP
     bannerText: fmString(fm.banner ?? fm.bannerText ?? fm.kicker) ?? t(locale, "banner.announcement"),
     bodyMarkdown: ctx.bodyMarkdown,
     organization: ctx.organization,
-    primaryColor: theme.primaryColor,
+    theme: ctx.theme,
     footerText: theme.footerText,
     tagline: theme.tagline,
-    fontFamily: theme.fontFamily,
-    contentWidth: theme.contentWidth,
     social: theme.social,
     address: theme.address,
     unsubscribeUrl: theme.unsubscribeUrl,

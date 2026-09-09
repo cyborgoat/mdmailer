@@ -6,19 +6,18 @@ import { Footer } from "../components/Footer.js";
 import { buildMarkdownOverrides } from "../markdown-overrides.js";
 import type { TemplateContext } from "../template-context.js";
 import type { ResolvedOrganization } from "../../resolve-logo.js";
-import { DEFAULT_FONT_FAMILY, type SocialLink } from "../../config-schema.js";
+import type { SocialLink } from "../../config-schema.js";
 import { t, type Locale } from "../../i18n/index.js";
+import { DEFAULT_EMAIL_PREVIEW_THEME, headingColor, type EmailTheme } from "../theme.js";
 
 export interface OrganizationEmailProps {
   title: string;
   date: string;
   bodyMarkdown: string;
   organization: ResolvedOrganization;
-  primaryColor: string;
+  theme: EmailTheme;
   footerText: string;
   tagline: string;
-  fontFamily: string;
-  contentWidth: number;
   social: SocialLink[];
   address?: string;
   unsubscribeUrl?: string;
@@ -30,11 +29,9 @@ export default function OrganizationEmail({
   date,
   bodyMarkdown,
   organization,
-  primaryColor,
+  theme,
   footerText,
   tagline,
-  fontFamily,
-  contentWidth,
   social,
   address,
   unsubscribeUrl,
@@ -44,23 +41,25 @@ export default function OrganizationEmail({
     <Html lang={locale}>
       <Head />
       <Preview>{title}</Preview>
-      <Body style={{ backgroundColor: "#ffffff", fontFamily }}>
-        <Container style={{ backgroundColor: "#ffffff", padding: "24px", maxWidth: `${contentWidth}px` }}>
+      <Body style={{ backgroundColor: theme.background, color: theme.foreground, fontFamily: theme.fontFamily }}>
+        <Container style={{ backgroundColor: theme.background, padding: "24px", maxWidth: `${theme.contentWidth}px` }}>
           <Header
             organizationName={organization.name}
             organizationLogoUrl={organization.logoUrl}
             logoAspectRatio={organization.logoAspectRatio}
+            theme={theme}
+            useLogoPlate={theme.appearance === "contrast" && !organization.logoUrlOnDark}
           />
-          <Heading as="h1" style={{ fontFamily, color: primaryColor, marginTop: "24px" }}>
+          <Heading as="h1" style={{ fontFamily: theme.fontFamily, color: headingColor(theme), marginTop: "24px" }}>
             {title}
           </Heading>
-          <Text style={{ fontFamily, fontSize: "12px", color: "#52665d", marginTop: "-8px" }}>{date}</Text>
-          <Markdown options={{ overrides: buildMarkdownOverrides(fontFamily) }}>{bodyMarkdown}</Markdown>
+          <Text style={{ fontFamily: theme.fontFamily, fontSize: "12px", color: theme.mutedForeground, marginTop: "-8px" }}>{date}</Text>
+          <Markdown options={{ overrides: buildMarkdownOverrides(theme) }}>{bodyMarkdown}</Markdown>
           <Footer
             organizationName={organization.name}
             tagline={tagline}
             footerText={footerText}
-            fontFamily={fontFamily}
+            theme={theme}
             social={social}
             address={address}
             unsubscribeUrl={unsubscribeUrl}
@@ -78,11 +77,9 @@ OrganizationEmail.PreviewProps = {
   date: "2026-08-26",
   bodyMarkdown: "# What shipped this month\n\nSample content for preview.",
   organization: { name: "Engineering", logoUrl: "https://placehold.co/80x40" },
-  primaryColor: "#1A4B8C",
+  theme: DEFAULT_EMAIL_PREVIEW_THEME,
   footerText: "© 2026 {{organization}}",
   tagline: "Flowing intelligence across the network.",
-  fontFamily: DEFAULT_FONT_FAMILY,
-  contentWidth: 820,
   social: [],
   locale: "en",
 } satisfies OrganizationEmailProps;
@@ -95,11 +92,9 @@ export function buildRegularProps(ctx: TemplateContext): OrganizationEmailProps 
     date: ctx.date,
     bodyMarkdown: ctx.bodyMarkdown,
     organization: ctx.organization,
-    primaryColor: ctx.config.theme.primaryColor,
+    theme: ctx.theme,
     footerText: ctx.config.theme.footerText,
     tagline: ctx.config.theme.tagline,
-    fontFamily: ctx.config.theme.fontFamily,
-    contentWidth: ctx.config.theme.contentWidth,
     social: ctx.config.theme.social,
     address: ctx.config.theme.address,
     unsubscribeUrl: ctx.config.theme.unsubscribeUrl,

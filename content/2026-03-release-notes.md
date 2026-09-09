@@ -1,6 +1,7 @@
 ---
 title: "Release Notes — v1.4"
 date: 2026-03-02
+theme: cobalt-mint
 ---
 
 # v1.4 release notes

@@ -25,6 +25,7 @@ const PLACEHOLDER_LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="240
 const EXAMPLE_CONTENT = `---
 title: "Example Update"
 date: 2026-01-01
+theme: classic
 ---
 
 # Headline
@@ -76,6 +77,7 @@ const EXAMPLE_EVENT = `---
 title: "You're invited: Intro to the Design System"
 type: workshop
 lang: en
+theme: navy-gold
 eventName: "Intro to the Design System"
 startsAt: 2026-02-18
 time: "15:00–16:00 UTC"
@@ -109,6 +111,7 @@ const EXAMPLE_WEBINAR = `---
 title: "You're invited: Shipping reliable APIs in 2026"
 type: webinar
 lang: en
+theme: forest-cream
 eventName: "Shipping reliable APIs in 2026"
 startsAt: 2026-10-15
 time: "16:00–17:00 UTC"
@@ -147,6 +150,7 @@ on-call — then take questions live.
 const EXAMPLE_ANNOUNCEMENT = `---
 title: "All-hands moves to Thursdays"
 type: announcement
+theme: plum-rose
 headline: "All-hands moves to Thursdays, starting March"
 banner: "Schedule change"
 date: 2026-02-24
@@ -170,6 +174,7 @@ const EXAMPLE_MINIMAL = `---
 title: "Heads up: brief API slowdown tonight"
 type: minimal
 date: 2026-01-06
+theme: cobalt-mint
 ---
 
 We're migrating a database tonight at **23:00 UTC**. Expect slower API responses for

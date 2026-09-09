@@ -1,6 +1,7 @@
 ---
 title: "Heads up: search reindex tonight"
 type: minimal
+theme: cobalt-mint
 date: 2026-09-04
 ---
 

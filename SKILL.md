@@ -34,6 +34,7 @@ Use a non-default config or override the frontmatter template when needed:
 ```bash
 npm run generate -- --input content/<name>.md --config path/to/config.json
 npm run generate -- --input content/<name>.md --template workshop
+npm run generate -- --input content/<name>.md --theme navy-gold
 ```
 
 The `--template` flag takes precedence over frontmatter `type`. With neither, the template is `regular`.
@@ -56,6 +57,7 @@ title: "September Update"
 date: 2026-09-15
 type: regular
 lang: en
+theme: cobalt-mint
 ---
 ```
 
@@ -63,6 +65,7 @@ lang: en
 - `date` is displayed by layouts that use a dateline.
 - `type` selects the layout.
 - `lang` accepts `en` or `zh`; aliases are `locale` and `language`.
+- `theme` selects `classic`, `cobalt-mint`, `navy-gold`, `forest-cream`, or `plum-rose`. It may also be an object with `preset` and `colors` fields.
 - Template chrome is localized. Titles, body content, tagline, and footer remain author-written.
 
 The body supports normal Markdown, including headings, emphasis, links, lists, task lists, tables, blockquotes, code, and images.
@@ -119,11 +122,14 @@ Configure branding in `mdmailer.config.json`:
 
 - `organization.name`: brand name and image alt text.
 - `organization.logoUrl`: hosted HTTPS URL or local path.
+- `organization.logoUrlOnDark`: optional light/white logo selected by contrast themes; without it the normal logo receives a white fallback plate.
 - `theme.primaryColor`: headings and accents.
 - `theme.footerText`: copyright text; `{{organization}}` expands to the organization name.
 - `theme.tagline`: footer department tagline.
 - `theme.fontFamily`: use an Outlook-compatible web-safe font stack.
 - `theme.social`, `theme.address`, and `theme.unsubscribeUrl`: optional rich-footer fields.
+
+Visual theme presets and optional semantic `colors` overrides belong in Markdown frontmatter, not `mdmailer.config.json`. The `--theme` CLI flag overrides the frontmatter preset for one generation. Contrast text pairs must meet WCAG AA (4.5:1) or generation fails.
 
 All layouts use the shared `src/emails/components/Header.tsx`. Keep logo dimensions and centering in that component rather than adding per-template overrides. Host introductions use `src/emails/components/HostsSection.tsx`; change that shared component rather than duplicating host markup.
 

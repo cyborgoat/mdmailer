@@ -1,6 +1,7 @@
 ---
 title: "New expense policy takes effect October 1"
 type: announcement
+theme: cobalt-mint
 headline: "Expense policy update — effective Oct 1"
 banner: "Policy change"
 date: 2026-09-03
