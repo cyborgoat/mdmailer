@@ -15,7 +15,7 @@ interface HeaderProps {
   useLogoPlate?: boolean;
 }
 
-const LOGO_HEIGHT = 96;
+const LOGO_HEIGHT = 144;
 const FALLBACK_ASPECT_RATIO = 1.2;
 
 export function Header({ organizationName, organizationLogoUrl, logoAspectRatio, theme, useLogoPlate }: HeaderProps) {
