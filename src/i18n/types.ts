@@ -1,6 +1,7 @@
 export type Locale = "en" | "zh";
 
 export type MessageKey =
+  | "detail.when"
   | "detail.where"
   | "detail.join"
   | "detail.hosts"

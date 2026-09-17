@@ -1,6 +1,7 @@
 import type { Messages } from "./types.js";
 
 export const zh: Messages = {
+  "detail.when": "时间",
   "detail.where": "地点",
   "detail.join": "加入",
   "detail.hosts": "嘉宾",

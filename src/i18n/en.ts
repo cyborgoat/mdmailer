@@ -1,6 +1,7 @@
 import type { Messages } from "./types.js";
 
 export const en: Messages = {
+  "detail.when": "When",
   "detail.where": "Where",
   "detail.join": "Join",
   "detail.hosts": "Hosts",

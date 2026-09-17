@@ -40,6 +40,7 @@ export interface EventEmailProps {
   unsubscribeUrl?: string;
   locale: Locale;
   labels: {
+    when: string;
     where: string;
     join: string;
     hosts: string;
@@ -79,9 +80,9 @@ export default function EventEmail({
   const richHosts = hostProfiles.some((host) => host.photoUrl || host.bio || host.role);
   const renderHostsSection = hostProfiles.length > 0 && (showHostsSection || richHosts);
 
-  // "When" isn't in the card — it's already the subline under the heading.
   // The dedicated host section replaces the plain "Hosts" row in the details card.
   const details: EventDetailItem[] = [
+    { label: labels.when, value: whenLine },
     { label: labels.where, value: location },
     {
       label: labels.join,
@@ -137,9 +138,6 @@ export default function EventEmail({
             >
               {eventName}
             </Heading>
-            {whenLine ? (
-              <Text style={{ fontFamily: theme.fontFamily, fontSize: "14px", color: theme.mutedForeground, margin: "8px 0 0" }}>{whenLine}</Text>
-            ) : null}
           </Section>
           <EventDetails items={details} theme={theme} />
           {bodyMarkdown.trim() ? (
@@ -245,6 +243,7 @@ EventEmail.PreviewProps = {
   unsubscribeUrl: "https://example.com/unsubscribe",
   locale: "en",
   labels: {
+    when: "When",
     where: "Where",
     join: "Join",
     hosts: "Hosts",
@@ -283,6 +282,7 @@ export function buildEventProps(
     unsubscribeUrl: theme.unsubscribeUrl,
     locale,
     labels: {
+      when: t(locale, "detail.when"),
       where: t(locale, "detail.where"),
       join: t(locale, "detail.join"),
       hosts: t(locale, "detail.hosts"),

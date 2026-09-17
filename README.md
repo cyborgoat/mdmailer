@@ -148,7 +148,7 @@ The seven email types use two underlying layout families: content (`news`, `rele
 | `news` | Company, team, or product news with a title, date, and free-form Markdown body. |
 | `release-notes` | Versioned product changes organized as additions, improvements, and fixes. |
 | `digest` | A recurring roundup of highlights, links, metrics, or updates. |
-| `event` / `workshop` / `webinar` | Invitation layout: compact logo bar, a hero with the event name, a details card (Where / Join / Hosts — localized), your Markdown as the description, and an optional agenda. `workshop` and `webinar` preset the eyebrow label. Workshops render hosts in a dedicated section; rich host objects add photos and bios. |
+| `event` / `workshop` / `webinar` | Invitation layout: compact logo bar, a hero with the event name, a details card (When / Where / Join / Hosts — localized), your Markdown as the description, and an optional agenda. `workshop` and `webinar` preset the eyebrow label. Workshops render hosts in a dedicated section; rich host objects add photos and bios. |
 | `announcement` | One high-impact message: a colored callout strip, a headline, and a short Markdown body. Add links directly in Markdown. |
 
 Event and announcement layouts read additional optional fields; missing values simply omit the corresponding section:
@@ -159,8 +159,8 @@ Event and announcement layouts read additional optional fields; missing values s
 | --- | --- |
 | `eventName` (`name`) | Hero heading. Falls back to `title`. |
 | `kicker` (`eyebrow`) | Small uppercase label above the heading. `workshop` / `webinar` supply a localized default when omitted. |
-| `startsAt` (`date`) | The "When" date. |
-| `time` | Clock time as a **quoted string**, e.g. `"14:00–15:30 UTC"` — an unquoted `18:00` is parsed as a time and loses its display form. |
+| `startsAt` (`date`) | Event date, shown in the details box’s localized “When” row alongside `time`. |
+| `time` | Clock time in the details box’s “When” row, as a **quoted string**, e.g. `"14:00–15:30 UTC"` — an unquoted `18:00` is parsed as a time and loses its display form. |
 | `location` (`venue`) | The "Where" line. |
 | `joinUrl` (`onlineUrl`) | Online join link. |
 | `hosts` (`speakers`) | A YAML list of names, **or** a list of `{ name, photo, bio, role }` maps. Plain names fill the details card; object hosts (typical for `webinar`) render a photo + intro section instead. Local `photo` paths are embedded like content images. |
