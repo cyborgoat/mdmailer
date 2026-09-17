@@ -122,7 +122,7 @@ async function generateFile(args: Map<string, string>) {
   }
 
   if (args.has("template") || args.has("type")) {
-    console.error('Email type cannot be set from the CLI. Add it to Markdown frontmatter, for example: type: workshop');
+    console.error('Email type cannot be set from the CLI. Add it to Markdown frontmatter, for example: type: meeting');
     process.exitCode = 1;
     return;
   }

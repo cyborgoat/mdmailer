@@ -139,19 +139,13 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
 
-# Local example content (repo dogfooding) — only the tracked examples below ship
+# Personal email drafts stay local; these five starter templates ship
 content/*
-!content/2026-08-engineering.md
-!content/2026-06-monthly-digest.md
-!content/2026-06-monthly-digest-zh.md
-!content/2026-05-product-launch.md
-!content/2026-03-release-notes.md
-!content/2026-01-quarterly-review.md
-!content/2026-09-devtools-workshop.md
-!content/2026-09-policy-announcement.md
-!content/2026-09-quick-note.md
-!content/2026-10-platform-webinar.md
-!content/2026-10-platform-webinar-zh.md
+!content/news.md
+!content/notification.md
+!content/meeting.md
+!content/event.md
+!content/webinar.md
 
 # Generated email output (HTML/EML) — reproducible via `npm run generate`
 output/

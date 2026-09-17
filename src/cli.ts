@@ -15,9 +15,9 @@ Options:
   -h, --help                            Show this help
 
 Examples:
-  mdmailer content/example.md
+  mdmailer content/news.md
   mdmailer content/
-  mdmailer content/example.md --theme navy-gold
+  mdmailer content/news.md --theme navy-gold
 
 Also supported: mdmailer generate --input <file.md>
 

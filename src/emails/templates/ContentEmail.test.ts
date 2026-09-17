@@ -32,28 +32,15 @@ test("news variant renders its category, title, and dateline", async () => {
   assert.match(html, /content="width=device-width, initial-scale=1"/);
 });
 
-test("release notes and digest variants render their semantic categories", async () => {
-  const releaseNotes = await renderContent({
-    ...common,
-    variant: "release-notes",
-    categoryLabel: "Release notes",
-    date: "2026-09-09",
-  });
-  const digest = await renderContent({ ...common, variant: "digest", categoryLabel: "Digest", date: "2026-09-09" });
-
-  assert.match(releaseNotes, />Release notes<\/p>/);
-  assert.match(digest, />Digest<\/p>/);
-});
-
-test("announcement variant renders banner and headline without a dateline", async () => {
+test("notification variant renders banner and headline without a dateline", async () => {
   const html = await renderContent({
     ...common,
-    variant: "announcement",
+    variant: "notification",
     headline: "Important headline",
-    bannerText: "Announcement label",
+    bannerText: "Notification label",
   });
 
-  assert.match(html, />Announcement label<\/p>/);
+  assert.match(html, />Notification label<\/p>/);
   assert.match(html, />Important headline<\/h1>/);
   assert.doesNotMatch(html, /2026-09-09/);
 });

@@ -9,7 +9,7 @@ import { DEFAULT_EMAIL_PREVIEW_THEME, headingColor } from "../theme.js";
 import { CalloutBanner } from "../components/CalloutBanner.js";
 import { EmailShell, type EmailChromeProps } from "../components/EmailShell.js";
 
-export type ContentVariant = "news" | "release-notes" | "digest" | "announcement";
+export type ContentVariant = "news" | "notification";
 
 interface ContentEmailBaseProps extends EmailChromeProps {
   title: string;
@@ -17,26 +17,26 @@ interface ContentEmailBaseProps extends EmailChromeProps {
 }
 
 interface DatedContentEmailProps extends ContentEmailBaseProps {
-  variant: "news" | "release-notes" | "digest";
+  variant: "news";
   categoryLabel: string;
   date: string;
 }
 
-interface AnnouncementContentEmailProps extends ContentEmailBaseProps {
-  variant: "announcement";
+interface NotificationContentEmailProps extends ContentEmailBaseProps {
+  variant: "notification";
   headline: string;
   bannerText: string;
 }
 
-export type ContentEmailProps = DatedContentEmailProps | AnnouncementContentEmailProps;
+export type ContentEmailProps = DatedContentEmailProps | NotificationContentEmailProps;
 
 export default function ContentEmail(props: ContentEmailProps) {
   const { variant, title, bodyMarkdown, theme } = props;
 
   return (
     <EmailShell {...props} previewText={title}>
-      {variant === "announcement" ? <CalloutBanner text={props.bannerText} theme={theme} /> : null}
-      {variant !== "announcement" ? (
+      {variant === "notification" ? <CalloutBanner text={props.bannerText} theme={theme} /> : null}
+      {variant !== "notification" ? (
         <Text
           style={{
             color: theme.accent,
@@ -58,12 +58,12 @@ export default function ContentEmail(props: ContentEmailProps) {
           fontFamily: theme.fontFamily,
           fontSize: "30px",
           lineHeight: "38px",
-          margin: variant === "announcement" ? "24px 0 0" : "0",
+          margin: variant === "notification" ? "24px 0 0" : "0",
         }}
       >
-        {variant === "announcement" ? props.headline : title}
+        {variant === "notification" ? props.headline : title}
       </Heading>
-      {variant !== "announcement" && props.date ? (
+      {variant !== "notification" && props.date ? (
         <Text
           style={{
             color: theme.mutedForeground,
@@ -111,22 +111,18 @@ export function buildContentProps(ctx: TemplateContext, variant: ContentVariant)
     unsubscribeLabel: t(ctx.locale, "footer.unsubscribe"),
   };
 
-  if (variant === "announcement") {
+  if (variant === "notification") {
     return {
       ...common,
       variant,
       headline: fmString(ctx.frontmatter.headline) ?? ctx.title,
       bannerText: fmString(
         ctx.frontmatter.banner ?? ctx.frontmatter.bannerText ?? ctx.frontmatter.kicker,
-      ) ?? t(ctx.locale, "banner.announcement"),
+      ) ?? t(ctx.locale, "banner.notification"),
     };
   }
 
-  const categoryLabel = {
-    news: t(ctx.locale, "kicker.news"),
-    "release-notes": t(ctx.locale, "kicker.releaseNotes"),
-    digest: t(ctx.locale, "kicker.digest"),
-  }[variant];
+  const categoryLabel = t(ctx.locale, "kicker.news");
 
   return { ...common, variant, categoryLabel, date: ctx.date };
 }

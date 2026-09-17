@@ -215,7 +215,7 @@ function normalizeAgenda(raw: unknown): Agenda {
 
 EventEmail.PreviewProps = {
   title: "You're invited: Hands-on with the new CLI",
-  kicker: "Workshop",
+  kicker: "Meeting",
   eventName: "Hands-on with the new CLI",
   bodyMarkdown:
     "A 90-minute working session for anyone shipping with the toolchain. Bring a laptop with Node 24 installed — we'll build a small integration together.\n\nSeats are limited to 20.",

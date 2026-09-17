@@ -7,12 +7,10 @@ export type MessageKey =
   | "detail.hosts"
   | "section.agenda"
   | "section.hosts"
-  | "kicker.workshop"
+  | "kicker.meeting"
   | "kicker.webinar"
   | "kicker.news"
-  | "kicker.releaseNotes"
-  | "kicker.digest"
-  | "banner.announcement"
+  | "banner.notification"
   | "footer.unsubscribe"
   | "fallback.untitled";
 

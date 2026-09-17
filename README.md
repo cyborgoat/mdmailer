@@ -1,180 +1,103 @@
 # mdmailer
 
-Turn a Markdown file into a branded email, ready to send manually — no automation, no SMTP involved.
+Turn Markdown into branded HTML and EML emails. Preview the HTML in a browser, then open the EML in your mail client to add recipients and send. mdmailer does not send email itself.
 
-Requires Node.js 24 or later.
+Requires **Node.js 24 or later**.
 
-## How it works
+## Quick start
 
-1. Write your update as Markdown, with required `type` and `lang` frontmatter plus a recommended `title` and relevant dates.
-2. Configure your organization's name, logo, typography, and footer once in `mdmailer.config.json`; choose the visual theme in each Markdown file.
-3. Run the generator. It renders the email with [react.email](https://react.email/docs/introduction) and writes two files to `output/`:
-   - `<name>.html` — open in a browser to preview.
-   - `<name>.eml` — open it and your default mail client will pop up a compose window with the formatted email already in the body. Add recipients and hit send.
-
-## Usage
-
-Build and link the CLI once from this repository:
+From this repository:
 
 ```bash
 npm install
 npm run build
 npm link
+mdmailer content/news.md
 ```
 
-Run commands from your email workspace, where `mdmailer.config.json` lives. To set up a new workspace:
+Edit `mdmailer.config.json` for your branding and a file in `content/` for your message. Generate all templates with:
 
 ```bash
-mdmailer init
+mdmailer content/
 ```
 
-This creates missing config, logo, and example Markdown files without overwriting existing files. Edit the config and an example, then generate:
+Outputs go to `output/<name>.html` and `output/<name>.eml`. Matching output files are replaced. Folder generation reads immediate `.md` files in filename order, skips subfolders, and stops on the first error.
+
+For a new email workspace, run `mdmailer init`. It creates missing config, a placeholder logo, and the five templates below without overwriting existing files.
+
+## Templates and themes
+
+| File | Type | Theme | Use for |
+| --- | --- | --- | --- |
+| [news.md](content/news.md) | `news` | `classic` | Updates, release notes, and digests |
+| [notification.md](content/notification.md) | `notification` | `classic` | A notice with a banner and headline |
+| [meeting.md](content/meeting.md) | `meeting` | `navy-gold` | Meeting details, hosts, and an agenda |
+| [event.md](content/event.md) | `event` | `forest-cream` | An event invitation |
+| [webinar.md](content/webinar.md) | `webinar` | `forest-cream` | An online session with speaker bios |
+
+Any type can use any of the three themes:
+
+- `classic` — light background with your brand color; the default.
+- `navy-gold` — navy background with gold accents.
+- `forest-cream` — forest background with cream text and gold accents.
+
+Choose the theme in frontmatter or override it for one run:
 
 ```bash
-mdmailer content/example.md    # One email
-mdmailer content/             # Every Markdown file in the folder
-```
-
-Each input produces `output/<name>.html` and `output/<name>.eml`, replacing existing outputs with the same name. A folder processes `.md` files directly inside it in filename order, without searching subfolders. Generation stops on the first error; files already generated remain in `output/`. An empty folder or a missing input path reports an error.
-
-Optional overrides work with either a file or folder:
-
-```bash
-mdmailer content/example.md --theme navy-gold
+mdmailer content/meeting.md --theme classic
 mdmailer content/ --config path/to/config.json
 ```
 
-`--config` defaults to `mdmailer.config.json` in the current directory. Local image paths and the output folder also resolve from the current directory. `--theme` overrides the preset for every input in that run; email type and language must come from frontmatter. See [Themes](#themes) for preset details.
+Run `mdmailer --help` for usage. The older `mdmailer generate --input <file.md>` command still works.
 
-Run `mdmailer` or `mdmailer --help` for usage. The original `mdmailer generate --input content/example.md` command remains supported, as does `mdmailer generate content/example.md`.
+## Write an email
 
-Without linking, run directly from the repository source:
-
-```bash
-npm run generate -- content/example.md
-npm run generate -- content/
-```
-
-Rebuild with `npm run build` after changing source code when using the linked `mdmailer` command. The npm commands above use the source directly.
-
-## Writing an email
-
-Every input is a Markdown file with a YAML frontmatter block at the very top. Put metadata between the opening and closing `---`; everything after it is the email body. At minimum, frontmatter must contain `type` and `lang`.
+Each Markdown file starts with YAML frontmatter:
 
 ```markdown
 ---
-title: "September Update"
-date: 2026-09-15
+title: "Team update"
 type: news
 lang: en
-theme: navy-gold
+theme: classic
+date: 2026-10-01
 ---
 
-# Headline
+## What's new
 
-Your content here, in normal Markdown (headings, lists, tables, task lists, links, bold/italic, etc.).
-
-![Alt text](https://.../photo.jpg)
-![Alt text](assets/images/photo.jpg)
+Write your message with **formatting**, lists, tables, and [links](https://example.com).
 ```
 
-### Common frontmatter
-
-| Field | Values and behavior |
+| Field | Meaning |
 | --- | --- |
-| `title` | Email subject, preview text, and default visible heading. A missing or blank title becomes `Untitled Email` in English or `未命名邮件` in Chinese. Supplying a meaningful title is strongly recommended. |
-| `date` | Dateline for `news`, `release-notes`, and `digest`; fallback event date when `startsAt` is absent. `announcement` does not display a date. Use an ISO date such as `2026-09-15` for predictable output. |
-| `type` | **Required.** `news`, `release-notes`, `digest`, `announcement`, `event`, `workshop`, or `webinar`. There is no CLI override. See [Email types](#email-types). |
-| `lang` | **Required.** `en` for English or `zh` for Simplified Chinese. See [Language](#language). Aliases: `locale`, `language`. |
-| `theme` | A preset name or an object containing `preset` and optional semantic `colors`. See [Themes](#themes). |
+| `type` | Required: `news`, `notification`, `meeting`, `event`, or `webinar` |
+| `lang` | Required: `en` or `zh` (Simplified Chinese) |
+| `title` | Email subject and default heading |
+| `theme` | `classic`, `navy-gold`, or `forest-cream`; defaults to `classic` |
+| `date` | News dateline; also a fallback for an event's `startsAt` |
 
-Unknown frontmatter fields are ignored. Prefer the canonical names above; aliases exist mainly for compatibility.
+Language changes built-in labels, not your message. Write titles, body text, and host bios in the intended language. Type and language are set in frontmatter only.
 
-### Language
+For **notifications**, use `headline` to override the heading and `banner` for the callout text. Notifications do not display a dateline.
 
-mdmailer supports exactly two template languages:
+For **meetings, events, and webinars**:
 
-| Language | Recommended value | Also recognized |
-| --- | --- | --- |
-| English | `en` | `en-US`, `english` |
-| Simplified Chinese | `zh` | `zh-CN`, `zh-Hans`, `chinese` |
-
-Language values are case-insensitive. Missing or unrecognized values stop generation with an error. Every email must explicitly use `lang: en` or `lang: zh` (or a recognized alias).
-
-The language setting localizes mdmailer-generated interface text: content category labels, event details, section headings, default kickers and announcement banner, the unsubscribe label, and the untitled fallback. It does **not** translate `title`, Markdown body text, host information, `tagline`, `footerText`, or other author-written values. Write those in the intended language yourself.
-
-### Themes
-
-The recommended form selects one of three built-in presets:
-
-| Preset | Appearance |
+| Field | Meaning |
 | --- | --- |
-| `classic` | Light background using the configured primary color for headings and accents. |
-| `navy-gold` | Navy background with gold accents. |
-| `forest-cream` | Forest background with cream text and gold accents. |
+| `eventName` | Heading; defaults to `title` |
+| `kicker` | Small label above the heading; meetings and webinars have localized defaults |
+| `startsAt` | Event date, such as `2026-10-15` |
+| `time` | Quoted time, such as `"16:00–17:00 UTC"` |
+| `location` | Venue or online location |
+| `joinUrl` | Meeting or registration link |
+| `hosts` | Names or objects with `name`, optional `role`, `bio`, and `photo` |
+| `agenda` | Markdown text, a list of strings, or a list of `{ time, title }` objects |
 
-For example, use `theme: navy-gold`. If `theme` is omitted, mdmailer uses `classic`. For custom colors, use the object form and override only the tokens you need:
+Date and time appear inside the details box with location and the join link. Missing details are omitted. Meetings show hosts in a separate section; events and webinars do so when host profiles include photos, roles, or bios.
 
-```yaml
-theme:
-  preset: navy-gold
-  colors:
-    background: "#14213D"
-    foreground: "#FFFFFF"
-    mutedForeground: "#D6DCE8"
-    accent: "#FFD166"
-    surface: "#0B132B"
-    border: "#52617A"
-```
+Older files should change `release-notes` and `digest` to `news`, `announcement` to `notification`, and `workshop` to `meeting`. The old type names are no longer accepted.
 
-Colors must be quoted six-digit hexadecimal values. Contrast themes are validated against WCAG AA's 4.5:1 text contrast requirement; generation stops with an explanation when a combination fails. `classic` uses `theme.primaryColor` from `mdmailer.config.json` as its accent unless frontmatter overrides `accent`.
-
-The `--theme <preset>` CLI option replaces the selected preset for one generation. Existing `colors` overrides in frontmatter are retained and applied over that preset.
-
-When both a canonical field and one of its aliases are present, the canonical field takes precedence. Do not specify both in new content.
-
-### Markdown and images
-
-The body supports headings, emphasis, links, ordered and unordered lists, task lists, tables, blockquotes, inline code, code blocks, and images.
-
-Images work the same way the logo does: a hosted `https://...` URL is left as-is, while a local path (relative to the current directory) is automatically embedded at generation time — no image hosting required. As with the logo, it's a `data:` URI in the `.html` preview and a `cid:`-referenced inline attachment in the `.eml`, since Outlook doesn't render `data:` URIs; on the page itself, images are scaled down with CSS to fit the email width, but not re-encoded, so keep source files reasonably sized.
-
-## Email types
-
-The seven email types use two underlying layout families: content (`news`, `release-notes`, `digest`, `announcement`) and events (`event`, `workshop`, `webinar`). Content types receive a localized category label. Missing or unknown frontmatter types stop generation with an error.
-
-| `type:` | Layout |
-| --- | --- |
-| `news` | Company, team, or product news with a title, date, and free-form Markdown body. |
-| `release-notes` | Versioned product changes organized as additions, improvements, and fixes. |
-| `digest` | A recurring roundup of highlights, links, metrics, or updates. |
-| `event` / `workshop` / `webinar` | Invitation layout: compact logo bar, a hero with the event name, a details card (When / Where / Join / Hosts — localized), your Markdown as the description, and an optional agenda. `workshop` and `webinar` preset the eyebrow label. Workshops render hosts in a dedicated section; rich host objects add photos and bios. |
-| `announcement` | One high-impact message: a colored callout strip, a headline, and a short Markdown body. Add links directly in Markdown. |
-
-Event and announcement layouts read additional optional fields; missing values simply omit the corresponding section:
-
-**`event` / `workshop` / `webinar`**
-
-| field (aliases) | notes |
-| --- | --- |
-| `eventName` (`name`) | Hero heading. Falls back to `title`. |
-| `kicker` (`eyebrow`) | Small uppercase label above the heading. `workshop` / `webinar` supply a localized default when omitted. |
-| `startsAt` (`date`) | Event date, shown in the details box’s localized “When” row alongside `time`. |
-| `time` | Clock time in the details box’s “When” row, as a **quoted string**, e.g. `"14:00–15:30 UTC"` — an unquoted `18:00` is parsed as a time and loses its display form. |
-| `location` (`venue`) | The "Where" line. |
-| `joinUrl` (`onlineUrl`) | Online join link. |
-| `hosts` (`speakers`) | A YAML list of names, **or** a list of `{ name, photo, bio, role }` maps. Plain names fill the details card; object hosts (typical for `webinar`) render a photo + intro section instead. Local `photo` paths are embedded like content images. |
-| `agenda` | A Markdown string, a list of strings, or a list of `{ time, title }` entries. |
-
-**`announcement`**
-
-| field (aliases) | notes |
-| --- | --- |
-| `headline` | Main heading. Falls back to `title`. |
-| `banner` (`bannerText`, `kicker`) | Text in the colored strip. Default is localized ("Announcement" / "公告"). |
-Add links directly in the Markdown body, for example `[Read the full policy](https://example.com/policy)`.
-
-## Configuring branding
+## Branding and images
 
 Edit `mdmailer.config.json`:
 
@@ -182,47 +105,39 @@ Edit `mdmailer.config.json`:
 {
   "organization": {
     "name": "Your Organization",
-    "logoUrl": "https://.../logo.png",
-    "logoUrlOnDark": "https://.../logo-white.png"
+    "logoUrl": "assets/logo.svg"
   },
   "theme": {
-    "primaryColor": "#1a73e8",
-    "footerText": "© 2026 {{organization}}",
-    "tagline": "Flowing intelligence across the network.",
-    "fontFamily": "\"Microsoft YaHei\", \"Helvetica Neue\", Helvetica, Arial, \"PingFang SC\", sans-serif",
-    "contentWidth": 680,
-    "social": [{ "label": "GitHub", "url": "https://github.com/your-org" }],
-    "address": "123 Market Street, Tech City, CA 94102",
-    "unsubscribeUrl": "https://.../unsubscribe"
+    "primaryColor": "#1A73E8",
+    "tagline": "Your tagline",
+    "footerText": "© 2026 {{organization}}"
   }
 }
 ```
 
-`social`, `address`, and `unsubscribeUrl` are optional and appear in the shared footer for every layout (`social` renders as plain text links, so it works even where images are blocked). Configs without these keys keep working unchanged.
+Optional settings include `organization.logoUrlOnDark` for dark themes, and `theme.fontFamily`, `contentWidth`, `social` (`{ label, url }` entries), `address`, and `unsubscribeUrl`.
 
-The global config holds organization-wide branding, typography, width, and footer metadata. Per-email visual selection belongs in Markdown frontmatter; see [Themes](#themes) for presets, custom colors, defaults, and CLI precedence.
+Use local paths or hosted HTTPS URLs for logos, Markdown images, and host photos. Local images are embedded in both outputs; HTML uses data URLs and EML uses inline attachments. Local SVGs are converted to PNG. All local paths, the default config, and `output/` resolve from the current working directory.
 
-`logoUrl` accepts either a hosted `https://...` URL, or a path (relative to the current directory) to a local image file — local logos are automatically embedded at generation time (SVGs are rasterized to PNG first, since most email clients don't render inline SVG), so no image hosting is required. It's embedded differently depending on the output: in the `.html` preview it's a `data:` URI (browsers render those fine), while in the `.eml` it's attached as a proper inline image referenced by `Content-ID`/`cid:` — Outlook doesn't render `data:` URIs in `<img>` tags, so this keeps the logo visible there too.
+For custom theme colors, use an object instead of a preset name:
 
-`logoUrlOnDark` is optional artwork for contrast mode, typically a white or light-stroke logo. It follows the same hosted/local embedding rules as `logoUrl`. When it is omitted, mdmailer keeps the normal logo legible by placing it on a compact white plate; it does not use CSS filters or rewrite third-party artwork.
-
-`fontFamily` is optional and defaults to `"Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, "PingFang SC", sans-serif` — a stack that covers both Latin and Simplified Chinese glyphs. Outlook desktop renders with the Word HTML engine, which only matches web-safe fonts already installed on the system (no `@font-face`/web fonts), so stick to fonts you know your recipients have — the default only uses fonts that ship with Windows and macOS.
-
-`contentWidth` is optional and defaults to `680`, producing a more readable line length while retaining enough room for event details and tables.
-
-`organization.name` and `theme.tagline` form a centered footer brand stack. Optional links and address follow below, with the copyright and unsubscribe text in a separate legal group. The logo remains in the shared centered header rather than repeating in the footer. `theme.footerText` can include the placeholder `{{organization}}`, which is replaced with `organization.name` at generation time.
-
-## Local development
-
-Example Markdown lives under `content/`, generated HTML and EML files under `output/`, and reusable images under `assets/`. Generated output is gitignored.
-
-```bash
-npm install
-npm run generate -- content/2026-08-engineering.md
-npm run generate -- content/                                  # regenerate all examples
-npm run email:dev                                             # react.email live preview server
-npm run typecheck
-npm run build                                                 # bundles src/cli.ts -> dist/cli.js via tsup
+```yaml
+theme:
+  preset: navy-gold
+  colors:
+    accent: "#FFE099"
 ```
 
-`engines.node` is `>=24`, matching `react-email`'s own Node requirement.
+Supported color keys are `background`, `foreground`, `mutedForeground`, `accent`, `surface`, and `border`. Quote six-digit hex values. Dark themes enforce WCAG AA text contrast. `--theme` changes the preset while retaining frontmatter color overrides.
+
+## Development
+
+```bash
+npm run generate -- content/   # Run from source without linking
+npm run email:dev              # Live template previews
+npm run typecheck
+npm test
+npm run build
+```
+
+The linked `mdmailer` command uses `dist/cli.js`; rebuild after changing source code. Generated output and personal drafts are gitignored; the five starter files are tracked.

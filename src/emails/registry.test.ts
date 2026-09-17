@@ -9,28 +9,31 @@ import type { TemplateContext } from "./template-context.js";
 
 test("content types share one physical template", () => {
   assert.equal(templates.news.component, ContentEmail);
-  assert.equal(templates["release-notes"].component, ContentEmail);
-  assert.equal(templates.digest.component, ContentEmail);
-  assert.equal(templates.announcement.component, ContentEmail);
+  assert.equal(templates.notification.component, ContentEmail);
 });
 
 test("event types share one physical template", () => {
   assert.equal(templates.event.component, EventEmail);
-  assert.equal(templates.workshop.component, EventEmail);
+  assert.equal(templates.meeting.component, EventEmail);
   assert.equal(templates.webinar.component, EventEmail);
 });
 
 test("template resolution requires a valid frontmatter type", () => {
   assert.equal(resolveTemplateName(undefined), null);
   assert.equal(resolveTemplateName(""), null);
-  assert.equal(resolveTemplateName("release-notes"), "release-notes");
-  assert.equal(resolveTemplateName(" WORKSHOP "), "workshop");
+  for (const type of ["news", "notification", "meeting", "event", "webinar"]) {
+    assert.equal(resolveTemplateName(type), type);
+  }
+  for (const type of ["release-notes", "digest", "announcement", "workshop", "constructor", "toString", "__proto__"]) {
+    assert.equal(resolveTemplateName(type), null);
+  }
+  assert.equal(resolveTemplateName(" MEETING "), "meeting");
   assert.equal(resolveTemplateName("regular"), null);
   assert.equal(resolveTemplateName("minimal"), null);
   assert.equal(resolveTemplateName("unknown"), null);
 });
 
-test("workshop and webinar aliases preserve their event defaults", () => {
+test("meeting and webinar types preserve their event defaults", () => {
   const config = configSchema.parse({
     organization: { name: "Example", logoUrl: "assets/logo.svg" },
     theme: { primaryColor: "#1a73e8", footerText: "© Example" },
@@ -47,11 +50,11 @@ test("workshop and webinar aliases preserve their event defaults", () => {
     hostProfiles: [],
   };
 
-  const workshop = templates.workshop.buildProps(ctx) as EventEmailProps;
+  const meeting = templates.meeting.buildProps(ctx) as EventEmailProps;
   const webinar = templates.webinar.buildProps(ctx) as EventEmailProps;
 
-  assert.equal(workshop.kicker, "Workshop");
-  assert.equal(workshop.showHostsSection, true);
+  assert.equal(meeting.kicker, "Meeting");
+  assert.equal(meeting.showHostsSection, true);
   assert.equal(webinar.kicker, "Webinar");
   assert.equal(webinar.showHostsSection, false);
 });
@@ -74,10 +77,10 @@ test("content types receive localized semantic labels", () => {
   };
 
   const news = templates.news.buildProps(base) as ContentEmailProps;
-  const releaseNotes = templates["release-notes"].buildProps(base) as ContentEmailProps;
-  const digest = templates.digest.buildProps({ ...base, locale: "zh" }) as ContentEmailProps;
+  const notification = templates.notification.buildProps({ ...base, locale: "zh" }) as ContentEmailProps;
+  const meeting = templates.meeting.buildProps({ ...base, locale: "zh" }) as EventEmailProps;
 
-  assert.equal(news.variant === "announcement" ? "" : news.categoryLabel, "News");
-  assert.equal(releaseNotes.variant === "announcement" ? "" : releaseNotes.categoryLabel, "Release notes");
-  assert.equal(digest.variant === "announcement" ? "" : digest.categoryLabel, "简报");
+  assert.equal(news.variant === "notification" ? "" : news.categoryLabel, "News");
+  assert.equal(notification.variant === "notification" ? notification.bannerText : "", "通知");
+  assert.equal(meeting.kicker, "会议");
 });

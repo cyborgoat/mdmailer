@@ -11,12 +11,10 @@ joinUrl: "https://example.com/zoom/api-webinar"
 hosts:
   - name: Priya Nair
     role: Staff Platform Engineer
-    photo: assets/images/hosts/priya-nair.jpg
-    bio: Leads API reliability work across our edge services. Previously built timeout and retry libraries used by most product teams.
+    bio: Leads API reliability work across our edge services.
   - name: Marcus Cole
     role: Principal Engineer, Observability
-    photo: assets/images/hosts/marcus-cole.jpg
-    bio: Designs the tracing and SLO tooling we use on-call. Spends a lot of time turning noisy dashboards into signals people trust.
+    bio: Designs the tracing and SLO tooling we use on-call.
 agenda:
   - time: "16:00"
     title: "What breaks at scale (and what doesn't)"
@@ -34,3 +32,5 @@ on-call — then take questions live.
 
 - Backend and platform engineers shipping public or partner APIs
 - Anyone who's been burned by cascading timeouts and wants a clearer playbook
+
+> Nothing to install — join from a browser when it's time.

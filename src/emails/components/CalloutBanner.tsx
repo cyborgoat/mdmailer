@@ -7,7 +7,7 @@ interface CalloutBannerProps {
   theme: EmailTheme;
 }
 
-/** A full-width colored strip with bold white text — the announcement header. */
+/** A full-width colored strip with bold white text — the notification header. */
 export function CalloutBanner({ text, theme }: CalloutBannerProps) {
   const isContrast = theme.appearance === "contrast";
 

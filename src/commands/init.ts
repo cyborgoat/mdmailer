@@ -67,7 +67,7 @@ You get **bold**, *italic*, ~~strikethrough~~, and \`inline code\`, plus [links]
 ## Code block
 
 \`\`\`bash
-mdmailer content/example.md
+mdmailer content/news.md
 \`\`\`
 
 ---
@@ -75,9 +75,9 @@ mdmailer content/example.md
 Questions? Reply to this email.
 `;
 
-const EXAMPLE_EVENT = `---
+const EXAMPLE_MEETING = `---
 title: "You're invited: Intro to the Design System"
-type: workshop
+type: meeting
 lang: en
 theme: navy-gold
 eventName: "Intro to the Design System"
@@ -122,11 +122,9 @@ joinUrl: "https://example.com/zoom/api-webinar"
 hosts:
   - name: Priya Nair
     role: Staff Platform Engineer
-    photo: assets/images/hosts/priya-nair.jpg
     bio: Leads API reliability work across our edge services.
   - name: Marcus Cole
     role: Principal Engineer, Observability
-    photo: assets/images/hosts/marcus-cole.jpg
     bio: Designs the tracing and SLO tooling we use on-call.
 agenda:
   - time: "16:00"
@@ -149,9 +147,9 @@ on-call — then take questions live.
 > Nothing to install — join from a browser when it's time.
 `;
 
-const EXAMPLE_ANNOUNCEMENT = `---
+const EXAMPLE_NOTIFICATION = `---
 title: "All-hands moves to Thursdays"
-type: announcement
+type: notification
 lang: en
 theme: classic
 headline: "All-hands moves to Thursdays, starting March"
@@ -173,39 +171,21 @@ Thursday keeps it live for more people.
 [See the new calendar](https://example.com/all-hands)
 `;
 
-const EXAMPLE_RELEASE_NOTES = `---
-title: "Release notes — v1.0"
-type: release-notes
+const EXAMPLE_EVENT = `---
+title: "You're invited: Community open house"
+type: event
 lang: en
-date: 2026-01-06
-theme: navy-gold
----
-
-## Added
-
-- A faster setup flow
-- Clearer validation messages
-
-## Fixed
-
-- Images now scale correctly on mobile clients
-`;
-
-const EXAMPLE_DIGEST = `---
-title: "January digest"
-type: digest
-lang: en
-date: 2026-01-31
 theme: forest-cream
+eventName: "Community open house"
+startsAt: 2026-10-22
+time: "17:00–19:00 UTC"
+location: "Main hall"
+joinUrl: "https://example.com/events/open-house"
+hosts:
+  - Community Team
 ---
 
-## Highlights
-
-- Shipped the new onboarding experience
-- Welcomed three new teammates
-- Published the next-quarter roadmap
-
-Read on for the details and useful links from this month.
+Meet the team, explore recent projects, and share ideas over refreshments.
 `;
 
 async function exists(path: string): Promise<boolean> {
@@ -234,12 +214,11 @@ export async function runInit() {
 
   await writeIfMissing(configPath, DEFAULT_CONFIG);
   await mkdir(contentDir, { recursive: true });
-  await writeIfMissing(resolve(contentDir, "example.md"), EXAMPLE_CONTENT);
-  await writeIfMissing(resolve(contentDir, "example-release-notes.md"), EXAMPLE_RELEASE_NOTES);
-  await writeIfMissing(resolve(contentDir, "example-digest.md"), EXAMPLE_DIGEST);
-  await writeIfMissing(resolve(contentDir, "example-workshop.md"), EXAMPLE_EVENT);
-  await writeIfMissing(resolve(contentDir, "example-webinar.md"), EXAMPLE_WEBINAR);
-  await writeIfMissing(resolve(contentDir, "example-announcement.md"), EXAMPLE_ANNOUNCEMENT);
+  await writeIfMissing(resolve(contentDir, "news.md"), EXAMPLE_CONTENT);
+  await writeIfMissing(resolve(contentDir, "meeting.md"), EXAMPLE_MEETING);
+  await writeIfMissing(resolve(contentDir, "event.md"), EXAMPLE_EVENT);
+  await writeIfMissing(resolve(contentDir, "webinar.md"), EXAMPLE_WEBINAR);
+  await writeIfMissing(resolve(contentDir, "notification.md"), EXAMPLE_NOTIFICATION);
   await mkdir(assetsDir, { recursive: true });
   await writeIfMissing(logoPath, PLACEHOLDER_LOGO_SVG);
 
@@ -247,16 +226,15 @@ export async function runInit() {
     "\nNext steps:\n" +
       "  1. Replace assets/logo.svg with your real logo (or point logoUrl at a hosted image).\n" +
       "  2. Edit mdmailer.config.json with your organization's branding and footer.\n" +
-      "  3. Edit content/example.md with your update.\n" +
-      "  4. Run: npm run generate -- content/example.md\n" +
+      "  3. Edit content/news.md with your update.\n" +
+      "  4. Run: mdmailer content/news.md\n" +
       "\n" +
       "Every Markdown file must declare its layout and language in frontmatter. Each example above shows one:\n" +
-      "  example.md              news update                 (type: news)\n" +
-      "  example-release-notes.md product changes             (type: release-notes)\n" +
-      "  example-digest.md       recurring roundup           (type: digest)\n" +
-      "  example-workshop.md     workshop / event invitation  (type: workshop)\n" +
-      "  example-webinar.md      webinar invitation           (type: webinar)\n" +
-      "  example-announcement.md single high-impact notice     (type: announcement)\n" +
+      "  news.md              news update                  (type: news)\n" +
+      "  notification.md notice with a headline       (type: notification)\n" +
+      "  meeting.md      meeting invitation           (type: meeting)\n" +
+      "  event.md        event invitation             (type: event)\n" +
+      "  webinar.md      webinar invitation           (type: webinar)\n" +
       "Set the required layout with `type:` in frontmatter.\n" +
       "Set the required language with `lang: en` or `lang: zh` (English or Chinese).\n",
   );
