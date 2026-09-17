@@ -14,18 +14,48 @@ Requires Node.js 24 or later.
 
 ## Usage
 
+Build and link the CLI once from this repository:
+
 ```bash
 npm install
-npm run init
+npm run build
+npm link
 ```
 
-This scaffolds `mdmailer.config.json`, a placeholder logo, and Markdown examples for every email type. Edit the config and an example, then generate:
+Run commands from your email workspace, where `mdmailer.config.json` lives. To set up a new workspace:
 
 ```bash
-npm run generate -- --input content/example.md
+mdmailer init
 ```
 
-Generation accepts `--config <file>` to use a non-default config and `--theme <preset>` to override the email's frontmatter theme once. Email type and language must come from frontmatter. See [Themes](#themes) for preset details.
+This creates missing config, logo, and example Markdown files without overwriting existing files. Edit the config and an example, then generate:
+
+```bash
+mdmailer content/example.md    # One email
+mdmailer content/             # Every Markdown file in the folder
+```
+
+Each input produces `output/<name>.html` and `output/<name>.eml`, replacing existing outputs with the same name. A folder processes `.md` files directly inside it in filename order, without searching subfolders. Generation stops on the first error; files already generated remain in `output/`. An empty folder or a missing input path reports an error.
+
+Optional overrides work with either a file or folder:
+
+```bash
+mdmailer content/example.md --theme navy-gold
+mdmailer content/ --config path/to/config.json
+```
+
+`--config` defaults to `mdmailer.config.json` in the current directory. Local image paths and the output folder also resolve from the current directory. `--theme` overrides the preset for every input in that run; email type and language must come from frontmatter. See [Themes](#themes) for preset details.
+
+Run `mdmailer` or `mdmailer --help` for usage. The original `mdmailer generate --input content/example.md` command remains supported, as does `mdmailer generate content/example.md`.
+
+Without linking, run directly from the repository source:
+
+```bash
+npm run generate -- content/example.md
+npm run generate -- content/
+```
+
+Rebuild with `npm run build` after changing source code when using the linked `mdmailer` command. The npm commands above use the source directly.
 
 ## Writing an email
 
@@ -37,7 +67,7 @@ title: "September Update"
 date: 2026-09-15
 type: news
 lang: en
-theme: cobalt-mint
+theme: navy-gold
 ---
 
 # Headline
@@ -75,28 +105,26 @@ The language setting localizes mdmailer-generated interface text: content catego
 
 ### Themes
 
-The recommended form selects one of five built-in presets:
+The recommended form selects one of three built-in presets:
 
 | Preset | Appearance |
 | --- | --- |
 | `classic` | Light background using the configured primary color for headings and accents. |
-| `cobalt-mint` | Cobalt background with mint accents. |
 | `navy-gold` | Navy background with gold accents. |
 | `forest-cream` | Forest background with cream text and gold accents. |
-| `plum-rose` | Plum background with rose accents. |
 
 For example, use `theme: navy-gold`. If `theme` is omitted, mdmailer uses `classic`. For custom colors, use the object form and override only the tokens you need:
 
 ```yaml
 theme:
-  preset: cobalt-mint
+  preset: navy-gold
   colors:
-    background: "#1A4B8C"
+    background: "#14213D"
     foreground: "#FFFFFF"
-    mutedForeground: "#D9E5F2"
-    accent: "#A7F3D0"
-    surface: "#143B70"
-    border: "#6F91BC"
+    mutedForeground: "#D6DCE8"
+    accent: "#FFD166"
+    surface: "#0B132B"
+    border: "#52617A"
 ```
 
 Colors must be quoted six-digit hexadecimal values. Contrast themes are validated against WCAG AA's 4.5:1 text contrast requirement; generation stops with an explanation when a combination fails. `classic` uses `theme.primaryColor` from `mdmailer.config.json` as its accent unless frontmatter overrides `accent`.
@@ -186,11 +214,12 @@ The global config holds organization-wide branding, typography, width, and foote
 
 ## Local development
 
-Example Markdown lives under `content/`, matching generated previews under `output/`, and reusable images under `assets/`.
+Example Markdown lives under `content/`, generated HTML and EML files under `output/`, and reusable images under `assets/`. Generated output is gitignored.
 
 ```bash
 npm install
-npm run generate -- --input content/2026-08-engineering.md
+npm run generate -- content/2026-08-engineering.md
+npm run generate -- content/                                  # regenerate all examples
 npm run email:dev                                             # react.email live preview server
 npm run typecheck
 npm run build                                                 # bundles src/cli.ts -> dist/cli.js via tsup

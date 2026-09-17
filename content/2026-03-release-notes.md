@@ -3,7 +3,7 @@ title: "Release Notes — v1.4"
 date: 2026-03-02
 type: release-notes
 lang: en
-theme: plum-rose
+theme: navy-gold
 ---
 
 # v1.4 release notes

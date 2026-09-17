@@ -3,7 +3,7 @@ title: "August Engineering Update"
 date: 2026-08-26
 type: news
 lang: en
-theme: cobalt-mint
+theme: navy-gold
 ---
 
 # What shipped this month

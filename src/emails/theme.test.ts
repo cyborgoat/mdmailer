@@ -26,8 +26,15 @@ test("missing frontmatter theme resolves to classic", () => {
   assert.equal(theme.accent, "#1a73e8");
 });
 
+test("removed presets are rejected in both frontmatter forms", () => {
+  for (const preset of ["cobalt-mint", "plum-rose"]) {
+    assert.equal(frontmatterThemeSchema.safeParse(preset).success, false);
+    assert.equal(frontmatterThemeSchema.safeParse({ preset }).success, false);
+  }
+});
+
 test("contrast defaults meet AA for every rendered text pairing", () => {
-  const theme = resolveTheme("cobalt-mint");
+  const theme = resolveTheme("navy-gold");
 
   for (const [text, background] of [
     [theme.foreground, theme.background],
@@ -56,8 +63,8 @@ test("frontmatter object form selects a preset", () => {
 
 test("contrast configurations reject inaccessible overrides", () => {
   const result = frontmatterThemeSchema.safeParse({
-    preset: "cobalt-mint",
-    colors: { foreground: "#1A4B8C" },
+    preset: "navy-gold",
+    colors: { foreground: "#14213D" },
   });
 
   assert.equal(result.success, false);
@@ -83,7 +90,7 @@ test("contrast rendering applies semantic colors throughout the shell", async ()
   });
   const theme = resolveEmailTheme(
     config.theme,
-    normalizeThemeSelection(frontmatterThemeSchema.parse("cobalt-mint")),
+    normalizeThemeSelection(frontmatterThemeSchema.parse("navy-gold")),
   );
   const html = await render(React.createElement(ContentEmail, {
     variant: "news",
@@ -103,9 +110,9 @@ test("contrast rendering applies semantic colors throughout the shell", async ()
     unsubscribeLabel: "Unsubscribe",
   }));
 
-  assert.match(html, /background-color:#1A4B8C/);
+  assert.match(html, /background-color:#14213D/);
   assert.match(html, /color:#FFFFFF/);
-  assert.match(html, /color:#A7F3D0/);
+  assert.match(html, /color:#FFD166/);
   assert.match(html, /logo-white\.png/);
 });
 
@@ -113,7 +120,7 @@ test("contrast rendering adds a white plate when no dark logo exists", async () 
   const config = configSchema.parse(baseConfig);
   const theme = resolveEmailTheme(
     config.theme,
-    normalizeThemeSelection(frontmatterThemeSchema.parse("cobalt-mint")),
+    normalizeThemeSelection(frontmatterThemeSchema.parse("navy-gold")),
   );
   const html = await render(React.createElement(ContentEmail, {
     variant: "news",

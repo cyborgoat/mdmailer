@@ -13,6 +13,7 @@ import { resolveBrandLogo } from "../resolve-logo.js";
 import { resolveContentImages } from "../resolve-content-images.js";
 import { resolveHosts } from "../resolve-hosts.js";
 import { normalizeThemeSelection, resolveEmailTheme, selectLogoUrl } from "../emails/theme.js";
+import { parseGenerateArgs, resolveGenerateInputs } from "../generate-input.js";
 
 interface EmlAttachment {
   cid: string;
@@ -21,18 +22,6 @@ interface EmlAttachment {
   // The string to find-and-replace in the rendered HTML with `cid:<cid>` —
   // either the org logo's resolved src, or a content image's data URI.
   renderedSrc: string;
-}
-
-function parseArgs(argv: string[]) {
-  const args = new Map<string, string>();
-  for (let i = 0; i < argv.length; i += 1) {
-    const arg = argv[i];
-    if (arg.startsWith("--")) {
-      args.set(arg.slice(2), argv[i + 1]);
-      i += 1;
-    }
-  }
-  return args;
 }
 
 function extensionForMime(mime: string): string {
@@ -108,13 +97,25 @@ function buildEml(subject: string, html: string, text: string, attachments: EmlA
 }
 
 export async function runGenerate(argv: string[]) {
-  const args = parseArgs(argv);
+  const args = parseGenerateArgs(argv);
+  const input = args.get("input");
+  if (!input) {
+    throw new Error("Provide a Markdown file or folder: mdmailer <file.md | folder/>.");
+  }
+  const inputs = await resolveGenerateInputs(input);
+  for (const inputPath of inputs) {
+    await generateFile(new Map(args).set("input", inputPath));
+    if (process.exitCode) return;
+  }
+}
+
+async function generateFile(args: Map<string, string>) {
   const inputPath = args.get("input");
   const configPath = args.get("config") ?? "mdmailer.config.json";
 
   if (!inputPath) {
     console.error(
-      "Usage: mdmailer generate --input content/<file>.md [--config mdmailer.config.json] [--theme <preset>]",
+      "Usage: mdmailer <file.md | folder/> [--config <file>] [--theme <preset>]",
     );
     process.exitCode = 1;
     return;

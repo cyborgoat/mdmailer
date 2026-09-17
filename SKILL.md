@@ -14,6 +14,19 @@ Use this project to turn Markdown with YAML frontmatter into a browser-previewab
 - Install locked dependencies with `npm ci` when `node_modules/` is absent.
 - Preserve existing user changes in a dirty worktree.
 
+## CLI setup
+
+If `mdmailer` is not available, build and link it from the repository:
+
+```bash
+npm run build
+npm link
+```
+
+The linked command runs `dist/cli.js`; rebuild after source changes before using it. To generate from source without linking or rebuilding, use `npm run generate -- content/<name>.md` or `npm run generate -- content/` from the repository root.
+
+Run `mdmailer` or `mdmailer --help` for usage. The legacy `mdmailer generate --input <file.md>` syntax remains supported, but prefer positional file or folder inputs in new instructions.
+
 ## Standard workflow
 
 1. Read `mdmailer.config.json` and the relevant file under `content/`.
@@ -23,7 +36,7 @@ Use this project to turn Markdown with YAML frontmatter into a browser-previewab
 5. Generate the email:
 
    ```bash
-   npm run generate -- --input content/<name>.md
+   mdmailer content/<name>.md
    ```
 
 6. Verify both `output/<name>.html` and `output/<name>.eml` exist.
@@ -32,8 +45,8 @@ Use this project to turn Markdown with YAML frontmatter into a browser-previewab
 Use a non-default config or override the frontmatter theme when needed:
 
 ```bash
-npm run generate -- --input content/<name>.md --config path/to/config.json
-npm run generate -- --input content/<name>.md --theme navy-gold
+mdmailer content/<name>.md --config path/to/config.json
+mdmailer content/<name>.md --theme navy-gold
 ```
 
 There is no template or language CLI override. Every Markdown input must declare `type` and `lang` in frontmatter.
@@ -43,7 +56,7 @@ There is no template or language CLI override. Every Markdown input must declare
 Run:
 
 ```bash
-npm run init
+mdmailer init
 ```
 
 This creates missing config, asset, and example files without overwriting existing ones. Do not run `init` merely to generate an existing email.
@@ -56,7 +69,7 @@ Read the README's frontmatter and relevant email-type sections before creating o
 - Valid types are `news`, `release-notes`, `digest`, `announcement`, `event`, `workshop`, and `webinar`.
 - Supported languages are English (`en`) and Simplified Chinese (`zh`). Compatibility aliases are documented in README, but use canonical `lang` values in new files.
 - Language affects generated category labels, template labels, and defaults only. Keep titles, body, hosts, tagline, and footer in the user's requested language; mdmailer does not translate them.
-- `theme` is optional and defaults to `classic`. The other presets are `cobalt-mint`, `navy-gold`, `forest-cream`, and `plum-rose`; `--theme` may override only the preset for one run.
+- `theme` is optional and defaults to `classic`. The other presets are `navy-gold` and `forest-cream`; `--theme` may override only the preset for one run.
 - Prefer canonical field names, ISO dates, and quoted times and hex colors. Use Markdown links for calls to action.
 
 For event types, consult README for `eventName`, `kicker`, `startsAt`, `time`, `location`, `joinUrl`, `hosts`, and `agenda` shapes. For announcements, consult it for `headline` and `banner`. Use a nearby file under `content/` as the starting example.
@@ -81,20 +94,20 @@ All layouts use the shared `EmailShell`, header, and footer components. Content 
 For one input, confirm generation and inspect relevant content:
 
 ```bash
-npm run generate -- --input content/<name>.md
 npm run typecheck
 npm run build
+mdmailer content/<name>.md
 ```
 
-To regenerate every tracked example:
+To regenerate all Markdown examples in `content/`:
 
 ```bash
-for input in content/*.md; do
-  npm run generate -- --input "$input" || exit 1
-done
+mdmailer content/
 ```
 
-Expect tracked EML files to change on every generation because MIME boundaries and content IDs use random UUIDs. Treat those identifier-only diffs as normal; investigate changes to rendered text, markup, attachments, or layout separately.
+Folder generation includes all immediate `.md` files, including local untracked examples, in filename order; it does not recurse into subfolders. It stops on the first error and leaves already generated files in place. Empty folders and missing paths report errors. Options such as `--theme` and `--config` apply to every input in the run.
+
+Outputs are written to `output/` relative to the current directory, replacing files with matching names. The folder is gitignored. EML bytes can differ between runs because MIME boundaries and content IDs use random UUIDs; inspect rendered content and attachments rather than treating those identifier changes as regressions.
 
 ## Safety and boundaries
 

@@ -46,15 +46,6 @@ export const THEME_PRESETS = {
     surface: "#f2f2f2",
     border: "#e6e6e6",
   },
-  "cobalt-mint": {
-    appearance: "contrast",
-    background: "#1A4B8C",
-    foreground: "#FFFFFF",
-    mutedForeground: "#D9E5F2",
-    accent: "#A7F3D0",
-    surface: "#143B70",
-    border: "#6F91BC",
-  },
   "navy-gold": {
     appearance: "contrast",
     background: "#14213D",
@@ -73,20 +64,11 @@ export const THEME_PRESETS = {
     surface: "#0F3028",
     border: "#6F8F83",
   },
-  "plum-rose": {
-    appearance: "contrast",
-    background: "#4A1942",
-    foreground: "#FFF7FB",
-    mutedForeground: "#E9D4E3",
-    accent: "#FFC2D1",
-    surface: "#35112F",
-    border: "#956487",
-  },
 } as const;
 
 export type ThemePresetName = keyof typeof THEME_PRESETS;
 export const THEME_PRESET_NAMES = Object.keys(THEME_PRESETS) as [ThemePresetName, ...ThemePresetName[]];
-export const CONTRAST_THEME_DEFAULTS = THEME_PRESETS["cobalt-mint"];
+export const CONTRAST_THEME_DEFAULTS = THEME_PRESETS["navy-gold"];
 
 function relativeLuminance(hex: string): number {
   const channels = [1, 3, 5].map((index) => parseInt(hex.slice(index, index + 2), 16) / 255);

@@ -67,7 +67,7 @@ You get **bold**, *italic*, ~~strikethrough~~, and \`inline code\`, plus [links]
 ## Code block
 
 \`\`\`bash
-npx mdmailer generate --input content/example.md
+mdmailer content/example.md
 \`\`\`
 
 ---
@@ -153,7 +153,7 @@ const EXAMPLE_ANNOUNCEMENT = `---
 title: "All-hands moves to Thursdays"
 type: announcement
 lang: en
-theme: plum-rose
+theme: classic
 headline: "All-hands moves to Thursdays, starting March"
 banner: "Schedule change"
 date: 2026-02-24
@@ -178,7 +178,7 @@ title: "Release notes — v1.0"
 type: release-notes
 lang: en
 date: 2026-01-06
-theme: cobalt-mint
+theme: navy-gold
 ---
 
 ## Added
@@ -248,7 +248,7 @@ export async function runInit() {
       "  1. Replace assets/logo.svg with your real logo (or point logoUrl at a hosted image).\n" +
       "  2. Edit mdmailer.config.json with your organization's branding and footer.\n" +
       "  3. Edit content/example.md with your update.\n" +
-      "  4. Run: npm run generate -- --input content/example.md\n" +
+      "  4. Run: npm run generate -- content/example.md\n" +
       "\n" +
       "Every Markdown file must declare its layout and language in frontmatter. Each example above shows one:\n" +
       "  example.md              news update                 (type: news)\n" +

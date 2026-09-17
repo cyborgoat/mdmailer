@@ -3,7 +3,7 @@ title: "June Monthly Digest"
 date: 2026-06-18
 type: digest
 lang: en
-theme: plum-rose
+theme: forest-cream
 ---
 
 # June monthly digest
