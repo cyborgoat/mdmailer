@@ -89,7 +89,7 @@ For **meetings, events, and webinars**:
 | `startsAt` | Event date, such as `2026-10-15` |
 | `time` | Quoted time, such as `"16:00–17:00 UTC"` |
 | `location` | Venue or online location |
-| `joinUrl` | Meeting or registration link |
+| `joinUrl` | Meeting or registration link, displayed with a short localized label instead of the raw URL |
 | `hosts` | Names or objects with `name`, optional `role`, `bio`, and `photo` |
 | `agenda` | Markdown text, a list of strings, or a list of `{ time, title }` objects |
 

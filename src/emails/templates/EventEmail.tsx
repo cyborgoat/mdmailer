@@ -43,6 +43,7 @@ export interface EventEmailProps {
     when: string;
     where: string;
     join: string;
+    joinLink: string;
     hosts: string;
     hostsSection: string;
     agenda: string;
@@ -88,7 +89,7 @@ export default function EventEmail({
       label: labels.join,
       value: joinUrl ? (
         <Link href={joinUrl} style={{ fontFamily: theme.fontFamily, color: theme.accent, wordBreak: "break-word" }}>
-          {joinUrl}
+          {labels.joinLink}
         </Link>
       ) : (
         ""
@@ -246,6 +247,7 @@ EventEmail.PreviewProps = {
     when: "When",
     where: "Where",
     join: "Join",
+    joinLink: "Join the meeting",
     hosts: "Hosts",
     hostsSection: "Meet the hosts",
     agenda: "Agenda",
@@ -285,6 +287,11 @@ export function buildEventProps(
       when: t(locale, "detail.when"),
       where: t(locale, "detail.where"),
       join: t(locale, "detail.join"),
+      joinLink: t(locale, fmString(fm.type)?.trim().toLowerCase() === "meeting"
+        ? "link.joinMeeting"
+        : fmString(fm.type)?.trim().toLowerCase() === "webinar"
+          ? "link.joinWebinar"
+          : "link.joinEvent"),
       hosts: t(locale, "detail.hosts"),
       hostsSection: t(locale, "section.hosts"),
       agenda: t(locale, "section.agenda"),
