@@ -68,7 +68,6 @@ export const THEME_PRESETS = {
 
 export type ThemePresetName = keyof typeof THEME_PRESETS;
 export const THEME_PRESET_NAMES = Object.keys(THEME_PRESETS) as [ThemePresetName, ...ThemePresetName[]];
-export const CONTRAST_THEME_DEFAULTS = THEME_PRESETS["navy-gold"];
 
 function relativeLuminance(hex: string): number {
   const channels = [1, 3, 5].map((index) => parseInt(hex.slice(index, index + 2), 16) / 255);

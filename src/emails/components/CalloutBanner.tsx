@@ -1,5 +1,4 @@
 import { Section, Text } from "react-email";
-import * as React from "react";
 import type { EmailTheme } from "../theme.js";
 
 interface CalloutBannerProps {

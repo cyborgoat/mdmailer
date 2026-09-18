@@ -10,8 +10,6 @@ export interface HostProfile {
 }
 
 export interface ResolvedHosts {
-  /** Plain name list used by event detail cards. */
-  names: string[];
   /** Rich profiles when frontmatter supplies objects (photo/bio). */
   profiles: HostProfile[];
   attachments: EmbeddedImage[];
@@ -24,11 +22,10 @@ export interface ResolvedHosts {
  */
 export async function resolveHosts(raw: unknown): Promise<ResolvedHosts> {
   if (raw == null) {
-    return { names: [], profiles: [], attachments: [] };
+    return { profiles: [], attachments: [] };
   }
 
   const items = Array.isArray(raw) ? raw : [raw];
-  const names: string[] = [];
   const profiles: HostProfile[] = [];
   const attachments: EmbeddedImage[] = [];
 
@@ -38,7 +35,6 @@ export async function resolveHosts(raw: unknown): Promise<ResolvedHosts> {
       const name = fmString(record.name ?? record.host ?? record.speaker);
       if (!name) continue;
 
-      names.push(name);
       let photoUrl = fmString(record.photo ?? record.image ?? record.avatar);
       const bio = fmString(record.bio ?? record.intro ?? record.about);
       const role = fmString(record.role ?? record.title);
@@ -55,10 +51,9 @@ export async function resolveHosts(raw: unknown): Promise<ResolvedHosts> {
 
     const name = fmString(item);
     if (name) {
-      names.push(name);
       profiles.push({ name });
     }
   }
 
-  return { names, profiles, attachments };
+  return { profiles, attachments };
 }

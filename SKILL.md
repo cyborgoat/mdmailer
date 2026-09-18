@@ -25,7 +25,7 @@ Generate email files from Markdown; the app does not send email. Read [README.md
 
    ```bash
    mdmailer content/news.md
-   mdmailer content/              # All immediate Markdown files
+   mdmailer content/ --output output   # All immediate Markdown files
    ```
 
 If the CLI is unavailable, use `npm run generate -- content/news.md` directly from source. To set up the short command, run `npm run build` and `npm link`. Rebuild after source changes before using the linked command.
@@ -51,4 +51,4 @@ Local assets resolve from the current directory. Confirm files exist before refe
 - Shared layout changes belong in `EmailShell` and its components. `ContentEmail` handles news and notifications; `EventEmail` handles meetings, events, and webinars.
 - After source changes, run `npm run typecheck`, relevant tests, and `npm run build`. Regenerate affected examples and inspect the output.
 - Folder generation processes immediate `.md` files in filename order and stops on the first error. Already generated files remain in place.
-- Outputs are written to gitignored `output/`, replacing matching filenames. Random MIME boundaries and image IDs make EML bytes differ between runs; verify rendered content and attachments.
+- Outputs default to the current working directory. Use `--output <folder>` to choose a destination (created if missing); relative paths resolve from the working directory. Matching filenames are replaced. For repository previews, prefer `--output output` to use the gitignored folder. Random MIME boundaries and image IDs make EML bytes differ between runs; verify rendered content and attachments.

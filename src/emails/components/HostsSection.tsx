@@ -1,5 +1,4 @@
 import { Column, Heading, Img, Row, Section, Text } from "react-email";
-import * as React from "react";
 import type { HostProfile } from "../../resolve-hosts.js";
 import type { EmailTheme } from "../theme.js";
 

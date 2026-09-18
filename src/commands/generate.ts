@@ -4,7 +4,7 @@ import { basename, extname, resolve } from "node:path";
 import * as React from "react";
 import matter from "gray-matter";
 import { render } from "@react-email/render";
-import { configSchema, frontmatterThemeSchema, THEME_PRESET_NAMES, type ThemePresetName } from "../config-schema.js";
+import { configSchema, frontmatterThemeSchema, THEME_PRESET_NAMES, type ThemePresetName, type Config } from "../config-schema.js";
 import { templates, TEMPLATE_NAMES, resolveTemplateName, type TemplateEntry } from "../emails/registry.js";
 import type { TemplateContext } from "../emails/template-context.js";
 import { formatDate } from "../frontmatter.js";
@@ -102,80 +102,53 @@ export async function runGenerate(argv: string[]) {
   if (!input) {
     throw new Error("Provide a Markdown file or folder: mdmailer <file.md | folder/>.");
   }
-  const inputs = await resolveGenerateInputs(input);
-  for (const inputPath of inputs) {
-    await generateFile(new Map(args).set("input", inputPath));
-    if (process.exitCode) return;
-  }
-}
-
-async function generateFile(args: Map<string, string>) {
-  const inputPath = args.get("input");
-  const configPath = args.get("config") ?? "mdmailer.config.json";
-
-  if (!inputPath) {
-    console.error(
-      "Usage: mdmailer <file.md | folder/> [--config <file>] [--theme <preset>]",
-    );
-    process.exitCode = 1;
-    return;
-  }
-
   if (args.has("template") || args.has("type")) {
-    console.error('Email type cannot be set from the CLI. Add it to Markdown frontmatter, for example: type: meeting');
-    process.exitCode = 1;
-    return;
+    throw new Error('Email type cannot be set from the CLI. Add it to Markdown frontmatter, for example: type: meeting');
   }
 
   if (args.has("lang") || args.has("locale") || args.has("language")) {
-    console.error('Email language cannot be set from the CLI. Add it to Markdown frontmatter as lang: en or lang: zh.');
-    process.exitCode = 1;
-    return;
+    throw new Error('Email language cannot be set from the CLI. Add it to Markdown frontmatter as lang: en or lang: zh.');
   }
 
+  const inputs = await resolveGenerateInputs(input);
+  const configPath = args.get("config") ?? "mdmailer.config.json";
   const rawConfig = JSON.parse(await readFile(resolve(configPath), "utf-8"));
   const config = configSchema.parse(rawConfig);
   const themeFlag = args.get("theme")?.toLowerCase().trim();
-  if (themeFlag) {
-    if (!THEME_PRESET_NAMES.includes(themeFlag as ThemePresetName)) {
-      console.error(`Unknown theme "${themeFlag}". Valid themes: ${THEME_PRESET_NAMES.join(", ")}`);
-      process.exitCode = 1;
-      return;
-    }
+  if (themeFlag && !THEME_PRESET_NAMES.includes(themeFlag as ThemePresetName)) {
+    throw new Error(`Unknown theme "${themeFlag}". Valid themes: ${THEME_PRESET_NAMES.join(", ")}`);
   }
+  const outputDir = resolve(args.get("output") ?? ".");
+  for (const inputPath of inputs) {
+    await generateFile(inputPath, config, outputDir, themeFlag);
+  }
+}
 
+async function generateFile(inputPath: string, config: Config, outputDir: string, themeFlag?: string) {
   const rawMarkdown = await readFile(resolve(inputPath), "utf-8");
   const { data: frontmatter, content: rawBodyMarkdown } = matter(rawMarkdown);
   const rawTemplateName = frontmatter.type;
   if (typeof rawTemplateName !== "string" || !rawTemplateName.trim()) {
-    console.error(`Missing required frontmatter field "type". Valid types: ${TEMPLATE_NAMES.join(", ")}`);
-    process.exitCode = 1;
-    return;
+    throw new Error(`Missing required frontmatter field "type". Valid types: ${TEMPLATE_NAMES.join(", ")}`);
   }
   const templateName = resolveTemplateName(rawTemplateName);
   if (!templateName) {
-    console.error(`Unknown frontmatter type "${String(rawTemplateName)}". Valid types: ${TEMPLATE_NAMES.join(", ")}`);
-    process.exitCode = 1;
-    return;
+    throw new Error(`Unknown frontmatter type "${String(rawTemplateName)}". Valid types: ${TEMPLATE_NAMES.join(", ")}`);
   }
 
   const rawLocale = frontmatter.lang ?? frontmatter.locale ?? frontmatter.language;
   if (typeof rawLocale !== "string" || !rawLocale.trim()) {
-    console.error('Missing required frontmatter field "lang". Available languages: English (en) and Chinese (zh).');
-    process.exitCode = 1;
-    return;
+    throw new Error('Missing required frontmatter field "lang". Available languages: English (en) and Chinese (zh).');
   }
   const locale = resolveLocale(rawLocale);
   if (!locale) {
-    console.error(`Unsupported frontmatter language "${String(rawLocale)}". Available languages: English (en) and Chinese (zh).`);
-    process.exitCode = 1;
-    return;
+    throw new Error(`Unsupported frontmatter language "${String(rawLocale)}". Available languages: English (en) and Chinese (zh).`);
   }
 
   const frontmatterTheme = normalizeThemeSelection(frontmatterThemeSchema.parse(frontmatter.theme));
-  const themeSelection = frontmatterThemeSchema.parse(themeFlag
-    ? { ...frontmatterTheme, preset: themeFlag }
-    : frontmatterTheme);
+  const themeSelection = themeFlag
+    ? normalizeThemeSelection(frontmatterThemeSchema.parse({ ...frontmatterTheme, preset: themeFlag }))
+    : frontmatterTheme;
   const { markdown: bodyMarkdown, attachments: contentImages } = await resolveContentImages(rawBodyMarkdown);
   const { profiles: hostProfiles, attachments: hostImages } = await resolveHosts(
     frontmatter.hosts ?? frontmatter.speakers,
@@ -185,7 +158,7 @@ async function generateFile(args: Map<string, string>) {
     ? frontmatter.title
     : t(locale, "fallback.untitled");
   const date = formatDate(frontmatter.date);
-  const theme = resolveEmailTheme(config.theme, normalizeThemeSelection(themeSelection));
+  const theme = resolveEmailTheme(config.theme, themeSelection);
   const selectedLogoUrl = selectLogoUrl(config.organization, theme.appearance);
   const { brand: organization, logoAttachment } = await resolveBrandLogo({
     ...config.organization,
@@ -209,11 +182,11 @@ async function generateFile(args: Map<string, string>) {
   const html = await render(element);
   const text = await render(element, { plainText: true });
 
-  await mkdir("output", { recursive: true });
+  await mkdir(outputDir, { recursive: true });
   const stem = basename(inputPath, extname(inputPath));
 
-  const htmlPath = resolve("output", `${stem}.html`);
-  const emlPath = resolve("output", `${stem}.eml`);
+  const htmlPath = resolve(outputDir, `${stem}.html`);
+  const emlPath = resolve(outputDir, `${stem}.eml`);
 
   // The .html preview keeps every local image as a data: URI (browsers render
   // those fine); the .eml swaps each one for a cid: reference matching its

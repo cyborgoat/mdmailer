@@ -1,5 +1,4 @@
 import { Column, Heading, Link, Row, Section, Text } from "react-email";
-import * as React from "react";
 import Markdown from "markdown-to-jsx";
 import { EmailShell } from "../components/EmailShell.js";
 import { EventDetails, type EventDetailItem } from "../components/EventDetails.js";

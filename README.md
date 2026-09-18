@@ -21,7 +21,14 @@ Edit `mdmailer.config.json` for your branding and a file in `content/` for your 
 mdmailer content/
 ```
 
-Outputs go to `output/<name>.html` and `output/<name>.eml`. Matching output files are replaced. Folder generation reads immediate `.md` files in filename order, skips subfolders, and stops on the first error.
+By default, `<name>.html` and `<name>.eml` are saved in your **current working directory** (where you run the command), not beside the input file. Use `--output <folder>` to choose another destination; missing folders are created. Matching output files are replaced. Folder generation reads immediate `.md` files in filename order, skips subfolders, and stops on the first error.
+
+```bash
+mdmailer content/news.md --output output
+mdmailer content/ --output "/path/to/email exports"
+```
+
+Relative output paths resolve from your current working directory; absolute paths work too.
 
 For a new email workspace, run `mdmailer init`. It creates missing config, a placeholder logo, and the five templates below without overwriting existing files.
 
@@ -117,7 +124,7 @@ Edit `mdmailer.config.json`:
 
 Optional settings include `organization.logoUrlOnDark` for dark themes, and `theme.fontFamily`, `contentWidth`, `social` (`{ label, url }` entries), `address`, and `unsubscribeUrl`.
 
-Use local paths or hosted HTTPS URLs for logos, Markdown images, and host photos. Local images are embedded in both outputs; HTML uses data URLs and EML uses inline attachments. Local SVGs are converted to PNG. All local paths, the default config, and `output/` resolve from the current working directory.
+Use local paths or hosted HTTPS URLs for logos, Markdown images, and host photos. Local images are embedded in both outputs; HTML uses data URLs and EML uses inline attachments. Local SVGs are converted to PNG. Local asset paths and the default config resolve from the current working directory.
 
 For custom theme colors, use an object instead of a preset name:
 
@@ -140,4 +147,4 @@ npm test
 npm run build
 ```
 
-The linked `mdmailer` command uses `dist/cli.js`; rebuild after changing source code. Generated output and personal drafts are gitignored; the five starter files are tracked.
+The linked `mdmailer` command uses `dist/cli.js`; rebuild after changing source code. The optional `output/` folder and personal drafts are gitignored; files generated elsewhere follow your own ignore rules; the five starter files are tracked.

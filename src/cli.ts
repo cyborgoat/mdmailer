@@ -5,11 +5,12 @@ import { TEMPLATE_NAMES } from "./emails/registry.js";
 const HELP = `mdmailer — turn a Markdown file into a branded email, ready to send manually.
 
 Usage:
-  mdmailer <file.md>                     Generate output/<name>.html and .eml
+  mdmailer <file.md>                     Generate <name>.html and .eml
   mdmailer <folder/>                     Generate every .md file directly in a folder
   mdmailer init                          Scaffold config and example content
 
 Options:
+  --output <folder>                      Defaults to the current working directory
   --theme <preset>                       Override the theme preset
   --config <file>                        Defaults to mdmailer.config.json
   -h, --help                            Show this help
@@ -18,6 +19,7 @@ Examples:
   mdmailer content/news.md
   mdmailer content/
   mdmailer content/news.md --theme navy-gold
+  mdmailer content/ --output output
 
 Also supported: mdmailer generate --input <file.md>
 
@@ -46,8 +48,6 @@ async function main() {
       break;
     case undefined:
     case "help":
-    case "--help":
-    case "-h":
       console.log(HELP);
       break;
     default:

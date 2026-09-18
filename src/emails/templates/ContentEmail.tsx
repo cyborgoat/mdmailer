@@ -1,5 +1,4 @@
 import { Heading, Text } from "react-email";
-import * as React from "react";
 import Markdown from "markdown-to-jsx";
 import { fmString } from "../../frontmatter.js";
 import { t } from "../../i18n/index.js";

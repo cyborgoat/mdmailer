@@ -1,5 +1,4 @@
 import { Hr, Link, Section, Text } from "react-email";
-import * as React from "react";
 import type { SocialLink } from "../../config-schema.js";
 import { SocialLinks } from "./SocialLinks.js";
 import type { EmailTheme } from "../theme.js";

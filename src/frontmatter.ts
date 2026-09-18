@@ -16,17 +16,3 @@ export function fmString(value: unknown): string | undefined {
   const str = String(value).trim();
   return str === "" ? undefined : str;
 }
-
-/** Like `fmString`, but falls back to `fallback` instead of `undefined`. */
-export function fmStringOr(value: unknown, fallback: string): string {
-  return fmString(value) ?? fallback;
-}
-
-/** Always an array of non-empty strings — accepts a YAML list or a lone scalar. */
-export function fmList(value: unknown): string[] {
-  if (Array.isArray(value)) {
-    return value.map((item) => String(item).trim()).filter(Boolean);
-  }
-  const str = fmString(value);
-  return str ? [str] : [];
-}

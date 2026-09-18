@@ -1,7 +1,7 @@
 import { readdir, stat } from "node:fs/promises";
 import { extname, join } from "node:path";
 
-const OPTIONS = new Set(["input", "config", "theme", "template", "type", "lang", "locale", "language"]);
+const OPTIONS = new Set(["input", "output", "config", "theme", "template", "type", "lang", "locale", "language"]);
 
 export function parseGenerateArgs(argv: string[]): Map<string, string> {
   const args = new Map<string, string>();
