@@ -1,5 +1,8 @@
 import { access, mkdir, writeFile } from "node:fs/promises";
-import { resolve } from "node:path";
+import { dirname, resolve } from "node:path";
+
+import { copyStarterPhotos } from "../template-assets.js";
+import { globalConfigPath } from "../config.js";
 
 const DEFAULT_CONFIG = `{
   "organization": {
@@ -67,7 +70,7 @@ You get **bold**, *italic*, ~~strikethrough~~, and \`inline code\`, plus [links]
 ## Code block
 
 \`\`\`bash
-mdmailer content/news.md
+mdmailer templates/news.md
 \`\`\`
 
 ---
@@ -122,10 +125,12 @@ joinUrl: "https://example.com/zoom/api-webinar"
 hosts:
   - name: Priya Nair
     role: Staff Platform Engineer
-    bio: Leads API reliability work across our edge services.
+    photo: assets/images/hosts/priya-nair.jpg
+    bio: Leads API reliability across our edge services, with eight years of experience building distributed systems. Previously developed the timeout and retry libraries used by our product teams.
   - name: Marcus Cole
     role: Principal Engineer, Observability
-    bio: Designs the tracing and SLO tooling we use on-call.
+    photo: assets/images/hosts/marcus-cole.jpg
+    bio: Has spent ten years helping teams run reliable production services. Designs tracing and SLO tools, coaches incident responders, and turns noisy dashboards into useful signals.
 agenda:
   - time: "16:00"
     title: "What breaks at scale (and what doesn't)"
@@ -144,7 +149,20 @@ on-call — then take questions live.
 - Backend and platform engineers shipping public or partner APIs
 - Anyone who's been burned by cascading timeouts and wants a clearer playbook
 
-> Nothing to install — join from a browser when it's time.
+## What you will learn
+
+| Topic | Takeaway |
+| --- | --- |
+| **Timeouts and retries** | Choose safe defaults and avoid retry storms |
+| **Observability** | Connect traces, metrics, and service objectives |
+| **Incident reviews** | Turn production lessons into practical improvements |
+
+## Before the session
+
+- [ ] Read the [session overview](https://example.com/webinar/overview).
+- [ ] Bring one reliability question for the live Q&A.
+
+> **No installation needed.** Join from your browser. The recording and slides will be shared afterward.
 `;
 
 const EXAMPLE_NOTIFICATION = `---
@@ -192,7 +210,8 @@ async function exists(path: string): Promise<boolean> {
   try {
     await access(path);
     return true;
-  } catch {
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
     return false;
   }
 }
@@ -206,28 +225,41 @@ async function writeIfMissing(path: string, contents: string) {
   console.log(`Created: ${path}`);
 }
 
-export async function runInit() {
+export async function runInit(argv: string[] = []) {
+  if (argv.length > 1 || (argv.length === 1 && argv[0] !== "--global")) {
+    throw new Error("Usage: mdmailer init [--global]");
+  }
+  if (argv[0] === "--global") {
+    const configPath = globalConfigPath();
+    const assetsDir = resolve(dirname(configPath), "assets");
+    await mkdir(assetsDir, { recursive: true });
+    await writeIfMissing(configPath, DEFAULT_CONFIG);
+    await writeIfMissing(resolve(assetsDir, "logo.svg"), PLACEHOLDER_LOGO_SVG);
+    console.log(`\nEdit ${configPath} to set your organization, logo, brand color, and footer.\nRelative logo paths are resolved from ${dirname(configPath)}.\nGenerate any Markdown file with: mdmailer <file.md>`);
+    return;
+  }
   const configPath = resolve("mdmailer.config.json");
-  const contentDir = resolve("content");
+  const templatesDir = resolve("templates");
   const assetsDir = resolve("assets");
   const logoPath = resolve(assetsDir, "logo.svg");
 
   await writeIfMissing(configPath, DEFAULT_CONFIG);
-  await mkdir(contentDir, { recursive: true });
-  await writeIfMissing(resolve(contentDir, "news.md"), EXAMPLE_CONTENT);
-  await writeIfMissing(resolve(contentDir, "meeting.md"), EXAMPLE_MEETING);
-  await writeIfMissing(resolve(contentDir, "event.md"), EXAMPLE_EVENT);
-  await writeIfMissing(resolve(contentDir, "webinar.md"), EXAMPLE_WEBINAR);
-  await writeIfMissing(resolve(contentDir, "notification.md"), EXAMPLE_NOTIFICATION);
+  await mkdir(templatesDir, { recursive: true });
+  await writeIfMissing(resolve(templatesDir, "news.md"), EXAMPLE_CONTENT);
+  await writeIfMissing(resolve(templatesDir, "meeting.md"), EXAMPLE_MEETING);
+  await writeIfMissing(resolve(templatesDir, "event.md"), EXAMPLE_EVENT);
+  await writeIfMissing(resolve(templatesDir, "webinar.md"), EXAMPLE_WEBINAR);
+  await writeIfMissing(resolve(templatesDir, "notification.md"), EXAMPLE_NOTIFICATION);
   await mkdir(assetsDir, { recursive: true });
   await writeIfMissing(logoPath, PLACEHOLDER_LOGO_SVG);
+  await copyStarterPhotos(assetsDir);
 
   console.log(
     "\nNext steps:\n" +
       "  1. Replace assets/logo.svg with your real logo (or point logoUrl at a hosted image).\n" +
       "  2. Edit mdmailer.config.json with your organization's branding and footer.\n" +
-      "  3. Edit content/news.md with your update.\n" +
-      "  4. Run: mdmailer content/news.md\n" +
+      "  3. Edit templates/news.md with your update.\n" +
+      "  4. Run: mdmailer templates/news.md\n" +
       "\n" +
       "Every Markdown file must declare its layout and language in frontmatter. Each example above shows one:\n" +
       "  news.md              news update                  (type: news)\n" +

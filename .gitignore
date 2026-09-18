@@ -141,11 +141,12 @@ vite.config.ts.timestamp-*
 
 # Personal email drafts stay local; these five starter templates ship
 content/*
-!content/news.md
-!content/notification.md
-!content/meeting.md
-!content/event.md
-!content/webinar.md
+templates/*
+!templates/news.md
+!templates/notification.md
+!templates/meeting.md
+!templates/event.md
+!templates/webinar.md
 
 # Generated email output (HTML/EML) — reproducible via `npm run generate`
 output/

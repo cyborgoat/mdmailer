@@ -7,19 +7,20 @@ const HELP = `mdmailer — turn a Markdown file into a branded email, ready to s
 Usage:
   mdmailer <file.md>                     Generate <name>.html and .eml
   mdmailer <folder/>                     Generate every .md file directly in a folder
-  mdmailer init                          Scaffold config and example content
+  mdmailer init                          Scaffold local config and templates
+  mdmailer init --global                 Create user-wide branding config
 
 Options:
   --output <folder>                      Defaults to the current working directory
   --theme <preset>                       Override the theme preset
-  --config <file>                        Defaults to mdmailer.config.json
+  --config <file>                        Override local or user-global configuration
   -h, --help                            Show this help
 
 Examples:
-  mdmailer content/news.md
-  mdmailer content/
-  mdmailer content/news.md --theme navy-gold
-  mdmailer content/ --output output
+  mdmailer templates/news.md
+  mdmailer templates/
+  mdmailer templates/news.md --theme navy-gold
+  mdmailer templates/ --output output
 
 Also supported: mdmailer generate --input <file.md>
 
@@ -44,7 +45,7 @@ async function main() {
       await runGenerate(rest);
       break;
     case "init":
-      await runInit();
+      await runInit(rest);
       break;
     case undefined:
     case "help":

@@ -4,7 +4,7 @@ import { basename, extname, resolve } from "node:path";
 import * as React from "react";
 import matter from "gray-matter";
 import { render } from "@react-email/render";
-import { configSchema, frontmatterThemeSchema, THEME_PRESET_NAMES, type ThemePresetName, type Config } from "../config-schema.js";
+import { frontmatterThemeSchema, THEME_PRESET_NAMES, type ThemePresetName, type Config } from "../config-schema.js";
 import { templates, TEMPLATE_NAMES, resolveTemplateName, type TemplateEntry } from "../emails/registry.js";
 import type { TemplateContext } from "../emails/template-context.js";
 import { formatDate } from "../frontmatter.js";
@@ -13,6 +13,7 @@ import { resolveBrandLogo } from "../resolve-logo.js";
 import { resolveContentImages } from "../resolve-content-images.js";
 import { resolveHosts } from "../resolve-hosts.js";
 import { normalizeThemeSelection, resolveEmailTheme, selectLogoUrl } from "../emails/theme.js";
+import { loadConfig } from "../config.js";
 import { parseGenerateArgs, resolveGenerateInputs } from "../generate-input.js";
 
 interface EmlAttachment {
@@ -111,9 +112,7 @@ export async function runGenerate(argv: string[]) {
   }
 
   const inputs = await resolveGenerateInputs(input);
-  const configPath = args.get("config") ?? "mdmailer.config.json";
-  const rawConfig = JSON.parse(await readFile(resolve(configPath), "utf-8"));
-  const config = configSchema.parse(rawConfig);
+  const config = await loadConfig(args.get("config"));
   const themeFlag = args.get("theme")?.toLowerCase().trim();
   if (themeFlag && !THEME_PRESET_NAMES.includes(themeFlag as ThemePresetName)) {
     throw new Error(`Unknown theme "${themeFlag}". Valid themes: ${THEME_PRESET_NAMES.join(", ")}`);

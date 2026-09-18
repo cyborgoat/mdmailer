@@ -1,14 +1,13 @@
 {
   "name": "@cyborgoat/mdmailer",
-  "version": "0.1.1",
-  "private": true,
+  "version": "0.1.2",
   "description": "Turn a Markdown file into a branded HTML/EML email, ready to send manually. Configure your organization's name, logo, theme, and tagline once; write updates in plain Markdown.",
   "type": "module",
   "license": "MIT",
   "author": "cyborgoat",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cyborgoat/mailman.git"
+    "url": "git+https://github.com/cyborgoat/mdmailer.git"
   },
   "engines": {
     "node": ">=24"
@@ -22,7 +21,8 @@
     "email:dev": "email dev --dir src/emails/templates",
     "test": "tsx --test \"src/**/*.test.ts\"",
     "typecheck": "tsc --noEmit",
-    "build": "tsup"
+    "build": "tsup",
+    "prepack": "npm run build"
   },
   "dependencies": {
     "@react-email/render": "^2.1.0",
@@ -40,5 +40,21 @@
     "tsup": "^8.5.1",
     "tsx": "^4.23.12",
     "typescript": "^7.0.2"
+  },
+  "files": [
+    "dist/cli.js",
+    "templates/news.md",
+    "templates/notification.md",
+    "templates/meeting.md",
+    "templates/event.md",
+    "templates/webinar.md",
+    "SKILL.md",
+    "README.md",
+    "LICENSE",
+    "assets/images/hosts/priya-nair.jpg",
+    "assets/images/hosts/marcus-cole.jpg"
+  ],
+  "publishConfig": {
+    "access": "public"
   }
 }

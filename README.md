@@ -6,41 +6,74 @@ Requires **Node.js 24 or later**.
 
 ## Quick start
 
-From this repository:
+Install in your email workspace:
 
 ```bash
-npm install
-npm run build
-npm link
-mdmailer content/news.md
+npm install @cyborgoat/mdmailer
+npx mdmailer init
+npx mdmailer templates/news.md
 ```
 
-Edit `mdmailer.config.json` for your branding and a file in `content/` for your message. Generate all templates with:
+For a global CLI, use `npm install -g @cyborgoat/mdmailer`, then run `mdmailer` directly. The examples below use that shorter form.
+
+Edit `mdmailer.config.json` for your branding and a file in `templates/` for your message. Generate all templates with:
 
 ```bash
-mdmailer content/
+mdmailer templates/
 ```
 
 By default, `<name>.html` and `<name>.eml` are saved in your **current working directory** (where you run the command), not beside the input file. Use `--output <folder>` to choose another destination; missing folders are created. Matching output files are replaced. Folder generation reads immediate `.md` files in filename order, skips subfolders, and stops on the first error.
 
 ```bash
-mdmailer content/news.md --output output
-mdmailer content/ --output "/path/to/email exports"
+mdmailer templates/news.md --output output
+mdmailer templates/ --output "/path/to/email exports"
 ```
 
 Relative output paths resolve from your current working directory; absolute paths work too.
 
-For a new email workspace, run `mdmailer init`. It creates missing config, a placeholder logo, and the five templates below without overwriting existing files.
+For a new email workspace, run `mdmailer init`. It creates missing config, a placeholder logo, and the five starters under `templates/` without overwriting existing files. Templates are starting points: your Markdown files can live in any folder.
+
+## Use with an LLM agent
+
+The npm package includes `SKILL.md`, this README, and five starter files in `templates/`, and sample speaker photos. For a local install, tell your agent:
+
+> Read `node_modules/@cyborgoat/mdmailer/SKILL.md` and use mdmailer to create my email.
+
+For a global install, run `npm root -g`; the skill is at `<that directory>/@cyborgoat/mdmailer/SKILL.md`.
+
+Agents can copy a starter into your workspace, edit the Markdown, and run the installed CLI. They do not need the source repository or a build step. Bundling a skill does not automatically register it with every agent; point your agent to the file or register it using that agent's skill mechanism.
+
+## Configure branding once
+
+```bash
+mdmailer init --global
+```
+
+Edit `~/.mdmailer/mdmailer.config.json` to set your organization, logo, brand color, and footer. The command creates a placeholder at `~/.mdmailer/assets/logo.svg`; it does not create templates or change your working folder.
+
+The CLI selects one configuration file in this order:
+
+1. The file passed with `--config <file>`.
+2. `mdmailer.config.json` in your current working directory.
+3. `~/.mdmailer/mdmailer.config.json` in your home directory.
+
+Configurations are not merged. An invalid selected file reports an error instead of silently using another file. A local config lets you use different branding for a particular workspace. No package source files need editing.
+
+Both `logoUrl` and `logoUrlOnDark` resolve relative to the selected JSON file. Absolute paths and hosted URLs also work. After global setup, you can generate from any folder:
+
+```bash
+mdmailer /path/to/my-email.md --output ./emails
+```
 
 ## Templates and themes
 
 | File | Type | Theme | Use for |
 | --- | --- | --- | --- |
-| [news.md](content/news.md) | `news` | `classic` | Updates, release notes, and digests |
-| [notification.md](content/notification.md) | `notification` | `classic` | A notice with a banner and headline |
-| [meeting.md](content/meeting.md) | `meeting` | `navy-gold` | Meeting details, hosts, and an agenda |
-| [event.md](content/event.md) | `event` | `forest-cream` | An event invitation |
-| [webinar.md](content/webinar.md) | `webinar` | `forest-cream` | An online session with speaker bios |
+| [news.md](templates/news.md) | `news` | `classic` | Updates, release notes, and digests |
+| [notification.md](templates/notification.md) | `notification` | `classic` | A notice with a banner and headline |
+| [meeting.md](templates/meeting.md) | `meeting` | `navy-gold` | Meeting details, hosts, and an agenda |
+| [event.md](templates/event.md) | `event` | `forest-cream` | An event invitation |
+| [webinar.md](templates/webinar.md) | `webinar` | `forest-cream` | An online session with speaker photos, roles, experience, and an agenda |
 
 Any type can use any of the three themes:
 
@@ -51,8 +84,8 @@ Any type can use any of the three themes:
 Choose the theme in frontmatter or override it for one run:
 
 ```bash
-mdmailer content/meeting.md --theme classic
-mdmailer content/ --config path/to/config.json
+mdmailer templates/meeting.md --theme classic
+mdmailer templates/ --config path/to/config.json
 ```
 
 Run `mdmailer --help` for usage. The older `mdmailer generate --input <file.md>` command still works.
@@ -100,13 +133,15 @@ For **meetings, events, and webinars**:
 | `hosts` | Names or objects with `name`, optional `role`, `bio`, and `photo` |
 | `agenda` | Markdown text, a list of strings, or a list of `{ time, title }` objects |
 
+The webinar starter demonstrates rich speaker introductions using `name`, `role` (job title), `bio` (experience), and `photo`. `mdmailer init` copies its two sample photos into `assets/images/hosts/`. Replace them and the example biographies with your speakers’ details. The news starter demonstrates text formatting, lists, tables, quotations, and code blocks; the webinar adds a learning-outcomes table and preparation checklist.
+
 Date and time appear inside the details box with location and the join link. Missing details are omitted. Meetings show hosts in a separate section; events and webinars do so when host profiles include photos, roles, or bios.
 
 Older files should change `release-notes` and `digest` to `news`, `announcement` to `notification`, and `workshop` to `meeting`. The old type names are no longer accepted.
 
 ## Branding and images
 
-Edit `mdmailer.config.json`:
+Edit your selected local or global JSON configuration:
 
 ```json
 {
@@ -124,7 +159,7 @@ Edit `mdmailer.config.json`:
 
 Optional settings include `organization.logoUrlOnDark` for dark themes, and `theme.fontFamily`, `contentWidth`, `social` (`{ label, url }` entries), `address`, and `unsubscribeUrl`.
 
-Use local paths or hosted HTTPS URLs for logos, Markdown images, and host photos. Local images are embedded in both outputs; HTML uses data URLs and EML uses inline attachments. Local SVGs are converted to PNG. Local asset paths and the default config resolve from the current working directory.
+Use local paths or hosted HTTPS URLs for logos, Markdown images, and host photos. Local images are embedded in both outputs; HTML uses data URLs and EML uses inline attachments. Local SVGs are converted to PNG. Logo paths resolve from the configuration file’s folder. Markdown image and host-photo paths resolve from the current working directory.
 
 For custom theme colors, use an object instead of a preset name:
 
@@ -139,8 +174,10 @@ Supported color keys are `background`, `foreground`, `mutedForeground`, `accent`
 
 ## Development
 
+For source checkout setup, run `npm ci`, `npm run build`, and optionally `npm link`.
+
 ```bash
-npm run generate -- content/   # Run from source without linking
+npm run generate -- templates/   # Run from source without linking
 npm run email:dev              # Live template previews
 npm run typecheck
 npm test
@@ -148,3 +185,5 @@ npm run build
 ```
 
 The linked `mdmailer` command uses `dist/cli.js`; rebuild after changing source code. The optional `output/` folder and personal drafts are gitignored; files generated elsewhere follow your own ignore rules; the five starter files are tracked.
+
+`npm pack` builds the CLI and includes only the CLI bundle, five starters, SKILL.md, README, license, and package metadata. Only the two sample speaker photos are bundled as assets; personal branding, other assets, drafts, and generated emails are excluded.

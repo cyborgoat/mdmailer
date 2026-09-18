@@ -1,6 +1,6 @@
 ---
 name: mdmailer
-description: Create, configure, generate, and validate branded HTML and EML emails with mdmailer. Use for email content, branding, templates, images, and generation troubleshooting in this repository.
+description: Create, configure, generate, and validate branded HTML and EML emails with mdmailer. Use for email content, branding, templates, images, and generation troubleshooting with the installed npm package or source repository.
 ---
 
 # mdmailer
@@ -9,8 +9,8 @@ Generate email files from Markdown; the app does not send email. Read [README.md
 
 ## Workflow
 
-1. Run from the repository root with Node.js 24 or later. Use `npm ci` if dependencies are missing.
-2. Read `mdmailer.config.json` and choose a starter from `content/`:
+1. Use Node.js 24 or later and run from the user's email workspace, not the installed package directory. For a local npm installation, use `npx --no-install mdmailer`; for a global installation, use `mdmailer`. Do not build or modify the installed package.
+2. Read the selected config (`--config`, working-directory `mdmailer.config.json`, then `~/.mdmailer/mdmailer.config.json`). Choose a starter from the `templates/` folder next to this SKILL.md, or from workspace templates created by `init`:
 
    | Starter | Type | Theme |
    | --- | --- | --- |
@@ -20,17 +20,17 @@ Generate email files from Markdown; the app does not send email. Read [README.md
    | `event.md` | `event` | `forest-cream` |
    | `webinar.md` | `webinar` | `forest-cream` |
 
-3. Edit the requested file or copy a starter for a new message. Preserve unrelated user content.
+3. Copy a bundled starter into the user’s workspace before editing it. For the webinar, also copy the bundled `assets/images/hosts/` photos into the same relative workspace paths (or use real speaker photos). Alternatively, `init` copies the required example assets. Edit the requested existing Markdown file when one is provided. Never write drafts or branding into `node_modules` or the installed package directory. Preserve unrelated user content.
 4. Generate and check both HTML and EML outputs:
 
    ```bash
-   mdmailer content/news.md
-   mdmailer content/ --output output   # All immediate Markdown files
+   npx --no-install mdmailer my-email.md
+   npx --no-install mdmailer ./drafts --output ./emails
    ```
 
-If the CLI is unavailable, use `npm run generate -- content/news.md` directly from source. To set up the short command, run `npm run build` and `npm link`. Rebuild after source changes before using the linked command.
+If not installed, the user can install it with `npm install @cyborgoat/mdmailer` in their workspace, or `npm install -g @cyborgoat/mdmailer` for a global command. The README and templates referenced here are bundled with the package; resolve those resources relative to this SKILL.md.
 
-`mdmailer init` creates missing config, assets, and the same five starters without overwriting existing files. Use it for new workspaces, not ordinary regeneration.
+`npx --no-install mdmailer init` creates local config, assets, and five workspace starters without overwriting files. `npx --no-install mdmailer init --global` creates only branding config and a placeholder logo under `~/.mdmailer/`. If a usable config already exists, skip initialization and copy just the starter you need.
 
 ## Authoring
 
@@ -38,17 +38,20 @@ If the CLI is unavailable, use `npm run generate -- content/news.md` directly fr
 - Use only `classic`, `navy-gold`, or `forest-cream`. Any type can use any theme; omitted themes default to `classic`.
 - Keep author-written text in the requested language. Localization changes built-in labels only.
 - Quote clock times and hex colors. Prefer ISO dates and the canonical field names in README.
+- For rich speaker introductions, use `name`, `role` for the job title, `bio` for experience, and `photo` for the avatar. Treat bundled speaker profiles as examples, not facts about the user’s speakers.
 - Notifications use `headline` and `banner`. Meetings, events, and webinars use `startsAt`, `time`, `location`, `joinUrl`, `hosts`, and `agenda`. Date and time belong inside the details box.
 - Migrate legacy types when encountered: `release-notes` / `digest` → `news`, `announcement` → `notification`, `workshop` → `meeting`.
 
-Branding belongs in `mdmailer.config.json`; per-email theme selection belongs in frontmatter. Overrides are available with `--theme <preset>` and `--config <file>`. There are no type or language CLI overrides.
+Branding belongs in the selected JSON config (one complete file, no merging); per-email theme selection belongs in frontmatter. Overrides are available with `--theme <preset>` and `--config <file>`. There are no type or language CLI overrides.
 
-Local assets resolve from the current directory. Confirm files exist before referencing them. Local images use data URLs in HTML and CID attachments in EML; hosted HTTPS images stay remote. Do not open EML files or launch a mail client unless asked.
+Logo paths resolve relative to the selected JSON file; Markdown images and host photos resolve from the current directory. Confirm files exist before referencing them. Local images use data URLs in HTML and CID attachments in EML; hosted HTTPS images stay remote. Do not open EML files or launch a mail client unless asked.
 
-## Maintenance and verification
+## Verification
 
-- Keep `content/`, `mdmailer init`, README, and this skill synchronized when types or themes change. Update the explicit starter list in `.gitignore` if filenames change.
-- Shared layout changes belong in `EmailShell` and its components. `ContentEmail` handles news and notifications; `EventEmail` handles meetings, events, and webinars.
-- After source changes, run `npm run typecheck`, relevant tests, and `npm run build`. Regenerate affected examples and inspect the output.
+- Generate the requested email and confirm both HTML and EML exist. Inspect the HTML and check the expected text, links, and images. Generation does not send email.
 - Folder generation processes immediate `.md` files in filename order and stops on the first error. Already generated files remain in place.
-- Outputs default to the current working directory. Use `--output <folder>` to choose a destination (created if missing); relative paths resolve from the working directory. Matching filenames are replaced. For repository previews, prefer `--output output` to use the gitignored folder. Random MIME boundaries and image IDs make EML bytes differ between runs; verify rendered content and attachments.
+- Outputs default to the current working directory. Use `--output <folder>` to choose a destination, created if missing. Matching filenames are replaced. MIME boundaries and image IDs vary between runs.
+
+## Source development only
+
+When working on the source repository itself, use `npm ci`, `npm run typecheck`, tests, and `npm run build` as needed. `npm run generate -- <file.md>` runs from source. Keep bundled templates, `init`, README, and this skill synchronized. These build steps are not required for npm users.

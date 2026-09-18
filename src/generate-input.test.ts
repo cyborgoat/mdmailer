@@ -7,10 +7,10 @@ import { parseGenerateArgs, resolveGenerateInputs } from "./generate-input.js";
 
 test("positional input and legacy --input produce the same options", () => {
   assert.deepEqual(
-    parseGenerateArgs(["content/example.md", "--theme", "navy-gold"]),
-    parseGenerateArgs(["--input", "content/example.md", "--theme", "navy-gold"]),
+    parseGenerateArgs(["templates/example.md", "--theme", "navy-gold"]),
+    parseGenerateArgs(["--input", "templates/example.md", "--theme", "navy-gold"]),
   );
-  assert.equal(parseGenerateArgs(["--config", "custom.json", "content/"]).get("input"), "content/");
+  assert.equal(parseGenerateArgs(["--config", "custom.json", "templates/"]).get("input"), "templates/");
   assert.equal(parseGenerateArgs(["--", "--example.md"]).get("input"), "--example.md");
 });
 
