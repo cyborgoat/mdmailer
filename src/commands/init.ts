@@ -91,6 +91,7 @@ joinUrl: "https://example.com/call/design-system"
 hosts:
   - name: Jordan Lee
     role: Design Systems Lead
+    photo: assets/images/hosts/jordan-lee.jpg
     bio: Leads the component library and helps product teams turn shared design patterns into accessible interfaces.
 agenda:
   - time: "15:00"
@@ -200,10 +201,45 @@ time: "17:00–19:00 UTC"
 location: "Main hall"
 joinUrl: "https://example.com/events/open-house"
 hosts:
-  - Community Team
+  - name: Maya Thompson
+    role: Community Programs Director
+    photo: assets/images/hosts/maya-thompson.jpg
+    bio: Brings neighbors, local partners, and project teams together through welcoming programs and practical ways to get involved.
 ---
 
 Meet the team, explore recent projects, and share ideas over refreshments.
+`;
+
+const EXAMPLE_INVITATION = `---
+title: "You're invited: Annual leadership dinner"
+type: invitation
+lang: en
+theme: navy-gold
+eventName: "Annual leadership dinner"
+startsAt: 2026-11-12
+time: "18:30–21:00"
+location: "The Garden Room, 18 Riverside Walk"
+rsvpUrl: "https://example.com/rsvp/leadership-dinner"
+hosts:
+  - name: Eleanor Brooks
+    role: Chief of Staff
+    photo: assets/images/hosts/eleanor-brooks.jpg
+    bio: Leads executive programs and brings guests together for thoughtful conversations about the year ahead.
+---
+
+Please join us for an evening of conversation, dinner, and a look ahead at the
+year to come. We would be delighted to welcome you and a guest.
+
+## Evening details
+
+- Reception and welcome drinks from **18:30**
+- Dinner served at **19:15**
+- Business attire
+
+> Kindly respond by **29 October**. Please include any dietary requirements with
+> your response.
+
+We hope you can join us.
 `;
 
 async function exists(path: string): Promise<boolean> {
@@ -249,6 +285,7 @@ export async function runInit(argv: string[] = []) {
   await writeIfMissing(resolve(templatesDir, "news.md"), EXAMPLE_CONTENT);
   await writeIfMissing(resolve(templatesDir, "meeting.md"), EXAMPLE_MEETING);
   await writeIfMissing(resolve(templatesDir, "event.md"), EXAMPLE_EVENT);
+  await writeIfMissing(resolve(templatesDir, "invitation.md"), EXAMPLE_INVITATION);
   await writeIfMissing(resolve(templatesDir, "webinar.md"), EXAMPLE_WEBINAR);
   await writeIfMissing(resolve(templatesDir, "notification.md"), EXAMPLE_NOTIFICATION);
   await mkdir(assetsDir, { recursive: true });
@@ -269,6 +306,7 @@ export async function runInit(argv: string[] = []) {
       "  notification.md notice with a headline       (type: notification)\n" +
       "  meeting.md      meeting invitation           (type: meeting)\n" +
       "  event.md        event invitation             (type: event)\n" +
+      "  invitation.md   formal invitation            (type: invitation)\n" +
       "  webinar.md      webinar invitation           (type: webinar)\n" +
       "Set the required layout with `type:` in frontmatter.\n" +
       "Set the required language with `lang: en` or `lang: zh` (English or Chinese).\n",

@@ -261,6 +261,8 @@ export function buildEventProps(
   const fm = ctx.frontmatter;
   const theme = ctx.config.theme;
   const { locale } = ctx;
+  const eventType = fmString(fm.type)?.trim().toLowerCase();
+  const isInvitation = eventType === "invitation";
   return {
     title: ctx.title,
     kicker: fmString(fm.kicker ?? fm.eyebrow) ?? opts.defaultKicker ?? "",
@@ -269,7 +271,7 @@ export function buildEventProps(
     startsAt: formatDate(fm.startsAt ?? fm.date) || ctx.date,
     time: fmString(fm.time),
     location: fmString(fm.location ?? fm.venue),
-    joinUrl: fmString(fm.joinUrl ?? fm.onlineUrl),
+    joinUrl: fmString(isInvitation ? (fm.rsvpUrl ?? fm.joinUrl ?? fm.onlineUrl) : (fm.joinUrl ?? fm.onlineUrl)),
     hosts: ctx.hostProfiles.map((host) => host.name),
     hostProfiles: ctx.hostProfiles,
     showHostsSection: opts.showHostsSection ?? false,
@@ -285,11 +287,13 @@ export function buildEventProps(
     labels: {
       when: t(locale, "detail.when"),
       where: t(locale, "detail.where"),
-      join: t(locale, "detail.join"),
-      joinLink: t(locale, fmString(fm.type)?.trim().toLowerCase() === "meeting"
+      join: t(locale, isInvitation ? "detail.rsvp" : "detail.join"),
+      joinLink: t(locale, eventType === "meeting"
         ? "link.joinMeeting"
-        : fmString(fm.type)?.trim().toLowerCase() === "webinar"
+        : eventType === "webinar"
           ? "link.joinWebinar"
+          : isInvitation
+            ? "link.respondInvitation"
           : "link.joinEvent"),
       hosts: t(locale, "detail.hosts"),
       hostsSection: t(locale, "section.hosts"),

@@ -17,12 +17,12 @@ export function HostsSection({ hosts, sectionLabel, theme }: HostsSectionProps) 
       {hosts.map((host) => (
         <Row key={host.name} style={{ marginBottom: "20px" }}>
           {host.photoUrl ? (
-            <Column style={{ width: "72px", verticalAlign: "top", paddingRight: "12px" }}>
+            <Column style={{ width: "112px", verticalAlign: "top", paddingRight: "16px" }}>
               <Img
                 src={host.photoUrl}
                 alt={host.name}
-                width={64}
-                height={64}
+                width={96}
+                height={96}
                 style={{ display: "block", borderRadius: "50%", objectFit: "cover" }}
               />
             </Column>

@@ -31,11 +31,11 @@ mdmailer templates/ --output "/path/to/email exports"
 
 Relative output paths resolve from your current working directory; absolute paths work too.
 
-For a new email workspace, run `mdmailer init`. It creates SKILL.md, missing config, a placeholder logo, and the five starters under `templates/` without overwriting existing files. Templates are starting points: your Markdown files can live in any folder.
+For a new email workspace, run `mdmailer init`. It creates SKILL.md, missing config, a placeholder logo, and the six starters under `templates/` without overwriting existing files. Templates are starting points: your Markdown files can live in any folder.
 
 ## Use with an LLM agent
 
-The npm package includes `SKILL.md`, this README, and five starter files in `templates/`, and sample speaker photos. Run `npx mdmailer init` to copy SKILL.md into your workspace, then tell your agent:
+The npm package includes `SKILL.md`, this README, six starter files in `templates/`, and sample speaker photos. Run `npx mdmailer init` to copy SKILL.md into your workspace, then tell your agent:
 
 > Read `SKILL.md` and use mdmailer to create my email.
 
@@ -77,6 +77,7 @@ mdmailer /path/to/my-email.md --output ./emails
 | [notification.md](templates/notification.md) | `notification` | `classic` | A notice with a banner and headline |
 | [meeting.md](templates/meeting.md) | `meeting` | `navy-gold` | Meeting details, hosts, and an agenda |
 | [event.md](templates/event.md) | `event` | `forest-cream` | An event invitation |
+| [invitation.md](templates/invitation.md) | `invitation` | `navy-gold` | A formal invitation with RSVP details |
 | [webinar.md](templates/webinar.md) | `webinar` | `forest-cream` | An online session with speaker photos, roles, experience, and an agenda |
 
 Any type can use any of the three themes:
@@ -114,7 +115,7 @@ Write your message with **formatting**, lists, tables, and [links](https://examp
 
 | Field | Meaning |
 | --- | --- |
-| `type` | Required: `news`, `notification`, `meeting`, `event`, or `webinar` |
+| `type` | Required: `news`, `notification`, `meeting`, `event`, `invitation`, or `webinar` |
 | `lang` | Required: `en` or `zh` (Simplified Chinese) |
 | `title` | Email subject and default heading |
 | `theme` | `classic`, `navy-gold`, or `forest-cream`; defaults to `classic` |
@@ -124,7 +125,7 @@ Language changes built-in labels, not your message. Write titles, body text, and
 
 For **notifications**, use `headline` to override the heading and `banner` for the callout text. Notifications do not display a dateline.
 
-For **meetings, events, and webinars**:
+For **meetings, events, invitations, and webinars**:
 
 | Field | Meaning |
 | --- | --- |
@@ -134,12 +135,13 @@ For **meetings, events, and webinars**:
 | `time` | Quoted time, such as `"16:00–17:00 UTC"` |
 | `location` | Venue or online location |
 | `joinUrl` | Meeting or registration link, displayed with a short localized label instead of the raw URL |
+| `rsvpUrl` | Invitation response link; invitations also accept `joinUrl` as a fallback |
 | `hosts` | Names or objects with `name`, optional `role`, `bio`, and `photo` |
 | `agenda` | Markdown text, a list of strings, or a list of `{ time, title }` objects |
 
-The webinar starter demonstrates rich speaker introductions using `name`, `role` (job title), `bio` (experience), and `photo`. `mdmailer init` copies its two sample photos into `assets/images/hosts/`. Replace them and the example biographies with your speakers’ details. The news starter demonstrates text formatting, lists, tables, quotations, and code blocks; the webinar adds a learning-outcomes table and preparation checklist.
+Every starter with hosts includes sample photos and demonstrates rich introductions using `name`, `role` (job title), `bio` (experience), and `photo`. `mdmailer init` copies the five sample photos into `assets/images/hosts/`. Replace them and the example biographies with your hosts’ details. The news starter demonstrates text formatting, lists, tables, quotations, and code blocks; the webinar adds a learning-outcomes table and preparation checklist.
 
-Date and time appear inside the details box with location and the join link. Missing details are omitted. Meetings show hosts in a separate section; events and webinars do so when host profiles include photos, roles, or bios.
+Date and time appear inside the details box with location and the action link. Invitations show a localized RSVP label and “Respond to invitation” link. Missing details are omitted. Meetings show hosts in a separate section; events, invitations, and webinars do so when host profiles include photos, roles, or bios.
 
 Older files should change `release-notes` and `digest` to `news`, `announcement` to `notification`, and `workshop` to `meeting`. The old type names are no longer accepted.
 
@@ -190,6 +192,6 @@ npm test
 npm run build
 ```
 
-The linked `mdmailer` command uses `dist/cli.js`; rebuild after changing source code. The optional `output/` folder and personal drafts are gitignored; files generated elsewhere follow your own ignore rules; the five starter files are tracked.
+The linked `mdmailer` command uses `dist/cli.js`; rebuild after changing source code. The optional `output/` folder and personal drafts are gitignored; files generated elsewhere follow your own ignore rules; the six starter files are tracked.
 
-`npm pack` builds the CLI and includes only the CLI bundle, five starters, SKILL.md, README, license, and package metadata. Only the two sample speaker photos are bundled as assets; personal branding, other assets, drafts, and generated emails are excluded.
+`npm pack` builds the CLI and includes only the CLI bundle, six starters, SKILL.md, README, license, and package metadata. Only the five sample host photos are bundled as assets; personal branding, other assets, drafts, and generated emails are excluded.

@@ -40,3 +40,23 @@ test("time alone creates a details row and absent date/time omits it", async () 
   assert.doesNotMatch(empty, />When<\/p>/);
   assert.ok(!empty.includes(`border:1px solid ${props.theme.border}`));
 });
+
+test("host profiles render large photos", async () => {
+  const props = {
+    ...EventEmail.PreviewProps,
+    hosts: ["Jordan Lee"],
+    hostProfiles: [
+      {
+        name: "Jordan Lee",
+        role: "Design Systems Lead",
+        photoUrl: "data:image/jpeg;base64,example",
+        bio: "Leads the component library.",
+      },
+    ],
+    showHostsSection: true,
+  };
+  const html = await render(React.createElement(EventEmail, props));
+  assert.match(html, /alt="Jordan Lee"/);
+  assert.match(html, /width="96"/);
+  assert.match(html, /height="96"/);
+});

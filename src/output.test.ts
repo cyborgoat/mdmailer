@@ -24,7 +24,7 @@ test("CLI defaults to cwd and supports relative and absolute output folders", as
     await assert.rejects(access(join(cwd, "output")));
 
     await run("templates/", "--output", "nested/email exports");
-    assert.equal((await readdir(join(cwd, "nested/email exports"))).length, 10);
+    assert.equal((await readdir(join(cwd, "nested/email exports"))).length, 12);
 
     const absolute = join(cwd, "absolute exports");
     await run("generate", "--input", "templates/news.md", "--output", absolute);

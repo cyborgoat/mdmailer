@@ -9,7 +9,10 @@ time: "17:00–19:00 UTC"
 location: "Main hall"
 joinUrl: "https://example.com/events/open-house"
 hosts:
-  - Community Team
+  - name: Maya Thompson
+    role: Community Programs Director
+    photo: assets/images/hosts/maya-thompson.jpg
+    bio: Brings neighbors, local partners, and project teams together through welcoming programs and practical ways to get involved.
 ---
 
 Meet the team, explore recent projects, and share ideas over refreshments.

@@ -1,7 +1,13 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
-const HOST_PHOTOS = ["priya-nair.jpg", "marcus-cole.jpg"] as const;
+const HOST_PHOTOS = [
+  "jordan-lee.jpg",
+  "maya-thompson.jpg",
+  "eleanor-brooks.jpg",
+  "priya-nair.jpg",
+  "marcus-cole.jpg",
+] as const;
 
 /** The assets folder is a sibling of both src/ and the packaged dist/. */
 export async function copyStarterPhotos(assetsDir: string): Promise<void> {

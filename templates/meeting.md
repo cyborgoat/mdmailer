@@ -11,6 +11,7 @@ joinUrl: "https://example.com/call/design-system"
 hosts:
   - name: Jordan Lee
     role: Design Systems Lead
+    photo: assets/images/hosts/jordan-lee.jpg
     bio: Leads the component library and helps product teams turn shared design patterns into accessible interfaces.
 agenda:
   - time: "15:00"

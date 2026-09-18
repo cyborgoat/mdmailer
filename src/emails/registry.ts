@@ -20,6 +20,10 @@ export const templates = {
       buildEventProps(ctx, { defaultKicker: t(ctx.locale, "kicker.meeting"), showHostsSection: true }),
   },
   event: { component: EventEmail, buildProps: (ctx) => buildEventProps(ctx) },
+  invitation: {
+    component: EventEmail,
+    buildProps: (ctx) => buildEventProps(ctx, { defaultKicker: t(ctx.locale, "kicker.invitation") }),
+  },
   webinar: {
     component: EventEmail,
     buildProps: (ctx) => buildEventProps(ctx, { defaultKicker: t(ctx.locale, "kicker.webinar") }),

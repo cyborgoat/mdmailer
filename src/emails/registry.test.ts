@@ -14,6 +14,7 @@ test("content types share one physical template", () => {
 
 test("event types share one physical template", () => {
   assert.equal(templates.event.component, EventEmail);
+  assert.equal(templates.invitation.component, EventEmail);
   assert.equal(templates.meeting.component, EventEmail);
   assert.equal(templates.webinar.component, EventEmail);
 });
@@ -21,7 +22,7 @@ test("event types share one physical template", () => {
 test("template resolution requires a valid frontmatter type", () => {
   assert.equal(resolveTemplateName(undefined), null);
   assert.equal(resolveTemplateName(""), null);
-  for (const type of ["news", "notification", "meeting", "event", "webinar"]) {
+  for (const type of ["news", "notification", "meeting", "event", "invitation", "webinar"]) {
     assert.equal(resolveTemplateName(type), type);
   }
   for (const type of ["release-notes", "digest", "announcement", "workshop", "constructor", "toString", "__proto__"]) {
@@ -33,7 +34,7 @@ test("template resolution requires a valid frontmatter type", () => {
   assert.equal(resolveTemplateName("unknown"), null);
 });
 
-test("meeting and webinar types preserve their event defaults", () => {
+test("meeting, invitation, and webinar types preserve their event defaults", () => {
   const config = configSchema.parse({
     organization: { name: "Example", logoUrl: "assets/logo.svg" },
     theme: { primaryColor: "#1a73e8", footerText: "© Example" },
@@ -51,10 +52,18 @@ test("meeting and webinar types preserve their event defaults", () => {
   };
 
   const meeting = templates.meeting.buildProps(ctx) as EventEmailProps;
+  const invitation = templates.invitation.buildProps({
+    ...ctx,
+    frontmatter: { type: "invitation", rsvpUrl: "https://example.com/rsvp" },
+  }) as EventEmailProps;
   const webinar = templates.webinar.buildProps(ctx) as EventEmailProps;
 
   assert.equal(meeting.kicker, "Meeting");
   assert.equal(meeting.showHostsSection, true);
+  assert.equal(invitation.kicker, "Invitation");
+  assert.equal(invitation.joinUrl, "https://example.com/rsvp");
+  assert.equal(invitation.labels.join, "RSVP");
+  assert.equal(invitation.labels.joinLink, "Respond to invitation");
   assert.equal(webinar.kicker, "Webinar");
   assert.equal(webinar.showHostsSection, false);
 });

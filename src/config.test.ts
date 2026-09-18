@@ -56,7 +56,7 @@ test("global setup, config precedence, relative logos, and synchronized starters
     await runGenerate(["templates/", "--output", "local-output"]);
     await rm("mdmailer.config.json");
     await runGenerate(["templates/", "--output", "global-output"]);
-    assert.equal((await readdir("global-output")).length, 10);
+    assert.equal((await readdir("global-output")).length, 12);
 
     const explicit = join(root, "explicit.json");
     global.organization.logoUrl = "https://example.com/logo.png";
