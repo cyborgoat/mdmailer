@@ -22,6 +22,9 @@ test("global setup, config precedence, relative logos, and synchronized starters
     await runInit(["--global"]);
     assert.deepEqual(await readdir(workspace), []);
     const globalPath = globalConfigPath();
+    const bundledSkill = await readFile(fileURLToPath(new URL("../SKILL.md", import.meta.url)), "utf8");
+    assert.equal(await readFile(join(dirname(globalPath), "SKILL.md"), "utf8"), bundledSkill);
+    await writeFile(join(dirname(globalPath), "SKILL.md"), "User global instructions");
     assert.equal(globalPath, join(home, ".mdmailer/mdmailer.config.json"));
     const global = JSON.parse(await readFile(globalPath, "utf8"));
     global.organization.name = "Global brand";
@@ -30,6 +33,7 @@ test("global setup, config precedence, relative logos, and synchronized starters
     await writeFile(globalPath, JSON.stringify(global));
     await runInit(["--global"]);
     assert.equal(JSON.parse(await readFile(globalPath, "utf8")).organization.name, "Global brand");
+    assert.equal(await readFile(join(dirname(globalPath), "SKILL.md"), "utf8"), "User global instructions");
     const resolved = await loadConfig();
     assert.equal(resolved.organization.logoUrl, join(dirname(globalPath), "assets/logo.svg"));
     assert.equal(resolved.organization.logoUrlOnDark, join(dirname(globalPath), "assets/dark.svg"));
@@ -40,6 +44,10 @@ test("global setup, config precedence, relative logos, and synchronized starters
     await access("email.eml");
     await runInit();
     assert.equal((await loadConfig()).organization.name, "Your Organization");
+    assert.equal(await readFile("SKILL.md", "utf8"), bundledSkill);
+    await writeFile("SKILL.md", "User workspace instructions");
+    await runInit();
+    assert.equal(await readFile("SKILL.md", "utf8"), "User workspace instructions");
     const templates = fileURLToPath(new URL("../templates/", import.meta.url));
     assert.deepEqual((await readdir("templates")).sort(), (await readdir(templates)).sort());
     for (const name of await readdir(templates)) {

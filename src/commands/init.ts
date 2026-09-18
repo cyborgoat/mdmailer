@@ -1,7 +1,7 @@
 import { access, mkdir, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 
-import { copyStarterPhotos } from "../template-assets.js";
+import { copyAgentSkill, copyStarterPhotos } from "../template-assets.js";
 import { globalConfigPath } from "../config.js";
 
 const DEFAULT_CONFIG = `{
@@ -234,8 +234,9 @@ export async function runInit(argv: string[] = []) {
     const assetsDir = resolve(dirname(configPath), "assets");
     await mkdir(assetsDir, { recursive: true });
     await writeIfMissing(configPath, DEFAULT_CONFIG);
+    await copyAgentSkill(dirname(configPath));
     await writeIfMissing(resolve(assetsDir, "logo.svg"), PLACEHOLDER_LOGO_SVG);
-    console.log(`\nEdit ${configPath} to set your organization, logo, brand color, and footer.\nRelative logo paths are resolved from ${dirname(configPath)}.\nGenerate any Markdown file with: mdmailer <file.md>`);
+    console.log(`\nEdit ${configPath} to set your organization, logo, brand color, and footer.\nRelative logo paths are resolved from ${dirname(configPath)}.\nGenerate any Markdown file with: mdmailer <file.md>\nFor agent integration, ask your agent to read ${resolve(dirname(configPath), "SKILL.md")}.`);
     return;
   }
   const configPath = resolve("mdmailer.config.json");
@@ -253,6 +254,7 @@ export async function runInit(argv: string[] = []) {
   await mkdir(assetsDir, { recursive: true });
   await writeIfMissing(logoPath, PLACEHOLDER_LOGO_SVG);
   await copyStarterPhotos(assetsDir);
+  await copyAgentSkill(resolve("."));
 
   console.log(
     "\nNext steps:\n" +
@@ -260,6 +262,7 @@ export async function runInit(argv: string[] = []) {
       "  2. Edit mdmailer.config.json with your organization's branding and footer.\n" +
       "  3. Edit templates/news.md with your update.\n" +
       "  4. Run: mdmailer templates/news.md\n" +
+      "  5. For agent integration, ask your agent to read SKILL.md.\n" +
       "\n" +
       "Every Markdown file must declare its layout and language in frontmatter. Each example above shows one:\n" +
       "  news.md              news update                  (type: news)\n" +

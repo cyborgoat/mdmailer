@@ -31,11 +31,15 @@ mdmailer templates/ --output "/path/to/email exports"
 
 Relative output paths resolve from your current working directory; absolute paths work too.
 
-For a new email workspace, run `mdmailer init`. It creates missing config, a placeholder logo, and the five starters under `templates/` without overwriting existing files. Templates are starting points: your Markdown files can live in any folder.
+For a new email workspace, run `mdmailer init`. It creates SKILL.md, missing config, a placeholder logo, and the five starters under `templates/` without overwriting existing files. Templates are starting points: your Markdown files can live in any folder.
 
 ## Use with an LLM agent
 
-The npm package includes `SKILL.md`, this README, and five starter files in `templates/`, and sample speaker photos. For a local install, tell your agent:
+The npm package includes `SKILL.md`, this README, and five starter files in `templates/`, and sample speaker photos. Run `npx mdmailer init` to copy SKILL.md into your workspace, then tell your agent:
+
+> Read `SKILL.md` and use mdmailer to create my email.
+
+Existing SKILL.md files are preserved. You can also point directly to the installed copy:
 
 > Read `node_modules/@cyborgoat/mdmailer/SKILL.md` and use mdmailer to create my email.
 
@@ -49,7 +53,7 @@ Agents can copy a starter into your workspace, edit the Markdown, and run the in
 mdmailer init --global
 ```
 
-Edit `~/.mdmailer/mdmailer.config.json` to set your organization, logo, brand color, and footer. The command creates a placeholder at `~/.mdmailer/assets/logo.svg`; it does not create templates or change your working folder.
+Edit `~/.mdmailer/mdmailer.config.json` to set your organization, logo, brand color, and footer. The command also copies the agent guide to `~/.mdmailer/SKILL.md` and creates a placeholder at `~/.mdmailer/assets/logo.svg`; it does not create templates or change your working folder.
 
 The CLI selects one configuration file in this order:
 
