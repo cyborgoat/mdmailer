@@ -9,17 +9,48 @@ const HOST_PHOTOS = [
   "marcus-cole.jpg",
 ] as const;
 
+const STARTER_TEMPLATES = [
+  "news.md",
+  "news.zh.md",
+  "notification.md",
+  "notification.zh.md",
+  "meeting.md",
+  "meeting.zh.md",
+  "event.md",
+  "event.zh.md",
+  "invitation.md",
+  "invitation.zh.md",
+  "webinar.md",
+  "webinar.zh.md",
+] as const;
+
+async function copyIfMissing(source: URL, target: string): Promise<boolean> {
+  try {
+    await writeFile(target, await readFile(source), { flag: "wx" });
+    return true;
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== "EEXIST") throw error;
+    return false;
+  }
+}
+
+/** Copy the bundled English and Chinese starter templates without replacing edits. */
+export async function copyStarterTemplates(targetDir: string): Promise<void> {
+  await mkdir(targetDir, { recursive: true });
+  for (const name of STARTER_TEMPLATES) {
+    const target = join(targetDir, name);
+    const created = await copyIfMissing(new URL(`../templates/${name}`, import.meta.url), target);
+    console.log(`${created ? "Created" : "Skipped (already exists)"}: ${target}`);
+  }
+}
+
 /** The assets folder is a sibling of both src/ and the packaged dist/. */
 export async function copyStarterPhotos(assetsDir: string): Promise<void> {
   const targetDir = join(assetsDir, "images", "hosts");
   await mkdir(targetDir, { recursive: true });
   for (const name of HOST_PHOTOS) {
     const source = new URL(`../assets/images/hosts/${name}`, import.meta.url);
-    try {
-      await writeFile(join(targetDir, name), await readFile(source), { flag: "wx" });
-    } catch (error) {
-      if ((error as NodeJS.ErrnoException).code !== "EEXIST") throw error;
-    }
+    await copyIfMissing(source, join(targetDir, name));
   }
 }
 

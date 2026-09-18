@@ -31,11 +31,11 @@ mdmailer templates/ --output "/path/to/email exports"
 
 Relative output paths resolve from your current working directory; absolute paths work too.
 
-For a new email workspace, run `mdmailer init`. It creates SKILL.md, missing config, a placeholder logo, and the six starters under `templates/` without overwriting existing files. Templates are starting points: your Markdown files can live in any folder.
+For a new email workspace, run `mdmailer init`. It creates SKILL.md, missing config, a placeholder logo, and twelve starters under `templates/`: one English and one Chinese example for each email type. Existing files are preserved. Templates are starting points; your Markdown files can live in any folder.
 
 ## Use with an LLM agent
 
-The npm package includes `SKILL.md`, this README, six starter files in `templates/`, and sample speaker photos. Run `npx mdmailer init` to copy SKILL.md into your workspace, then tell your agent:
+The npm package includes `SKILL.md`, this README, all twelve English and Chinese starter files in `templates/`, and sample host photos. Run `npx mdmailer init` to copy SKILL.md into your workspace, then tell your agent:
 
 > Read `SKILL.md` and use mdmailer to create my email.
 
@@ -71,14 +71,16 @@ mdmailer /path/to/my-email.md --output ./emails
 
 ## Templates and themes
 
-| File | Type | Theme | Use for |
-| --- | --- | --- | --- |
-| [news.md](templates/news.md) | `news` | `classic` | Updates, release notes, and digests |
-| [notification.md](templates/notification.md) | `notification` | `classic` | A notice with a banner and headline |
-| [meeting.md](templates/meeting.md) | `meeting` | `navy-gold` | Meeting details, hosts, and an agenda |
-| [event.md](templates/event.md) | `event` | `forest-cream` | An event invitation |
-| [invitation.md](templates/invitation.md) | `invitation` | `navy-gold` | A formal invitation with RSVP details |
-| [webinar.md](templates/webinar.md) | `webinar` | `forest-cream` | An online session with speaker photos, roles, experience, and an agenda |
+| English | Chinese | Type | Theme | Use for |
+| --- | --- | --- | --- | --- |
+| [news.md](templates/news.md) | [news.zh.md](templates/news.zh.md) | `news` | `classic` | Updates, release notes, and digests |
+| [notification.md](templates/notification.md) | [notification.zh.md](templates/notification.zh.md) | `notification` | `classic` | A notice with a banner and headline |
+| [meeting.md](templates/meeting.md) | [meeting.zh.md](templates/meeting.zh.md) | `meeting` | `navy-gold` | Meeting details, hosts, and an agenda |
+| [event.md](templates/event.md) | [event.zh.md](templates/event.zh.md) | `event` | `forest-cream` | An event invitation |
+| [invitation.md](templates/invitation.md) | [invitation.zh.md](templates/invitation.zh.md) | `invitation` | `navy-gold` | A formal invitation with RSVP details |
+| [webinar.md](templates/webinar.md) | [webinar.zh.md](templates/webinar.zh.md) | `webinar` | `forest-cream` | An online session with speaker photos, roles, experience, and an agenda |
+
+English examples use `<type>.md`; Chinese examples use `<type>.zh.md`. Set `lang: en` or `lang: zh` in your own file to choose the built-in labels.
 
 Any type can use any of the three themes:
 
@@ -192,6 +194,6 @@ npm test
 npm run build
 ```
 
-The linked `mdmailer` command uses `dist/cli.js`; rebuild after changing source code. The optional `output/` folder and personal drafts are gitignored; files generated elsewhere follow your own ignore rules; the six starter files are tracked.
+The linked `mdmailer` command uses `dist/cli.js`; rebuild after changing source code. The optional `output/` folder and personal drafts are gitignored; files generated elsewhere follow your own ignore rules; the twelve starter files are tracked.
 
-`npm pack` builds the CLI and includes only the CLI bundle, six starters, SKILL.md, README, license, and package metadata. Only the five sample host photos are bundled as assets; personal branding, other assets, drafts, and generated emails are excluded.
+`npm pack` builds the CLI and includes only the CLI bundle, twelve English and Chinese starters, SKILL.md, README, license, and package metadata. Only the five sample host photos are bundled as assets; personal branding, other assets, drafts, and generated emails are excluded.

@@ -12,14 +12,14 @@ Generate email files from Markdown; the app does not send email. For full field 
 1. Use Node.js 24 or later and run from the user's email workspace, not the installed package directory. For a local npm installation, use `npx --no-install mdmailer`; for a global installation, use `mdmailer`. Do not build or modify the installed package.
 2. Read the selected config (`--config`, working-directory `mdmailer.config.json`, then `~/.mdmailer/mdmailer.config.json`). Choose a starter from workspace `templates/` or the installed package’s `templates/` folder:
 
-   | Starter | Type | Theme |
-   | --- | --- | --- |
-   | `news.md` | `news` | `classic` |
-   | `notification.md` | `notification` | `classic` |
-   | `meeting.md` | `meeting` | `navy-gold` |
-   | `event.md` | `event` | `forest-cream` |
-   | `invitation.md` | `invitation` | `navy-gold` |
-   | `webinar.md` | `webinar` | `forest-cream` |
+   | English | Chinese | Type | Theme |
+   | --- | --- | --- | --- |
+   | `news.md` | `news.zh.md` | `news` | `classic` |
+   | `notification.md` | `notification.zh.md` | `notification` | `classic` |
+   | `meeting.md` | `meeting.zh.md` | `meeting` | `navy-gold` |
+   | `event.md` | `event.zh.md` | `event` | `forest-cream` |
+   | `invitation.md` | `invitation.zh.md` | `invitation` | `navy-gold` |
+   | `webinar.md` | `webinar.zh.md` | `webinar` | `forest-cream` |
 
 3. Copy a bundled starter into the user’s workspace before editing it. When the starter has hosts, also copy its bundled `assets/images/hosts/` photos into the same relative workspace paths (or use real host photos). Alternatively, `init` copies the required example assets. Edit the requested existing Markdown file when one is provided. Never write drafts or branding into `node_modules` or the installed package directory. Preserve unrelated user content.
 4. Generate and check both HTML and EML outputs:
@@ -31,7 +31,7 @@ Generate email files from Markdown; the app does not send email. For full field 
 
 If not installed, the user can install it with `npm install @cyborgoat/mdmailer` in their workspace, or `npm install -g @cyborgoat/mdmailer` for a global command. The README and templates referenced here are bundled with the package; locate them in the installed package, even when this skill was copied into a workspace or `~/.mdmailer/`.
 
-`npx --no-install mdmailer init` creates a workspace SKILL.md, local config, assets, and six workspace starters without overwriting files. `npx --no-install mdmailer init --global` creates SKILL.md, branding config, and a placeholder logo under `~/.mdmailer/`. If a usable config already exists, skip initialization and copy just the starter you need.
+`npx --no-install mdmailer init` creates a workspace SKILL.md, local config, assets, and twelve English and Chinese workspace starters without overwriting files. `npx --no-install mdmailer init --global` creates SKILL.md, branding config, and a placeholder logo under `~/.mdmailer/`. If a usable config already exists, skip initialization and copy just the starter you need.
 
 ## Authoring
 
