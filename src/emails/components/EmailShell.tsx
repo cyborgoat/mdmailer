@@ -66,7 +66,6 @@ export function EmailShell({
             organizationLogoUrl={organization.logoUrl}
             logoAspectRatio={organization.logoAspectRatio}
             theme={theme}
-            useLogoPlate={theme.appearance === "contrast" && !organization.logoUrlOnDark}
           />
           {children}
           <Footer

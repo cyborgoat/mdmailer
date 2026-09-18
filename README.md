@@ -161,6 +161,8 @@ Edit your selected local or global JSON configuration:
 }
 ```
 
+Transparent logos remain transparent on every theme; no white backing plate is added. Use a light-colored logo for a dark theme when needed.
+
 Optional settings include `organization.logoUrlOnDark` for dark themes, and `theme.fontFamily`, `contentWidth`, `social` (`{ label, url }` entries), `address`, and `unsubscribeUrl`.
 
 Use local paths or hosted HTTPS URLs for logos, Markdown images, and host photos. Local images are embedded in both outputs; HTML uses data URLs and EML uses inline attachments. Local SVGs are converted to PNG. Logo paths resolve from the configuration file’s folder. Markdown image and host-photo paths resolve from the current working directory.

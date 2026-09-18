@@ -1,4 +1,4 @@
-import { Container, Img, Section } from "react-email";
+import { Img, Section } from "react-email";
 import type { EmailTheme } from "../theme.js";
 
 interface HeaderProps {
@@ -11,13 +11,12 @@ interface HeaderProps {
    */
   logoAspectRatio?: number;
   theme: EmailTheme;
-  useLogoPlate?: boolean;
 }
 
 const LOGO_HEIGHT = 144;
 const FALLBACK_ASPECT_RATIO = 1.2;
 
-export function Header({ organizationName, organizationLogoUrl, logoAspectRatio, theme, useLogoPlate }: HeaderProps) {
+export function Header({ organizationName, organizationLogoUrl, logoAspectRatio, theme }: HeaderProps) {
   const aspectRatio =
     logoAspectRatio && logoAspectRatio > 0 ? logoAspectRatio : FALLBACK_ASPECT_RATIO;
   const logo = (
@@ -36,16 +35,7 @@ export function Header({ organizationName, organizationLogoUrl, logoAspectRatio,
 
   return (
     <Section style={{ padding: "16px 0 20px", borderBottom: `1px solid ${theme.border}`, textAlign: "center" }}>
-      {useLogoPlate ? (
-        <Container style={{
-          backgroundColor: "#ffffff",
-          borderRadius: "12px",
-          padding: "10px",
-          maxWidth: `${Math.round(LOGO_HEIGHT * aspectRatio) + 20}px`,
-        }}>
-          {logo}
-        </Container>
-      ) : logo}
+      {logo}
     </Section>
   );
 }

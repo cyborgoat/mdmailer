@@ -116,7 +116,7 @@ test("contrast rendering applies semantic colors throughout the shell", async ()
   assert.match(html, /logo-white\.png/);
 });
 
-test("contrast rendering adds a white plate when no dark logo exists", async () => {
+test("contrast rendering preserves a transparent logo without a white plate", async () => {
   const config = configSchema.parse(baseConfig);
   const theme = resolveEmailTheme(
     config.theme,
@@ -137,6 +137,7 @@ test("contrast rendering adds a white plate when no dark logo exists", async () 
     unsubscribeLabel: "Unsubscribe",
   }));
 
-  assert.match(html, /background-color:#ffffff;border-radius:12px/);
-  assert.match(html, /<td style="padding:10px"><img alt="Example"/);
+  assert.doesNotMatch(html, /background-color:#ffffff;border-radius:12px/);
+  assert.match(html, /<img alt="Example"/);
+  assert.doesNotMatch(html, /<td style="padding:10px"><img alt="Example"/);
 });
