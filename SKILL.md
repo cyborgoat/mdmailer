@@ -22,7 +22,7 @@ Generate email files from Markdown; the app does not send email. For full field 
    | `webinar.md` | `webinar.zh.md` | `webinar` | `forest-cream` |
 
 3. Copy a bundled starter into the user’s workspace before editing it. When the starter has hosts, also copy its bundled `assets/images/hosts/` photos into the same relative workspace paths (or use real host photos). Alternatively, `init` copies the required example assets. Edit the requested existing Markdown file when one is provided. Never write drafts or branding into `node_modules` or the installed package directory. Preserve unrelated user content.
-4. Generate and check both HTML and EML outputs:
+4. Generate and check HTML, EML, and PNG outputs:
 
    ```bash
    npx --no-install mdmailer my-email.md
@@ -49,7 +49,7 @@ Logo paths resolve relative to the selected JSON file; Markdown images and host 
 
 ## Verification
 
-- Generate the requested email and confirm both HTML and EML exist. Inspect the HTML and check the expected text, links, and images. Generation does not send email.
+- Generate the requested email and confirm HTML, EML, and PNG exist. All three share the complete email layout, with labeled QR codes just above the branding footer, once per unique destination. Readable link labels and numbered references remain clickable in HTML and EML; EML embeds QR images as CID attachments. The PNG uses twice the CSS resolution with no fixed height or summary truncation; no `promotion` frontmatter is needed. Inspect all content and QR codes. Shared rendering uses Puppeteer’s headless Chrome. Generation does not send email.
 - Folder generation processes immediate `.md` files in filename order and stops on the first error. Already generated files remain in place.
 - Outputs default to the current working directory. Use `--output <folder>` to choose a destination, created if missing. Matching filenames are replaced. MIME boundaries and image IDs vary between runs.
 

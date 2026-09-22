@@ -28,7 +28,7 @@ export function Footer({
   unsubscribeLabel = "Unsubscribe",
 }: FooterProps) {
   return (
-    <Section style={{ textAlign: "center" }}>
+    <Section data-email-footer="" style={{ textAlign: "center" }}>
       <Hr style={{ borderTop: `1px solid ${theme.border}`, margin: "44px 0 24px" }} />
       <Text
         style={{

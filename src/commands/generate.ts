@@ -15,6 +15,7 @@ import { resolveHosts } from "../resolve-hosts.js";
 import { normalizeThemeSelection, resolveEmailTheme, selectLogoUrl } from "../emails/theme.js";
 import { loadConfig } from "../config.js";
 import { parseGenerateArgs, resolveGenerateInputs } from "../generate-input.js";
+import { screenshotEmail } from "../screenshot.js";
 
 interface EmlAttachment {
   cid: string;
@@ -178,7 +179,8 @@ async function generateFile(inputPath: string, config: Config, outputDir: string
   const { component, buildProps }: TemplateEntry = templates[templateName];
   const element = React.createElement(component, buildProps(ctx));
 
-  const html = await render(element);
+  const preview = await screenshotEmail(await render(element), theme.contentWidth);
+  const html = preview.html;
   const text = await render(element, { plainText: true });
 
   await mkdir(outputDir, { recursive: true });
@@ -186,6 +188,7 @@ async function generateFile(inputPath: string, config: Config, outputDir: string
 
   const htmlPath = resolve(outputDir, `${stem}.html`);
   const emlPath = resolve(outputDir, `${stem}.eml`);
+  const pngPath = resolve(outputDir, `${stem}.png`);
 
   // The .html preview keeps every local image as a data: URI (browsers render
   // those fine); the .eml swaps each one for a cid: reference matching its
@@ -194,11 +197,16 @@ async function generateFile(inputPath: string, config: Config, outputDir: string
     ...(logoAttachment ? [{ ...logoAttachment, renderedSrc: organization.logoUrl }] : []),
     ...contentImages.map((image): EmlAttachment => ({ ...image, renderedSrc: image.dataUri })),
     ...hostImages.map((image): EmlAttachment => ({ ...image, renderedSrc: image.dataUri })),
+    ...preview.qrImages.map((dataUri): EmlAttachment => ({
+      cid: `qr-${randomUUID()}`, mime: "image/png",
+      buffer: Buffer.from(dataUri.split(",")[1], "base64"), renderedSrc: dataUri,
+    })),
   ];
   const emlHtml = attachments.reduce((acc, att) => acc.split(att.renderedSrc).join(`cid:${att.cid}`), html);
 
   await writeFile(htmlPath, html, "utf-8");
   await writeFile(emlPath, buildEml(title, emlHtml, text, attachments), "utf-8");
+  await writeFile(pngPath, preview.png);
 
-  console.log(`Generated:\n  ${htmlPath}  (preview in a browser)\n  ${emlPath}  (open to compose in your mail client)`);
+  console.log(`Generated:\n  ${htmlPath}  (preview in a browser)\n  ${emlPath}  (open to compose in your mail client)\n  ${pngPath}  (promotional card)`);
 }

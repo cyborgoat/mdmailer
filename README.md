@@ -1,6 +1,6 @@
 # mdmailer
 
-Turn Markdown into branded HTML and EML emails. Preview the HTML in a browser, then open the EML in your mail client to add recipients and send. mdmailer does not send email itself.
+Turn Markdown into branded HTML and EML emails, plus PNG promotional cards with QR codes. Preview the HTML in a browser, then open the EML in your mail client to add recipients and send. mdmailer does not send email itself.
 
 Requires **Node.js 24 or later**.
 
@@ -22,7 +22,19 @@ Edit `mdmailer.config.json` for your branding and a file in `templates/` for you
 mdmailer templates/
 ```
 
-By default, `<name>.html` and `<name>.eml` are saved in your **current working directory** (where you run the command), not beside the input file. Use `--output <folder>` to choose another destination; missing folders are created. Matching output files are replaced. Folder generation reads immediate `.md` files in filename order, skips subfolders, and stops on the first error.
+By default, `<name>.html`, `<name>.eml`, and `<name>.png` are saved in your **current working directory** (where you run the command), not beside the input file. The PNG includes the full email with URLs replaced by QR codes, at twice the configured email width and a height that fits all content. Use `--output <folder>` to choose another destination; missing folders are created. Matching output files are replaced. Folder generation reads immediate `.md` files in filename order, skips subfolders, and stops on the first error.
+
+Puppeteer is included as a dependency; users do not need to install it separately. It normally downloads Chrome during npm installation. If that browser is missing, mdmailer automatically uses installed Google Chrome (or Chromium on macOS/Linux), or downloads the required Chrome version on first PNG generation. The first download needs internet access and can take a few minutes; later runs reuse the cached browser. No separate browser setup command is normally required.
+
+Explicit Puppeteer download-disable settings are respected. Restricted networks can prevent automatic setup, and minimal Linux/container systems may still require Chrome’s operating-system libraries. Hosted images must be reachable during generation. Browser rendering prepares the shared layout before any files for that email are written; rerun the same command after resolving a reported setup or rendering issue.
+
+To use an existing Chrome installation instead, set `PUPPETEER_EXECUTABLE_PATH` to its executable path.
+
+### Promotional cards
+
+The PNG reuses the rendered email, including all body content, images, tables, agenda, host profiles, and footer. There is no separate summary template, text truncation, or fixed-height crop. No `promotion` frontmatter is needed; earlier promotional-copy overrides no longer apply.
+
+HTML, EML, and PNG share the same full-content layout. HTTP/HTTPS links keep their readable labels with small numbered references. URL-only labels and plain HTTP/HTTPS or `www.` URLs become numbered references. Matching labeled QR codes appear just above the branding footer, once per unique destination, in all three formats. Links and QR captions remain clickable in HTML and EML. Email and telephone links also receive QR codes. QR codes are generated locally with a white quiet zone, and embedded as inline CID attachments in EML. Email-client rendering can vary, but all outputs use the same layout and content.
 
 ```bash
 mdmailer templates/news.md --output output

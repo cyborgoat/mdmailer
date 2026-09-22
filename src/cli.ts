@@ -5,7 +5,7 @@ import { TEMPLATE_NAMES } from "./emails/registry.js";
 const HELP = `mdmailer — turn a Markdown file into a branded email, ready to send manually.
 
 Usage:
-  mdmailer <file.md>                     Generate <name>.html and .eml
+  mdmailer <file.md>                     Generate <name>.html, .eml, and .png
   mdmailer <folder/>                     Generate every .md file directly in a folder
   mdmailer init                          Scaffold local config and templates
   mdmailer init --global                 Create user-wide branding config
