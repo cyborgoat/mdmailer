@@ -14,7 +14,7 @@ import { resolveContentImages } from "../resolve-content-images.js";
 import { resolveHosts } from "../resolve-hosts.js";
 import { normalizeThemeSelection, resolveEmailTheme, selectLogoUrl } from "../emails/theme.js";
 import { loadConfig } from "../config.js";
-import { parseGenerateArgs, resolveGenerateInputs } from "../generate-input.js";
+import { parseGenerateArgs, parseOutputFormats, resolveGenerateInputs, type OutputFormat } from "../generate-input.js";
 import { screenshotEmail } from "../screenshot.js";
 
 interface EmlAttachment {
@@ -112,19 +112,22 @@ export async function runGenerate(argv: string[]) {
     throw new Error('Email language cannot be set from the CLI. Add it to Markdown frontmatter as lang: en or lang: zh.');
   }
 
+  const output = args.get("output");
+  if (!output?.trim()) throw new Error("Required option --output <folder> is missing. Use --output . to write to the current directory.");
+  const formats = parseOutputFormats(args.get("format"));
   const inputs = await resolveGenerateInputs(input);
   const config = await loadConfig(args.get("config"));
   const themeFlag = args.get("theme")?.toLowerCase().trim();
   if (themeFlag && !THEME_PRESET_NAMES.includes(themeFlag as ThemePresetName)) {
     throw new Error(`Unknown theme "${themeFlag}". Valid themes: ${THEME_PRESET_NAMES.join(", ")}`);
   }
-  const outputDir = resolve(args.get("output") ?? ".");
+  const outputDir = resolve(output);
   for (const inputPath of inputs) {
-    await generateFile(inputPath, config, outputDir, themeFlag);
+    await generateFile(inputPath, config, outputDir, formats, themeFlag);
   }
 }
 
-async function generateFile(inputPath: string, config: Config, outputDir: string, themeFlag?: string) {
+async function generateFile(inputPath: string, config: Config, outputDir: string, formats: Set<OutputFormat>, themeFlag?: string) {
   const rawMarkdown = await readFile(resolve(inputPath), "utf-8");
   const { data: frontmatter, content: rawBodyMarkdown } = matter(rawMarkdown);
   const rawTemplateName = frontmatter.type;
@@ -179,9 +182,9 @@ async function generateFile(inputPath: string, config: Config, outputDir: string
   const { component, buildProps }: TemplateEntry = templates[templateName];
   const element = React.createElement(component, buildProps(ctx));
 
-  const preview = await screenshotEmail(await render(element), theme.contentWidth);
+  const preview = await screenshotEmail(await render(element), theme.contentWidth, formats.has("png"));
   const html = preview.html;
-  const text = await render(element, { plainText: true });
+  const text = formats.has("eml") ? await render(element, { plainText: true }) : "";
 
   await mkdir(outputDir, { recursive: true });
   const stem = basename(inputPath, extname(inputPath));
@@ -204,9 +207,18 @@ async function generateFile(inputPath: string, config: Config, outputDir: string
   ];
   const emlHtml = attachments.reduce((acc, att) => acc.split(att.renderedSrc).join(`cid:${att.cid}`), html);
 
-  await writeFile(htmlPath, html, "utf-8");
-  await writeFile(emlPath, buildEml(title, emlHtml, text, attachments), "utf-8");
-  await writeFile(pngPath, preview.png);
-
-  console.log(`Generated:\n  ${htmlPath}  (preview in a browser)\n  ${emlPath}  (open to compose in your mail client)\n  ${pngPath}  (promotional card)`);
+  const generated: string[] = [];
+  if (formats.has("html")) {
+    await writeFile(htmlPath, html, "utf-8");
+    generated.push(`${htmlPath}  (preview in a browser)`);
+  }
+  if (formats.has("eml")) {
+    await writeFile(emlPath, buildEml(title, emlHtml, text, attachments), "utf-8");
+    generated.push(`${emlPath}  (open to compose in your mail client)`);
+  }
+  if (preview.png) {
+    await writeFile(pngPath, preview.png);
+    generated.push(`${pngPath}  (promotional card)`);
+  }
+  console.log(`Generated:\n  ${generated.join("\n  ")}`);
 }

@@ -55,7 +55,7 @@ export async function runInit(argv: string[] = []) {
     await writeIfMissing(configPath, DEFAULT_CONFIG);
     await copyAgentSkill(dirname(configPath));
     await writeIfMissing(resolve(assetsDir, "logo.svg"), PLACEHOLDER_LOGO_SVG);
-    console.log(`\nEdit ${configPath} to set your organization, logo, brand color, and footer.\nRelative logo paths are resolved from ${dirname(configPath)}.\nGenerate any Markdown file with: mdmailer <file.md>\nFor agent integration, ask your agent to read ${resolve(dirname(configPath), "SKILL.md")}.`);
+    console.log(`\nEdit ${configPath} to set your organization, logo, brand color, and footer.\nRelative logo paths are resolved from ${dirname(configPath)}.\nGenerate any Markdown file with: mdmailer <file.md> --output <folder>\nFor agent integration, ask your agent to read ${resolve(dirname(configPath), "SKILL.md")}.`);
     return;
   }
   const configPath = resolve("mdmailer.config.json");
@@ -75,7 +75,7 @@ export async function runInit(argv: string[] = []) {
       "  1. Replace assets/logo.svg with your real logo (or point logoUrl at a hosted image).\n" +
       "  2. Edit mdmailer.config.json with your organization's branding and footer.\n" +
       "  3. Edit templates/news.md with your update.\n" +
-      "  4. Run: mdmailer templates/news.md\n" +
+      "  4. Run: mdmailer templates/news.md --output emails\n" +
       "  5. For agent integration, ask your agent to read SKILL.md.\n" +
       "\n" +
       "Every Markdown file must declare its layout and language in frontmatter.\n" +

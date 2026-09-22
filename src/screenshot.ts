@@ -45,7 +45,7 @@ export async function browserExecutable(): Promise<string> {
 }
 
 /** Reuse the full email layout, replacing URLs with QR codes for the PNG. */
-export async function screenshotEmail(html: string, width: number): Promise<{ html: string; png: Uint8Array; qrImages: string[] }> {
+export async function screenshotEmail(html: string, width: number, capturePng = true): Promise<{ html: string; png?: Uint8Array; qrImages: string[] }> {
   const browser = await puppeteer.launch({ headless: true, executablePath: await browserExecutable() });
   try {
     const page = await browser.newPage();
@@ -59,7 +59,7 @@ export async function screenshotEmail(html: string, width: number): Promise<{ ht
         await image.decode();
       }));
     });
-    return { html: await page.content(), png: await page.screenshot({ type: "png", fullPage: true }), qrImages };
+    return { html: await page.content(), png: capturePng ? await page.screenshot({ type: "png", fullPage: true }) : undefined, qrImages };
   } catch (error) {
     throw new Error(`Could not capture the email PNG. Check that all email images are accessible. ${error instanceof Error ? error.message : String(error)}`, { cause: error });
   } finally {

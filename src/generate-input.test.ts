@@ -3,7 +3,15 @@ import { mkdtemp, mkdir, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
-import { parseGenerateArgs, resolveGenerateInputs } from "./generate-input.js";
+import { parseGenerateArgs, parseOutputFormats, resolveGenerateInputs } from "./generate-input.js";
+
+test("output formats default to all and validate explicit selections", () => {
+  assert.deepEqual([...parseOutputFormats()], ["html", "eml", "png"]);
+  assert.deepEqual([...parseOutputFormats(".HTML, png,html")], ["html", "png"]);
+  for (const value of ["", "pdf", "html,", "html png"]) {
+    assert.throws(() => parseOutputFormats(value), /Invalid --format/);
+  }
+});
 
 test("positional input and legacy --input produce the same options", () => {
   assert.deepEqual(

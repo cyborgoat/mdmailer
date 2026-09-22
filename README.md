@@ -11,7 +11,7 @@ Install in your email workspace:
 ```bash
 npm install @cyborgoat/mdmailer
 npx mdmailer init
-npx mdmailer templates/news.md
+npx mdmailer templates/news.md --output emails
 ```
 
 For a global CLI, use `npm install -g @cyborgoat/mdmailer`, then run `mdmailer` directly. The examples below use that shorter form.
@@ -19,10 +19,18 @@ For a global CLI, use `npm install -g @cyborgoat/mdmailer`, then run `mdmailer` 
 Edit `mdmailer.config.json` for your branding and a file in `templates/` for your message. Generate all templates with:
 
 ```bash
-mdmailer templates/
+mdmailer templates/ --output emails
 ```
 
-By default, `<name>.html`, `<name>.eml`, and `<name>.png` are saved in your **current working directory** (where you run the command), not beside the input file. The PNG includes the full email with URLs replaced by QR codes, at twice the configured email width and a height that fits all content. Use `--output <folder>` to choose another destination; missing folders are created. Matching output files are replaced. Folder generation reads immediate `.md` files in filename order, skips subfolders, and stops on the first error.
+`--output <folder>` is required; missing folders are created. Use `--output .` to explicitly save to your current directory. By default, all three files are generated: `<name>.html`, `<name>.eml`, and `<name>.png`. Select a subset with `--format html`, `--format eml,png`, or any comma-separated combination of `html`, `eml`, and `png` (leading dots are accepted). Only selected formats are written; existing files of other formats are left untouched. Matching selected files are replaced. Folder generation reads immediate `.md` files in filename order, skips subfolders, and stops on the first error.
+
+```bash
+mdmailer templates/news.md --output emails --format eml
+mdmailer templates/ --output images --format png
+mdmailer templates/news.md --output emails --format html,eml
+```
+
+The PNG includes the full email with URLs replaced by QR codes, at twice the configured email width and a height that fits all content. All formats share browser-based layout preparation; selecting HTML or EML alone skips screenshot capture.
 
 Puppeteer is included as a dependency; users do not need to install it separately. It normally downloads Chrome during npm installation. If that browser is missing, mdmailer automatically uses installed Google Chrome (or Chromium on macOS/Linux), or downloads the required Chrome version on first PNG generation. The first download needs internet access and can take a few minutes; later runs reuse the cached browser. No separate browser setup command is normally required.
 
@@ -103,11 +111,11 @@ Any type can use any of the three themes:
 Choose the theme in frontmatter or override it for one run:
 
 ```bash
-mdmailer templates/meeting.md --theme classic
-mdmailer templates/ --config path/to/config.json
+mdmailer templates/meeting.md --output emails --theme classic
+mdmailer templates/ --output emails --config path/to/config.json
 ```
 
-Run `mdmailer --help` for usage. The older `mdmailer generate --input <file.md>` command still works.
+Run `mdmailer --help` for usage. The older `mdmailer generate --input <file.md> --output <folder>` command still works.
 
 ## Write an email
 
@@ -199,7 +207,7 @@ Supported color keys are `background`, `foreground`, `mutedForeground`, `accent`
 For source checkout setup, run `npm ci`, `npm run build`, and optionally `npm link`.
 
 ```bash
-npm run generate -- templates/   # Run from source without linking
+npm run generate -- templates/ --output emails   # Run from source without linking
 npm run email:dev              # Live template previews
 npm run typecheck
 npm test

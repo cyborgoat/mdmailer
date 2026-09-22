@@ -1,7 +1,16 @@
 import { readdir, stat } from "node:fs/promises";
 import { extname, join } from "node:path";
 
-const OPTIONS = new Set(["input", "output", "config", "theme", "template", "type", "lang", "locale", "language"]);
+const OPTIONS = new Set(["input", "output", "format", "config", "theme", "template", "type", "lang", "locale", "language"]);
+export type OutputFormat = "html" | "eml" | "png";
+
+export function parseOutputFormats(value = "html,eml,png"): Set<OutputFormat> {
+  const formats = value.split(",").map(format => format.trim().toLowerCase().replace(/^\./, ""));
+  if (formats.some(format => !["html", "eml", "png"].includes(format))) {
+    throw new Error("Invalid --format. Choose html, eml, png, or a comma-separated combination (for example: html,png).");
+  }
+  return new Set(formats as OutputFormat[]);
+}
 
 export function parseGenerateArgs(argv: string[]): Map<string, string> {
   const args = new Map<string, string>();

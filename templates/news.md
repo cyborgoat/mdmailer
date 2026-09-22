@@ -43,7 +43,7 @@ You get **bold**, *italic*, ~~strikethrough~~, and `inline code`, plus [links](h
 ## Code block
 
 ```bash
-mdmailer templates/news.md
+mdmailer templates/news.md --output emails
 ```
 
 ---

@@ -43,7 +43,7 @@ theme: classic
 ## 代码块
 
 ```bash
-mdmailer templates/news.zh.md
+mdmailer templates/news.zh.md --output emails
 ```
 
 ---

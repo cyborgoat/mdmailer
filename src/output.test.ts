@@ -13,12 +13,14 @@ const cli = fileURLToPath(new URL("./cli.ts", import.meta.url));
 // Temporary workspaces need the repository's automatic JSX transform.
 const env = { ...process.env, TSX_TSCONFIG_PATH: fileURLToPath(new URL("../tsconfig.json", import.meta.url)) };
 
-test("CLI defaults to cwd and supports relative and absolute output folders", async () => {
+test("CLI requires output and supports explicit current, relative and absolute folders", async () => {
   const cwd = await mkdtemp(join(tmpdir(), "mdmailer-output-"));
   const run = (...args: string[]) => exec(process.execPath, ["--import", import.meta.resolve("tsx"), cli, ...args], { cwd, env });
   try {
     await run("init");
-    await run("templates/news.md");
+    await assert.rejects(run("templates/news.md"), /Required option --output/);
+    await assert.rejects(access(join(cwd, "news.html")));
+    await run("templates/news.md", "--output", ".");
     await access(join(cwd, "news.html"));
     await access(join(cwd, "news.eml"));
     const html = await readFile(join(cwd, "news.html"), "utf8");
@@ -44,6 +46,17 @@ test("CLI defaults to cwd and supports relative and absolute output folders", as
     await access(join(absolute, "news.png"));
 
     await assert.rejects(run("templates/news.md", "--output"), /Missing value for --output/);
+    await assert.rejects(run("templates/news.md", "--output", "invalid", "--format", "pdf"), /Invalid --format/);
+    await assert.rejects(access(join(cwd, "invalid")));
+
+    for (const format of ["html", "eml", "png", "html,eml", "html,png", "eml,png"]) {
+      const folder = `only-${format}`;
+      const { stdout } = await run("templates/news.md", "--output", folder, "--format", format);
+      assert.deepEqual((await readdir(join(cwd, folder))).sort(), format.split(",").map(ext => `news.${ext}`).sort());
+      for (const ext of ["html", "eml", "png"]) {
+        assert.equal(stdout.includes(`news.${ext}`), format.split(",").includes(ext));
+      }
+    }
   } finally {
     await rm(cwd, { recursive: true, force: true });
   }
@@ -62,7 +75,7 @@ test("folder generation stops at invalid frontmatter and preserves earlier outpu
     await assert.rejects(run("batch/", "--output", "results"), /Missing required frontmatter field "lang"/);
     assert.deepEqual((await readdir(join(cwd, "results"))).sort(), ["a.eml", "a.html", "a.png"]);
     await assert.rejects(run("templates/news.md", "--type", "event"), /Email type cannot be set from the CLI/);
-    await assert.rejects(run("templates/news.md", "--theme", "unknown"), /Valid themes: classic, navy-gold, forest-cream/);
+    await assert.rejects(run("templates/news.md", "--output", "results", "--theme", "unknown"), /Valid themes: classic, navy-gold, forest-cream/);
   } finally {
     await rm(cwd, { recursive: true, force: true });
   }

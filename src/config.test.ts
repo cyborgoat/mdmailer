@@ -39,7 +39,7 @@ test("global setup, config precedence, relative logos, and synchronized starters
     assert.equal(resolved.organization.logoUrlOnDark, join(dirname(globalPath), "assets/dark.svg"));
 
     await writeFile("email.md", "---\ntype: news\nlang: en\ntheme: navy-gold\n---\nHello\n");
-    await runGenerate(["email.md"]);
+    await runGenerate(["email.md", "--output", "."]);
     assert.match(await readFile("email.html", "utf8"), /Global brand/);
     await access("email.eml");
     await runInit();
