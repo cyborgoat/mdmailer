@@ -43,6 +43,8 @@ export interface EventEmailProps {
     where: string;
     join: string;
     joinLink: string;
+    /** Caption shown under this link's QR code, distinct from the clickable joinLink text. */
+    qrJoinCaption: string;
     hosts: string;
     hostsSection: string;
     agenda: string;
@@ -87,7 +89,11 @@ export default function EventEmail({
     {
       label: labels.join,
       value: joinUrl ? (
-        <Link href={joinUrl} style={{ fontFamily: theme.fontFamily, color: theme.accent, wordBreak: "break-word" }}>
+        <Link
+          href={joinUrl}
+          data-qr-caption={labels.qrJoinCaption}
+          style={{ fontFamily: theme.fontFamily, color: theme.accent, wordBreak: "break-word" }}
+        >
           {labels.joinLink}
         </Link>
       ) : (
@@ -247,6 +253,7 @@ EventEmail.PreviewProps = {
     where: "Where",
     join: "Join",
     joinLink: "Join the meeting",
+    qrJoinCaption: "Scan to join the meeting",
     hosts: "Hosts",
     hostsSection: "Meet the hosts",
     agenda: "Agenda",
@@ -295,6 +302,13 @@ export function buildEventProps(
           : isInvitation
             ? "link.respondInvitation"
           : "link.joinEvent"),
+      qrJoinCaption: t(locale, eventType === "meeting"
+        ? "qr.joinMeeting"
+        : eventType === "webinar"
+          ? "qr.joinWebinar"
+          : isInvitation
+            ? "qr.respondInvitation"
+          : "qr.joinEvent"),
       hosts: t(locale, "detail.hosts"),
       hostsSection: t(locale, "section.hosts"),
       agenda: t(locale, "section.agenda"),

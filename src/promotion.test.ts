@@ -49,3 +49,21 @@ test("PNG transformation preserves full content and converts links and bare URLs
     await browser.close();
   }
 });
+
+test("a link's data-qr-caption overrides its own visible text in the QR caption, even if the URL was seen first without one", async () => {
+  const browser = await puppeteer.launch({ headless: true, executablePath: await browserExecutable() });
+  try {
+    const page = await browser.newPage();
+    await page.setContent(`<html><body>
+      <p>Details: https://example.com/join</p>
+      <a href="https://example.com/join" data-qr-caption="Scan to join the meeting">Join the meeting</a>
+      </body></html>`);
+    await replaceLinksWithQr(page);
+    const captions = await page.evaluate(() =>
+      Array.from(document.querySelectorAll<HTMLElement>("[data-qr-url] a"), (a) => a.textContent),
+    );
+    assert.deepEqual(captions, ["[1] Scan to join the meeting"]);
+  } finally {
+    await browser.close();
+  }
+});

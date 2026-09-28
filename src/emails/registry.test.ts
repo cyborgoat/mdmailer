@@ -51,21 +51,53 @@ test("meeting, invitation, and webinar types preserve their event defaults", () 
     hostProfiles: [],
   };
 
-  const meeting = templates.meeting.buildProps(ctx) as EventEmailProps;
+  const meeting = templates.meeting.buildProps({ ...ctx, frontmatter: { type: "meeting" } }) as EventEmailProps;
   const invitation = templates.invitation.buildProps({
     ...ctx,
     frontmatter: { type: "invitation", rsvpUrl: "https://example.com/rsvp" },
   }) as EventEmailProps;
-  const webinar = templates.webinar.buildProps(ctx) as EventEmailProps;
+  const webinar = templates.webinar.buildProps({ ...ctx, frontmatter: { type: "webinar" } }) as EventEmailProps;
 
   assert.equal(meeting.kicker, "Meeting");
   assert.equal(meeting.showHostsSection, true);
+  assert.equal(meeting.labels.qrJoinCaption, "Scan to join the meeting");
   assert.equal(invitation.kicker, "Invitation");
   assert.equal(invitation.joinUrl, "https://example.com/rsvp");
   assert.equal(invitation.labels.join, "RSVP");
   assert.equal(invitation.labels.joinLink, "Respond to invitation");
+  assert.equal(invitation.labels.qrJoinCaption, "Scan to respond");
   assert.equal(webinar.kicker, "Webinar");
   assert.equal(webinar.showHostsSection, false);
+  assert.equal(webinar.labels.qrJoinCaption, "Scan to join the webinar");
+
+  const event = templates.event.buildProps({ ...ctx, frontmatter: { type: "event" } }) as EventEmailProps;
+  assert.equal(event.labels.qrJoinCaption, "Scan to view event details");
+});
+
+test("QR join captions are distinct from the clickable join link text, per locale", () => {
+  const config = configSchema.parse({
+    organization: { name: "Example", logoUrl: "assets/logo.svg" },
+    theme: { primaryColor: "#1a73e8", footerText: "© Example" },
+  });
+  const baseCtx: Omit<TemplateContext, "locale"> = {
+    frontmatter: { type: "meeting" },
+    bodyMarkdown: "",
+    config,
+    theme: resolveEmailTheme(config.theme, normalizeThemeSelection(frontmatterThemeSchema.parse("classic"))),
+    organization: config.organization,
+    title: "Example",
+    date: "2026-09-09",
+    hostProfiles: [],
+  };
+
+  const en = templates.meeting.buildProps({ ...baseCtx, locale: "en" }) as EventEmailProps;
+  assert.equal(en.labels.joinLink, "Join the meeting");
+  assert.equal(en.labels.qrJoinCaption, "Scan to join the meeting");
+  assert.notEqual(en.labels.joinLink, en.labels.qrJoinCaption);
+
+  const zh = templates.meeting.buildProps({ ...baseCtx, locale: "zh" }) as EventEmailProps;
+  assert.equal(zh.labels.joinLink, "加入会议");
+  assert.equal(zh.labels.qrJoinCaption, "扫码加入会议");
 });
 
 test("content types receive localized semantic labels", () => {

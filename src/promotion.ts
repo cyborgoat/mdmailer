@@ -6,9 +6,9 @@ export async function replaceLinksWithQr(page: Page): Promise<string[]> {
   const urls = await page.evaluate(() => {
     const destinations = new Map<string, { number: number; label: string }>();
     const pattern = /(?:https?:\/\/|www\.)[^\s<>]+/gi;
-    const qr = { code(url: string, label = ""): HTMLElement {
+    const qr = { code(url: string, label = "", opts: { force?: boolean } = {}): HTMLElement {
       if (!destinations.has(url)) destinations.set(url, { number: destinations.size + 1, label });
-      else if (label && !destinations.get(url)!.label) destinations.get(url)!.label = label;
+      else if (label && (opts.force || !destinations.get(url)!.label)) destinations.get(url)!.label = label;
       const span = document.createElement("sup");
       span.textContent = ` [${destinations.get(url)!.number}]`;
       span.style.cssText = "font-size:10px;line-height:1;white-space:nowrap";
@@ -18,6 +18,9 @@ export async function replaceLinksWithQr(page: Page): Promise<string[]> {
     for (const link of document.querySelectorAll<HTMLAnchorElement>("a[href]")) {
       const url = link.getAttribute("href") ?? "";
       if (!/^(https?:\/\/|mailto:|tel:)/i.test(url)) continue;
+      // A link can mark its own QR caption (e.g. "Scan to join the meeting"),
+      // distinct from its clickable text, which always wins for that URL.
+      const captionOverride = link.dataset.qrCaption;
       const label = document.createElement("a");
       label.href = url;
       label.style.cssText = link.style.cssText;
@@ -25,7 +28,7 @@ export async function replaceLinksWithQr(page: Page): Promise<string[]> {
       const text = label.textContent?.trim() ?? "";
       if (text === url || /^(?:https?:\/\/|www\.|mailto:|tel:)[^\s]+$/i.test(text)) label.textContent = "";
       link.replaceWith(label);
-      label.append(qr.code(url, label.textContent?.trim() ?? ""));
+      label.append(qr.code(url, captionOverride || (label.textContent?.trim() ?? ""), { force: Boolean(captionOverride) }));
     }
     // Plain URLs need the same treatment, including those inside code blocks.
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
