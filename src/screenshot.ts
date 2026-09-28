@@ -58,6 +58,17 @@ export async function screenshotEmail(html: string, width: number, capturePng = 
       await Promise.all(Array.from(document.images, async (image) => {
         await image.decode();
       }));
+      // Bake the CSS-constrained (max-width: 100%; height: auto) box size into
+      // width/height attributes. Browsers honor the CSS either way, but many
+      // mail clients — Outlook's Word engine especially — ignore max-width on
+      // <img> and fall back to the source file's native pixel size, which is
+      // what made oversized or mismatched Markdown images render messy in the
+      // .eml. Explicit attributes make the .eml match the .html/.png layout.
+      for (const image of Array.from(document.images)) {
+        const { width, height } = image.getBoundingClientRect();
+        if (width > 0) image.setAttribute("width", String(Math.round(width)));
+        if (height > 0) image.setAttribute("height", String(Math.round(height)));
+      }
     });
     return { html: await page.content(), png: capturePng ? await page.screenshot({ type: "png", fullPage: true }) : undefined, qrImages };
   } catch (error) {
