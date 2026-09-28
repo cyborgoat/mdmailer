@@ -2,11 +2,16 @@ import assert from "node:assert/strict";
 import { access, copyFile, mkdir, mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import { dirname, join } from "node:path";
+import { Readable, Writable } from "node:stream";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 import { globalConfigPath, loadConfig } from "./config.js";
 import { runInit } from "./commands/init.js";
 import { runGenerate } from "./commands/generate.js";
+
+// Explicit non-TTY IO: keeps `runInit()` deterministically non-interactive
+// regardless of whether this test happens to inherit a real terminal's stdin.
+const nonTtyIO = { input: new Readable({ read() {} }), output: new Writable({ write(_chunk, _enc, cb) { cb(); } }) };
 
 // This test process uses a temporary cwd and mocked home, never the real user config.
 test("global setup, config precedence, relative logos, and synchronized starters", async (t) => {
@@ -42,11 +47,11 @@ test("global setup, config precedence, relative logos, and synchronized starters
     await runGenerate(["email.md", "--output", "."]);
     assert.match(await readFile("email.html", "utf8"), /Global brand/);
     await access("email.eml");
-    await runInit();
+    await runInit([], nonTtyIO);
     assert.equal((await loadConfig()).organization.name, "Your Organization");
     assert.equal(await readFile("SKILL.md", "utf8"), bundledSkill);
     await writeFile("SKILL.md", "User workspace instructions");
-    await runInit();
+    await runInit([], nonTtyIO);
     assert.equal(await readFile("SKILL.md", "utf8"), "User workspace instructions");
     const templates = fileURLToPath(new URL("../templates/", import.meta.url));
     assert.deepEqual((await readdir("templates")).sort(), (await readdir(templates)).sort());

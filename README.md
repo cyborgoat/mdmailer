@@ -11,8 +11,16 @@ Install in your email workspace:
 ```bash
 npm install @cyborgoat/mdmailer
 npx mdmailer init
+```
+
+Run from a terminal, `init` asks for a project name (default: the current folder's name) and a default theme, then scaffolds everything into a new `<project-name>/` folder:
+
+```bash
+cd <project-name>
 npx mdmailer templates/news.md --output emails
 ```
+
+Run non-interactively — piped input, CI, or an agent — `init` skips both prompts and scaffolds directly into the current directory instead, exactly as before.
 
 For a global CLI, use `npm install -g @cyborgoat/mdmailer`, then run `mdmailer` directly. The examples below use that shorter form.
 
@@ -51,7 +59,7 @@ mdmailer templates/ --output "/path/to/email exports"
 
 Relative output paths resolve from your current working directory; absolute paths work too.
 
-For a new email workspace, run `mdmailer init`. It creates SKILL.md, missing config, a placeholder logo, and twelve starters under `templates/`: one English and one Chinese example for each email type. Existing files are preserved. Templates are starting points; your Markdown files can live in any folder.
+For a new email workspace, run `mdmailer init`. It creates SKILL.md, missing config, a placeholder logo, and twelve starters under `templates/`: one English and one Chinese example for each email type. Existing files are preserved. Templates are starting points; your Markdown files can live in any folder. Run from a terminal, it first prompts for a project name and default theme and scaffolds these into a new subfolder (see "Quick start"); run non-interactively, it scaffolds directly into the current directory with no prompts, as described above.
 
 ## Use with an LLM agent
 
@@ -73,7 +81,7 @@ Agents can copy a starter into your workspace, edit the Markdown, and run the in
 mdmailer init --global
 ```
 
-Edit `~/.mdmailer/mdmailer.config.json` to set your organization, logo, brand color, and footer. The command also copies the agent guide to `~/.mdmailer/SKILL.md` and creates a placeholder at `~/.mdmailer/assets/logo.svg`; it does not create templates or change your working folder.
+Edit `~/.mdmailer/mdmailer.config.json` to set your organization, logo, brand color, and footer. The command also copies the agent guide to `~/.mdmailer/SKILL.md` and creates a placeholder at `~/.mdmailer/assets/logo.svg`; it does not create templates or change your working folder. `mdmailer init --global` never prompts, even in a terminal — there's no project to name for user-wide branding.
 
 The CLI selects one configuration file in this order:
 
@@ -114,6 +122,8 @@ Choose the theme in frontmatter or override it for one run:
 mdmailer templates/meeting.md --output emails --theme classic
 mdmailer templates/ --output emails --config path/to/config.json
 ```
+
+Precedence when a Markdown file doesn't set `theme:` at all: the `--theme` flag, then frontmatter `theme:` (when present), then your config's `theme.preset` (set during `init`'s interactive wizard, or by hand — see "Branding and images"), then `classic`.
 
 Run `mdmailer --help` for usage. The older `mdmailer generate --input <file.md> --output <folder>` command still works.
 
@@ -180,10 +190,13 @@ Edit your selected local or global JSON configuration:
   "theme": {
     "primaryColor": "#1A73E8",
     "tagline": "Your tagline",
-    "footerText": "© 2026 {{organization}}"
+    "footerText": "© 2026 {{organization}}",
+    "preset": "classic"
   }
 }
 ```
+
+`theme.preset` (`classic`, `navy-gold`, or `forest-cream`) is the fallback used when a Markdown file's frontmatter omits `theme:` entirely; it defaults to `classic` when omitted here too. `init`'s interactive wizard sets it for you; explicit frontmatter `theme:` and the `--theme` flag both still override it for that one file or run.
 
 Transparent logos remain transparent on every theme; no white backing plate is added. Use a light-colored logo for a dark theme when needed.
 
@@ -215,5 +228,7 @@ npm run build
 ```
 
 The linked `mdmailer` command uses `dist/cli.js`; rebuild after changing source code. The optional `output/` folder and personal drafts are gitignored; files generated elsewhere follow your own ignore rules; the twelve starter files are tracked.
+
+`init`'s interactive wizard only activates with a real terminal attached, so it isn't exercised by the automated subprocess tests (which spawn the CLI without a TTY). Check it manually with `node --import tsx/esm src/cli.ts init` run directly in a terminal, or force a pty with `script -q /dev/null node --import tsx/esm src/cli.ts init` (macOS/Linux) for a scripted check.
 
 `npm pack` builds the CLI and includes only the CLI bundle, twelve English and Chinese starters, SKILL.md, README, license, and package metadata. Only the five sample host photos are bundled as assets; personal branding, other assets, drafts, and generated emails are excluded.

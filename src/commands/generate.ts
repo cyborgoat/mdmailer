@@ -148,7 +148,11 @@ async function generateFile(inputPath: string, config: Config, outputDir: string
     throw new Error(`Unsupported frontmatter language "${String(rawLocale)}". Available languages: English (en) and Chinese (zh).`);
   }
 
-  const frontmatterTheme = normalizeThemeSelection(frontmatterThemeSchema.parse(frontmatter.theme));
+  // Frontmatter omitting `theme:` entirely falls back to the config's default
+  // preset; zod's own `.default("classic")` can't tell "omitted" from an
+  // explicit `theme: classic`, so that distinction has to be made here.
+  const themeSource = frontmatter.theme === undefined ? config.theme.preset : frontmatter.theme;
+  const frontmatterTheme = normalizeThemeSelection(frontmatterThemeSchema.parse(themeSource));
   const themeSelection = themeFlag
     ? normalizeThemeSelection(frontmatterThemeSchema.parse({ ...frontmatterTheme, preset: themeFlag }))
     : frontmatterTheme;

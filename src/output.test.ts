@@ -62,6 +62,31 @@ test("CLI requires output and supports explicit current, relative and absolute f
   }
 });
 
+test("config theme.preset is the fallback for frontmatter that omits theme, but explicit frontmatter and --theme still win", async () => {
+  const cwd = await mkdtemp(join(tmpdir(), "mdmailer-theme-preset-"));
+  const run = (...args: string[]) => exec(process.execPath, ["--import", import.meta.resolve("tsx"), cli, ...args], { cwd, env });
+  try {
+    await run("init");
+    const configPath = join(cwd, "mdmailer.config.json");
+    const config = JSON.parse(await readFile(configPath, "utf8"));
+    config.theme.preset = "navy-gold";
+    await writeFile(configPath, JSON.stringify(config));
+
+    await writeFile(join(cwd, "omitted.md"), "---\ntype: news\nlang: en\n---\nBody\n");
+    await writeFile(join(cwd, "explicit.md"), "---\ntype: news\nlang: en\ntheme: classic\n---\nBody\n");
+
+    await run("omitted.md", "--output", "out", "--format", "html");
+    await run("explicit.md", "--output", "out", "--format", "html");
+    await run("omitted.md", "--output", "out-flag", "--format", "html", "--theme", "forest-cream");
+
+    assert.match(await readFile(join(cwd, "out/omitted.html"), "utf8"), /background-color:#14213D/);
+    assert.match(await readFile(join(cwd, "out/explicit.html"), "utf8"), /background-color:#ffffff/);
+    assert.match(await readFile(join(cwd, "out-flag/omitted.html"), "utf8"), /background-color:#173F35/);
+  } finally {
+    await rm(cwd, { recursive: true, force: true });
+  }
+});
+
 test("folder generation stops at invalid frontmatter and preserves earlier outputs", async () => {
   const cwd = await mkdtemp(join(tmpdir(), "mdmailer-errors-"));
   const run = (...args: string[]) => exec(process.execPath, ["--import", import.meta.resolve("tsx"), cli, ...args], { cwd, env });

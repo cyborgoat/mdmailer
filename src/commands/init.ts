@@ -1,8 +1,10 @@
 import { access, mkdir, writeFile } from "node:fs/promises";
-import { dirname, resolve } from "node:path";
+import { basename, dirname, resolve } from "node:path";
+import { createInterface } from "node:readline/promises";
 
 import { copyAgentSkill, copyStarterPhotos, copyStarterTemplates } from "../template-assets.js";
 import { globalConfigPath } from "../config.js";
+import { THEME_PRESET_NAMES, type ThemePresetName } from "../config-schema.js";
 
 const DEFAULT_CONFIG = `{
   "organization": {
@@ -44,7 +46,106 @@ async function writeIfMissing(path: string, contents: string) {
   console.log(`Created: ${path}`);
 }
 
-export async function runInit(argv: string[] = []) {
+/** Scaffold a local workspace's config, starter templates, and assets under `rootDir`. */
+async function scaffoldLocalWorkspace(rootDir: string, configContents: string) {
+  const configPath = resolve(rootDir, "mdmailer.config.json");
+  const templatesDir = resolve(rootDir, "templates");
+  const assetsDir = resolve(rootDir, "assets");
+  const logoPath = resolve(assetsDir, "logo.svg");
+
+  await writeIfMissing(configPath, configContents);
+  await copyStarterTemplates(templatesDir);
+  await mkdir(assetsDir, { recursive: true });
+  await writeIfMissing(logoPath, PLACEHOLDER_LOGO_SVG);
+  await copyStarterPhotos(assetsDir);
+  await copyAgentSkill(rootDir);
+}
+
+function nextStepsMessage(cdStep?: string): string {
+  const steps = [
+    ...(cdStep ? [cdStep] : []),
+    "Replace assets/logo.svg with your real logo (or point logoUrl at a hosted image).",
+    "Edit mdmailer.config.json with your organization's branding and footer.",
+    "Edit templates/news.md with your update.",
+    "Run: mdmailer templates/news.md --output emails",
+    "For agent integration, ask your agent to read SKILL.md.",
+  ];
+  return (
+    "\nNext steps:\n" +
+    steps.map((step, index) => `  ${index + 1}. ${step}\n`).join("") +
+    "\n" +
+    "Every Markdown file must declare its layout and language in frontmatter.\n" +
+    "English starters use <type>.md; Chinese starters use <type>.zh.md.\n" +
+    "Set the required layout with `type:` in frontmatter.\n" +
+    "Set the required language with `lang: en` or `lang: zh` (English or Chinese).\n"
+  );
+}
+
+export function slugify(name: string): string {
+  const slug = name
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  return slug || "mdmailer-project";
+}
+
+function buildConfigWithPreset(preset: ThemePresetName): string {
+  const parsed = JSON.parse(DEFAULT_CONFIG);
+  parsed.theme.preset = preset;
+  return `${JSON.stringify(parsed, null, 2)}\n`;
+}
+
+export interface InitIO {
+  input: NodeJS.ReadableStream & { isTTY?: boolean };
+  output: NodeJS.WritableStream & { isTTY?: boolean };
+}
+
+const defaultIO = (): InitIO => ({ input: process.stdin, output: process.stdout });
+
+function isInteractive(io: InitIO): boolean {
+  return Boolean(io.input.isTTY) && Boolean(io.output.isTTY);
+}
+
+async function promptThemePreset(rl: ReturnType<typeof createInterface>, output: InitIO["output"]): Promise<ThemePresetName> {
+  const listing = THEME_PRESET_NAMES
+    .map((name, index) => `  ${index + 1}) ${name}${index === 0 ? " (default)" : ""}`)
+    .join("\n");
+  for (;;) {
+    const answer = (
+      await rl.question(`\nChoose a default theme:\n${listing}\nEnter 1-${THEME_PRESET_NAMES.length} [1]: `)
+    ).trim();
+    if (!answer) return THEME_PRESET_NAMES[0];
+    const asIndex = Number(answer);
+    if (Number.isInteger(asIndex) && asIndex >= 1 && asIndex <= THEME_PRESET_NAMES.length) {
+      return THEME_PRESET_NAMES[asIndex - 1];
+    }
+    const byName = THEME_PRESET_NAMES.find((name) => name.toLowerCase() === answer.toLowerCase());
+    if (byName) return byName;
+    output.write(`Please enter a number from 1 to ${THEME_PRESET_NAMES.length}, or a theme name.\n`);
+  }
+}
+
+async function runInteractiveInit(io: InitIO) {
+  const rl = createInterface({ input: io.input, output: io.output });
+  try {
+    const cwdBase = basename(resolve(".")) || "mdmailer-project";
+    const nameAnswer = (await rl.question(`Project name (${cwdBase}): `)).trim();
+    const slug = slugify(nameAnswer || cwdBase);
+    const preset = await promptThemePreset(rl, io.output);
+
+    const projectDir = resolve(slug);
+    await mkdir(projectDir, { recursive: true });
+    await scaffoldLocalWorkspace(projectDir, buildConfigWithPreset(preset));
+
+    io.output.write(`\nCreated project "${slug}" in ./${slug}\n`);
+    io.output.write(nextStepsMessage(`cd ${slug}`));
+  } finally {
+    rl.close();
+  }
+}
+
+export async function runInit(argv: string[] = [], io: InitIO = defaultIO()) {
   if (argv.length > 1 || (argv.length === 1 && argv[0] !== "--global")) {
     throw new Error("Usage: mdmailer init [--global]");
   }
@@ -58,29 +159,12 @@ export async function runInit(argv: string[] = []) {
     console.log(`\nEdit ${configPath} to set your organization, logo, brand color, and footer.\nRelative logo paths are resolved from ${dirname(configPath)}.\nGenerate any Markdown file with: mdmailer <file.md> --output <folder>\nFor agent integration, ask your agent to read ${resolve(dirname(configPath), "SKILL.md")}.`);
     return;
   }
-  const configPath = resolve("mdmailer.config.json");
-  const templatesDir = resolve("templates");
-  const assetsDir = resolve("assets");
-  const logoPath = resolve(assetsDir, "logo.svg");
 
-  await writeIfMissing(configPath, DEFAULT_CONFIG);
-  await copyStarterTemplates(templatesDir);
-  await mkdir(assetsDir, { recursive: true });
-  await writeIfMissing(logoPath, PLACEHOLDER_LOGO_SVG);
-  await copyStarterPhotos(assetsDir);
-  await copyAgentSkill(resolve("."));
+  if (!isInteractive(io)) {
+    await scaffoldLocalWorkspace(resolve("."), DEFAULT_CONFIG);
+    console.log(nextStepsMessage());
+    return;
+  }
 
-  console.log(
-    "\nNext steps:\n" +
-      "  1. Replace assets/logo.svg with your real logo (or point logoUrl at a hosted image).\n" +
-      "  2. Edit mdmailer.config.json with your organization's branding and footer.\n" +
-      "  3. Edit templates/news.md with your update.\n" +
-      "  4. Run: mdmailer templates/news.md --output emails\n" +
-      "  5. For agent integration, ask your agent to read SKILL.md.\n" +
-      "\n" +
-      "Every Markdown file must declare its layout and language in frontmatter.\n" +
-      "English starters use <type>.md; Chinese starters use <type>.zh.md.\n" +
-      "Set the required layout with `type:` in frontmatter.\n" +
-      "Set the required language with `lang: en` or `lang: zh` (English or Chinese).\n",
-  );
+  await runInteractiveInit(io);
 }

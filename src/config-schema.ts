@@ -130,6 +130,9 @@ const themeSchema = z.object({
   fontFamily: z.string().default(DEFAULT_FONT_FAMILY),
   // Max width (px) of the email's content column. Applies to every template.
   contentWidth: z.number().positive().default(680),
+  // Fallback theme preset for Markdown files whose frontmatter omits `theme:`.
+  // Explicit frontmatter `theme:` and the `--theme` CLI flag both still win.
+  preset: z.enum(THEME_PRESET_NAMES).default("classic"),
 
   // Optional shared-footer metadata. Existing configs without it keep working.
   social: z.array(socialLinkSchema).default([]),

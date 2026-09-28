@@ -31,12 +31,12 @@ Generate email files from Markdown; the app does not send email. For full field 
 
 If not installed, the user can install it with `npm install @cyborgoat/mdmailer` in their workspace, or `npm install -g @cyborgoat/mdmailer` for a global command. The README and templates referenced here are bundled with the package; locate them in the installed package, even when this skill was copied into a workspace or `~/.mdmailer/`.
 
-`npx --no-install mdmailer init` creates a workspace SKILL.md, local config, assets, and twelve English and Chinese workspace starters without overwriting files. `npx --no-install mdmailer init --global` creates SKILL.md, branding config, and a placeholder logo under `~/.mdmailer/`. If a usable config already exists, skip initialization and copy just the starter you need.
+`npx --no-install mdmailer init` creates a workspace SKILL.md, local config, assets, and twelve English and Chinese workspace starters without overwriting files. Run this way (no attached terminal), it never prompts and scaffolds directly into the current directory — the interactive project-name/theme wizard only activates for a human running `init` from a real terminal, and does not apply to agent invocations. `npx --no-install mdmailer init --global` creates SKILL.md, branding config, and a placeholder logo under `~/.mdmailer/`; it never prompts, even interactively. If a usable config already exists, skip initialization and copy just the starter you need.
 
 ## Authoring
 
 - Require `type` and `lang` in YAML frontmatter. Valid types are `news`, `notification`, `meeting`, `event`, `invitation`, and `webinar`; languages are `en` and `zh`.
-- Use only `classic`, `navy-gold`, or `forest-cream`. Any type can use any theme; omitted themes default to `classic`.
+- Use only `classic`, `navy-gold`, or `forest-cream`. Any type can use any theme; frontmatter that omits `theme:` falls back to the config's `theme.preset` (set by `init`'s interactive wizard, or by hand — itself `classic` unless set).
 - Keep author-written text in the requested language. Localization changes built-in labels only.
 - Quote clock times and hex colors. Prefer ISO dates and the canonical field names in README.
 - For rich host or speaker introductions, use `name`, `role` for the job title, `bio` for experience, and `photo` for the avatar. Treat bundled profiles as examples, not facts about the user’s hosts.

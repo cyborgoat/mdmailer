@@ -33,6 +33,18 @@ test("removed presets are rejected in both frontmatter forms", () => {
   }
 });
 
+test("config theme.preset defaults to classic and round-trips valid presets", () => {
+  assert.equal(configSchema.parse(baseConfig).theme.preset, "classic");
+  for (const preset of THEME_PRESET_NAMES) {
+    const config = configSchema.parse({ ...baseConfig, theme: { ...baseConfig.theme, preset } });
+    assert.equal(config.theme.preset, preset);
+  }
+  assert.equal(
+    configSchema.safeParse({ ...baseConfig, theme: { ...baseConfig.theme, preset: "not-a-real-preset" } }).success,
+    false,
+  );
+});
+
 test("contrast defaults meet AA for every rendered text pairing", () => {
   const theme = resolveTheme("navy-gold");
 
