@@ -5,7 +5,7 @@ description: Create, configure, generate, and validate branded HTML and EML emai
 
 # mdmailer
 
-Generate email files from Markdown; the app does not send email. For full field documentation, read README.md in the installed package: `node_modules/@cyborgoat/mdmailer/README.md` for local installs, or `<npm root -g>/@cyborgoat/mdmailer/README.md` for global installs. In the source repository, use its README.md.
+Generate email files from Markdown; the app does not send email. For full field documentation, read README.md in the installed package: `node_modules/mdmailer/README.md` for local installs, or `<npm root -g>/mdmailer/README.md` for global installs. In the source repository, use its README.md.
 
 ## Workflow
 
@@ -29,7 +29,7 @@ Generate email files from Markdown; the app does not send email. For full field 
    npx --no-install mdmailer ./drafts --output ./emails
    ```
 
-If not installed, the user can install it with `npm install @cyborgoat/mdmailer` in their workspace, or `npm install -g @cyborgoat/mdmailer` for a global command. The README and templates referenced here are bundled with the package; locate them in the installed package, even when this skill was copied into a workspace or `~/.mdmailer/`.
+If not installed, the user can install it with `npm install mdmailer` in their workspace, or `npm install -g mdmailer` for a global command. The README and templates referenced here are bundled with the package; locate them in the installed package, even when this skill was copied into a workspace or `~/.mdmailer/`.
 
 `npx --no-install mdmailer init` creates a workspace SKILL.md, local config, assets, and twelve English and Chinese workspace starters without overwriting files. `npx --no-install mdmailer init --global` creates SKILL.md, branding config, and a placeholder logo under `~/.mdmailer/`. If a usable config already exists, skip initialization and copy just the starter you need.
 

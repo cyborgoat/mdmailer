@@ -9,12 +9,12 @@ Requires **Node.js 24 or later**.
 Install in your email workspace:
 
 ```bash
-npm install @cyborgoat/mdmailer
+npm install mdmailer
 npx mdmailer init
 npx mdmailer templates/news.md --output emails
 ```
 
-For a global CLI, use `npm install -g @cyborgoat/mdmailer`, then run `mdmailer` directly. The examples below use that shorter form.
+For a global CLI, use `npm install -g mdmailer`, then run `mdmailer` directly. The examples below use that shorter form.
 
 Edit `mdmailer.config.json` for your branding and a file in `templates/` for your message. Generate all templates with:
 
@@ -61,9 +61,9 @@ The npm package includes `SKILL.md`, this README, all twelve English and Chinese
 
 Existing SKILL.md files are preserved. You can also point directly to the installed copy:
 
-> Read `node_modules/@cyborgoat/mdmailer/SKILL.md` and use mdmailer to create my email.
+> Read `node_modules/mdmailer/SKILL.md` and use mdmailer to create my email.
 
-For a global install, run `npm root -g`; the skill is at `<that directory>/@cyborgoat/mdmailer/SKILL.md`.
+For a global install, run `npm root -g`; the skill is at `<that directory>/mdmailer/SKILL.md`.
 
 Agents can copy a starter into your workspace, edit the Markdown, and run the installed CLI. They do not need the source repository or a build step. Bundling a skill does not automatically register it with every agent; point your agent to the file or register it using that agent's skill mechanism.
 
