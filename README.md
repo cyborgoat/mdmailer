@@ -1,135 +1,47 @@
 # mdmailer
 
-Turn Markdown into branded HTML and EML emails, plus PNG promotional cards with QR codes. Preview the HTML in a browser, then open the EML in your mail client to add recipients and send. mdmailer does not send email itself.
+Turn a Markdown file into a branded HTML email, an EML file, and a PNG card with QR codes. Preview the HTML, then open the EML in your mail client to add recipients and send. mdmailer does not send email itself.
 
 Requires **Node.js 24 or later**.
 
 ## Quick start
-
-Install in your email workspace:
 
 ```bash
 npm install @cyborgoat/mdmailer
 npx mdmailer init
 ```
 
-Run from a terminal, `init` asks for a project name (default: the current folder's name) and a default theme, then scaffolds everything into a new `<project-name>/` folder:
+`init` asks for a project name and a default theme, then creates a project folder with a config file, a placeholder logo, and example emails. Then write a Markdown file and generate:
 
 ```bash
 cd <project-name>
-npx mdmailer templates/news.md --output emails
+npx mdmailer my-email.md --output emails
 ```
 
-Run non-interactively — piped input, CI, or an agent — `init` skips both prompts and scaffolds directly into the current directory instead, exactly as before.
+For a global command, use `npm install -g @cyborgoat/mdmailer` and run `mdmailer` directly.
 
-For a global CLI, use `npm install -g @cyborgoat/mdmailer`, then run `mdmailer` directly. The examples below use that shorter form.
-
-Edit `mdmailer.config.json` for your branding and a file in `templates/` for your message. Generate all templates with:
+## Generate
 
 ```bash
-mdmailer templates/ --output emails
+mdmailer my-email.md --output emails                 # one file
+mdmailer drafts/ --output emails                     # every .md file in a folder
+mdmailer my-email.md --output emails --format html   # only some formats
+mdmailer my-email.md --output emails --theme navy-gold
+mdmailer my-email.md --output emails --config path/to/config.json
 ```
 
-`--output <folder>` is required; missing folders are created. Use `--output .` to explicitly save to your current directory. By default, all three files are generated: `<name>.html`, `<name>.eml`, and `<name>.png`. Select a subset with `--format html`, `--format eml,png`, or any comma-separated combination of `html`, `eml`, and `png` (leading dots are accepted). Only selected formats are written; existing files of other formats are left untouched. Matching selected files are replaced. Folder generation reads immediate `.md` files in filename order, skips subfolders, and stops on the first error.
+- `--output <folder>` is required. Missing folders are created; use `--output .` for the current directory.
+- Each email produces `<name>.html`, `<name>.eml`, and `<name>.png`. Use `--format` with any comma-separated mix of `html`, `eml`, and `png` to write only those; other existing files are left alone.
+- Folder mode reads the folder's `.md` files in filename order, skips subfolders, and stops at the first error.
+- Run `mdmailer --help` for all options.
 
-```bash
-mdmailer templates/news.md --output emails --format eml
-mdmailer templates/ --output images --format png
-mdmailer templates/news.md --output emails --format html,eml
-```
+All three outputs share one layout. Links keep their labels with small numbered references, and a labeled QR code for each unique link, email address, or phone number appears above the footer. The PNG is the full email at twice the width, with no cropping.
 
-The PNG includes the full email with URLs replaced by QR codes, at twice the configured email width and a height that fits all content. All formats share browser-based layout preparation; selecting HTML or EML alone skips screenshot capture.
+### Browser
 
-Puppeteer is included as a dependency; users do not need to install it separately. It normally downloads Chrome during npm installation. If that browser is missing, mdmailer automatically uses installed Google Chrome (or Chromium on macOS/Linux), or downloads the required Chrome version on first PNG generation. The first download needs internet access and can take a few minutes; later runs reuse the cached browser. No separate browser setup command is normally required.
-
-Explicit Puppeteer download-disable settings are respected. Restricted networks can prevent automatic setup, and minimal Linux/container systems may still require Chrome’s operating-system libraries. Hosted images must be reachable during generation. Browser rendering prepares the shared layout before any files for that email are written; rerun the same command after resolving a reported setup or rendering issue.
-
-To use an existing Chrome installation instead, set `PUPPETEER_EXECUTABLE_PATH` to its executable path.
-
-### Promotional cards
-
-The PNG reuses the rendered email, including all body content, images, tables, agenda, host profiles, and footer. There is no separate summary template, text truncation, or fixed-height crop. No `promotion` frontmatter is needed; earlier promotional-copy overrides no longer apply.
-
-HTML, EML, and PNG share the same full-content layout. HTTP/HTTPS links keep their readable labels with small numbered references. URL-only labels and plain HTTP/HTTPS or `www.` URLs become numbered references. Matching labeled QR codes appear just above the branding footer, once per unique destination, in all three formats. Links and QR captions remain clickable in HTML and EML. Email and telephone links also receive QR codes. QR codes are generated locally with a white quiet zone, and embedded as inline CID attachments in EML. Email-client rendering can vary, but all outputs use the same layout and content.
-
-```bash
-mdmailer templates/news.md --output output
-mdmailer templates/ --output "/path/to/email exports"
-```
-
-Relative output paths resolve from your current working directory; absolute paths work too.
-
-For a new email workspace, run `mdmailer init`. It creates SKILL.md, missing config, a placeholder logo, and twelve starters under `templates/`: one English and one Chinese example for each email type. Existing files are preserved. Templates are starting points; your Markdown files can live in any folder. Run from a terminal, it first prompts for a project name and default theme and scaffolds these into a new subfolder (see "Quick start"); run non-interactively, it scaffolds directly into the current directory with no prompts, as described above.
-
-## Use with an LLM agent
-
-The npm package includes `SKILL.md`, this README, all twelve English and Chinese starter files in `templates/`, and sample host photos. Run `npx mdmailer init` to copy SKILL.md into your workspace, then tell your agent:
-
-> Read `SKILL.md` and use mdmailer to create my email.
-
-Existing SKILL.md files are preserved. You can also point directly to the installed copy:
-
-> Read `node_modules/@cyborgoat/mdmailer/SKILL.md` and use mdmailer to create my email.
-
-For a global install, run `npm root -g`; the skill is at `<that directory>/@cyborgoat/mdmailer/SKILL.md`.
-
-Agents can copy a starter into your workspace, edit the Markdown, and run the installed CLI. They do not need the source repository or a build step. Bundling a skill does not automatically register it with every agent; point your agent to the file or register it using that agent's skill mechanism.
-
-## Configure branding once
-
-```bash
-mdmailer init --global
-```
-
-Edit `~/.mdmailer/mdmailer.config.json` to set your organization, logo, brand color, and footer. The command also copies the agent guide to `~/.mdmailer/SKILL.md` and creates a placeholder at `~/.mdmailer/assets/logo.svg`; it does not create templates or change your working folder. `mdmailer init --global` never prompts, even in a terminal — there's no project to name for user-wide branding.
-
-The CLI selects one configuration file in this order:
-
-1. The file passed with `--config <file>`.
-2. `mdmailer.config.json` in your current working directory.
-3. `~/.mdmailer/mdmailer.config.json` in your home directory.
-
-Configurations are not merged. An invalid selected file reports an error instead of silently using another file. A local config lets you use different branding for a particular workspace. No package source files need editing.
-
-Both `logoUrl` and `logoUrlOnDark` resolve relative to the selected JSON file. Absolute paths and hosted URLs also work. After global setup, you can generate from any folder:
-
-```bash
-mdmailer /path/to/my-email.md --output ./emails
-```
-
-## Templates and themes
-
-| English | Chinese | Type | Theme | Use for |
-| --- | --- | --- | --- | --- |
-| [news.md](templates/news.md) | [news.zh.md](templates/news.zh.md) | `news` | `classic` | Updates, release notes, and digests |
-| [notification.md](templates/notification.md) | [notification.zh.md](templates/notification.zh.md) | `notification` | `classic` | A notice with a banner and headline |
-| [meeting.md](templates/meeting.md) | [meeting.zh.md](templates/meeting.zh.md) | `meeting` | `navy-gold` | Meeting details, hosts, and an agenda |
-| [event.md](templates/event.md) | [event.zh.md](templates/event.zh.md) | `event` | `forest-cream` | An event invitation |
-| [invitation.md](templates/invitation.md) | [invitation.zh.md](templates/invitation.zh.md) | `invitation` | `navy-gold` | A formal invitation with RSVP details |
-| [webinar.md](templates/webinar.md) | [webinar.zh.md](templates/webinar.zh.md) | `webinar` | `forest-cream` | An online session with speaker photos, roles, experience, and an agenda |
-
-English examples use `<type>.md`; Chinese examples use `<type>.zh.md`. Set `lang: en` or `lang: zh` in your own file to choose the built-in labels.
-
-Any type can use any of the three themes:
-
-- `classic` — light background with your brand color; the default.
-- `navy-gold` — navy background with gold accents.
-- `forest-cream` — forest background with cream text and gold accents.
-
-Choose the theme in frontmatter or override it for one run:
-
-```bash
-mdmailer templates/meeting.md --output emails --theme classic
-mdmailer templates/ --output emails --config path/to/config.json
-```
-
-Precedence when a Markdown file doesn't set `theme:` at all: the `--theme` flag, then frontmatter `theme:` (when present), then your config's `theme.preset` (set during `init`'s interactive wizard, or by hand — see "Branding and images"), then `classic`.
-
-Run `mdmailer --help` for usage. The older `mdmailer generate --input <file.md> --output <folder>` command still works.
+Layout and PNG rendering use Puppeteer's Chrome, which is installed with the package. If it is missing, mdmailer uses an installed Chrome/Chromium or downloads one on first use (needs internet). To use your own Chrome, set `PUPPETEER_EXECUTABLE_PATH`. Hosted images must be reachable while generating.
 
 ## Write an email
-
-Each Markdown file starts with YAML frontmatter:
 
 ```markdown
 ---
@@ -148,38 +60,42 @@ Write your message with **formatting**, lists, tables, and [links](https://examp
 | Field | Meaning |
 | --- | --- |
 | `type` | Required: `news`, `notification`, `meeting`, `event`, `invitation`, or `webinar` |
-| `lang` | Required: `en` or `zh` (Simplified Chinese) |
+| `lang` | Required: `en` or `zh`. Changes built-in labels only; write your text in the language you want |
 | `title` | Email subject and default heading |
-| `theme` | `classic`, `navy-gold`, or `forest-cream`; defaults to `classic` |
-| `date` | News dateline; also a fallback for an event's `startsAt` |
+| `theme` | `classic`, `navy-gold`, or `forest-cream` |
+| `date` | News dateline; fallback for an event's `startsAt` |
 
-Language changes built-in labels, not your message. Write titles, body text, and host bios in the intended language. Type and language are set in frontmatter only.
+**Notifications** also use `headline` (heading) and `banner` (callout text).
 
-For **notifications**, use `headline` to override the heading and `banner` for the callout text. Notifications do not display a dateline.
-
-For **meetings, events, invitations, and webinars**:
+**Meetings, events, invitations, and webinars** also use:
 
 | Field | Meaning |
 | --- | --- |
 | `eventName` | Heading; defaults to `title` |
-| `kicker` | Small label above the heading; meetings and webinars have localized defaults |
-| `startsAt` | Event date, such as `2026-10-15` |
-| `time` | Quoted time, such as `"16:00–17:00 UTC"` |
+| `kicker` | Small label above the heading |
+| `startsAt` | Event date, e.g. `2026-10-15` |
+| `time` | Quoted time, e.g. `"16:00–17:00 UTC"` |
 | `location` | Venue or online location |
-| `joinUrl` | Meeting or registration link, displayed with a short localized label instead of the raw URL |
-| `rsvpUrl` | Invitation response link; invitations also accept `joinUrl` as a fallback |
-| `hosts` | Names or objects with `name`, optional `role`, `bio`, and `photo` |
-| `agenda` | Markdown text, a list of strings, or a list of `{ time, title }` objects |
+| `joinUrl` | Meeting or registration link |
+| `rsvpUrl` | Invitation reply link (invitations fall back to `joinUrl`) |
+| `hosts` | Names, or objects with `name`, and optionally `role`, `bio`, `photo` |
+| `agenda` | Markdown text, a list of strings, or a list of `{ time, title }` |
 
-Every starter with hosts includes sample photos and demonstrates rich introductions using `name`, `role` (job title), `bio` (experience), and `photo`. `mdmailer init` copies the five sample photos into `assets/images/hosts/`. Replace them and the example biographies with your hosts’ details. The news starter demonstrates text formatting, lists, tables, quotations, and code blocks; the webinar adds a learning-outcomes table and preparation checklist.
+Missing details are simply left out.
 
-Date and time appear inside the details box with location and the action link. Invitations show a localized RSVP label and “Respond to invitation” link. Missing details are omitted. Meetings show hosts in a separate section; events, invitations, and webinars do so when host profiles include photos, roles, or bios.
+## Themes
 
-Older files should change `release-notes` and `digest` to `news`, `announcement` to `notification`, and `workshop` to `meeting`. The old type names are no longer accepted.
+Any type works with any theme:
 
-## Branding and images
+- `classic`: light background with your brand color (default)
+- `navy-gold`: navy background, gold accents
+- `forest-cream`: forest background, cream text, gold accents
 
-Edit your selected local or global JSON configuration:
+Precedence: `--theme` flag, then the file's `theme:`, then `theme.preset` in your config, then `classic`.
+
+## Branding
+
+Branding lives in `mdmailer.config.json`:
 
 ```json
 {
@@ -196,15 +112,15 @@ Edit your selected local or global JSON configuration:
 }
 ```
 
-`theme.preset` (`classic`, `navy-gold`, or `forest-cream`) is the fallback used when a Markdown file's frontmatter omits `theme:` entirely; it defaults to `classic` when omitted here too. `init`'s interactive wizard sets it for you; explicit frontmatter `theme:` and the `--theme` flag both still override it for that one file or run.
+`theme.preset` is the default theme for files that don't set one. Optional settings: `organization.logoUrlOnDark` (logo for dark themes), `theme.fontFamily`, `contentWidth`, `social` (`{ label, url }` entries), `address`, and `unsubscribeUrl`.
 
-Transparent logos remain transparent on every theme; no white backing plate is added. Use a light-colored logo for a dark theme when needed.
+**Which config is used** (one file, never merged): `--config <file>`, then `mdmailer.config.json` in the current folder, then `~/.mdmailer/mdmailer.config.json`.
 
-Optional settings include `organization.logoUrlOnDark` for dark themes, and `theme.fontFamily`, `contentWidth`, `social` (`{ label, url }` entries), `address`, and `unsubscribeUrl`.
+**Set branding once for every project:** run `mdmailer init --global`, edit `~/.mdmailer/mdmailer.config.json`, then generate from any folder.
 
-Use local paths or hosted HTTPS URLs for logos, Markdown images, and host photos. Local images are embedded in both outputs; HTML uses data URLs and EML uses inline attachments. Local SVGs are converted to PNG. Logo paths resolve from the configuration file’s folder. Markdown image and host-photo paths resolve from the current working directory.
+**Images:** use local paths or HTTPS URLs for logos, Markdown images, and host photos. Local images are embedded in the HTML and EML. Logo paths are relative to the config file; Markdown image and host-photo paths are relative to where you run the command.
 
-For custom theme colors, use an object instead of a preset name:
+**Custom colors:** override individual colors in frontmatter. Keys are `background`, `foreground`, `mutedForeground`, `accent`, `surface`, and `border`; quote the hex values.
 
 ```yaml
 theme:
@@ -213,22 +129,24 @@ theme:
     accent: "#FFE099"
 ```
 
-Supported color keys are `background`, `foreground`, `mutedForeground`, `accent`, `surface`, and `border`. Quote six-digit hex values. Dark themes enforce WCAG AA text contrast. `--theme` changes the preset while retaining frontmatter color overrides.
+## Use with an LLM agent
+
+`mdmailer init` places a `SKILL.md` in your project. Tell your agent:
+
+> Read `SKILL.md` and use mdmailer to create my email.
+
+Or point at the installed copy: `node_modules/@cyborgoat/mdmailer/SKILL.md`. For a global install, find it under `$(npm root -g)/@cyborgoat/mdmailer/`.
+
+The package also bundles example emails in `templates/` (one English and one Chinese for each type). They are references for you and your agent, not something you need to copy or edit.
 
 ## Development
 
-For source checkout setup, run `npm ci`, `npm run build`, and optionally `npm link`.
-
 ```bash
-npm run generate -- templates/ --output emails   # Run from source without linking
-npm run email:dev              # Live template previews
+npm ci
+npm run build
+npm run generate -- my-email.md --output emails   # run from source
 npm run typecheck
 npm test
-npm run build
 ```
 
-The linked `mdmailer` command uses `dist/cli.js`; rebuild after changing source code. The optional `output/` folder and personal drafts are gitignored; files generated elsewhere follow your own ignore rules; the twelve starter files are tracked.
-
-`init`'s interactive wizard only activates with a real terminal attached, so it isn't exercised by the automated subprocess tests (which spawn the CLI without a TTY). Check it manually with `node --import tsx/esm src/cli.ts init` run directly in a terminal, or force a pty with `script -q /dev/null node --import tsx/esm src/cli.ts init` (macOS/Linux) for a scripted check.
-
-`npm pack` builds the CLI and includes only the CLI bundle, twelve English and Chinese starters, SKILL.md, README, license, and package metadata. Only the five sample host photos are bundled as assets; personal branding, other assets, drafts, and generated emails are excluded.
+`npm link` makes the `mdmailer` command use your local `dist/cli.js`; rebuild after changing source. The interactive `init` wizard needs a real terminal, so automated tests don't cover it; try it by running `node --import tsx/esm src/cli.ts init` in a terminal.

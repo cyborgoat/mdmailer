@@ -1,58 +1,41 @@
 ---
 name: mdmailer
-description: Create, configure, generate, and validate branded HTML and EML emails with mdmailer. Use for email content, branding, templates, images, and generation troubleshooting with the installed npm package or source repository.
+description: Create, configure, generate, and validate branded HTML, EML, and PNG emails from Markdown with mdmailer. Use for email content, branding, images, and generation troubleshooting.
 ---
 
 # mdmailer
 
-Generate email files from Markdown; the app does not send email. For full field documentation, read README.md in the installed package: `node_modules/@cyborgoat/mdmailer/README.md` for local installs, or `<npm root -g>/@cyborgoat/mdmailer/README.md` for global installs. In the source repository, use its README.md.
+Generates email files from Markdown; it does not send email. Full field reference: `README.md` in the installed package (`node_modules/@cyborgoat/mdmailer/README.md`, or `$(npm root -g)/@cyborgoat/mdmailer/README.md` for a global install).
 
 ## Workflow
 
-1. Use Node.js 24 or later and run from the user's email workspace, not the installed package directory. For a local npm installation, use `npx --no-install mdmailer`; for a global installation, use `mdmailer`. Do not build or modify the installed package.
-2. Read the selected config (`--config`, working-directory `mdmailer.config.json`, then `~/.mdmailer/mdmailer.config.json`). Choose a starter from workspace `templates/` or the installed package’s `templates/` folder:
-
-   | English | Chinese | Type | Theme |
-   | --- | --- | --- | --- |
-   | `news.md` | `news.zh.md` | `news` | `classic` |
-   | `notification.md` | `notification.zh.md` | `notification` | `classic` |
-   | `meeting.md` | `meeting.zh.md` | `meeting` | `navy-gold` |
-   | `event.md` | `event.zh.md` | `event` | `forest-cream` |
-   | `invitation.md` | `invitation.zh.md` | `invitation` | `navy-gold` |
-   | `webinar.md` | `webinar.zh.md` | `webinar` | `forest-cream` |
-
-3. Copy a bundled starter into the user’s workspace before editing it. When the starter has hosts, also copy its bundled `assets/images/hosts/` photos into the same relative workspace paths (or use real host photos). Alternatively, `init` copies the required example assets. Edit the requested existing Markdown file when one is provided. Never write drafts or branding into `node_modules` or the installed package directory. Preserve unrelated user content.
-4. Generate and check HTML, EML, and PNG outputs:
+1. Work in the user's email workspace, not inside the installed package, and never modify the package. Use Node.js 24+. Run `npx --no-install mdmailer` for a local install, or `mdmailer` for a global one. If it isn't installed: `npm install @cyborgoat/mdmailer`.
+2. Find the config in this order: `--config <file>`, `mdmailer.config.json` in the working directory, `~/.mdmailer/mdmailer.config.json`. If none exists, run `npx --no-install mdmailer init` (non-interactive here; it scaffolds into the current directory and never overwrites files). `init --global` sets up `~/.mdmailer/` instead.
+3. Write or edit the Markdown file. If the user named a file, edit it and keep unrelated content. Otherwise create a new one, using the bundled examples as a reference. They live in the package's `templates/` folder, one English and one Chinese per type: `news`, `notification`, `meeting`, `event`, `invitation`, `webinar` (`<type>.md`, `<type>.zh.md`). Copy one into the workspace to start; example host photos are in the package's `assets/images/hosts/` and are placeholders, not the user's real hosts.
+4. Generate:
 
    ```bash
    npx --no-install mdmailer my-email.md --output ./emails
    npx --no-install mdmailer ./drafts --output ./emails
    ```
 
-If not installed, the user can install it with `npm install @cyborgoat/mdmailer` in their workspace, or `npm install -g @cyborgoat/mdmailer` for a global command. The README and templates referenced here are bundled with the package; locate them in the installed package, even when this skill was copied into a workspace or `~/.mdmailer/`.
+## Authoring rules
 
-`npx --no-install mdmailer init` creates a workspace SKILL.md, local config, assets, and twelve English and Chinese workspace starters without overwriting files. Run this way (no attached terminal), it never prompts and scaffolds directly into the current directory — the interactive project-name/theme wizard only activates for a human running `init` from a real terminal, and does not apply to agent invocations. `npx --no-install mdmailer init --global` creates SKILL.md, branding config, and a placeholder logo under `~/.mdmailer/`; it never prompts, even interactively. If a usable config already exists, skip initialization and copy just the starter you need.
+- Frontmatter requires `type` (`news`, `notification`, `meeting`, `event`, `invitation`, `webinar`) and `lang` (`en` or `zh`). `lang` only changes built-in labels; write the content in the requested language.
+- Themes: `classic`, `navy-gold`, `forest-cream`; any type can use any theme. If `theme:` is omitted, the config's `theme.preset` applies, then `classic`. `--theme <preset>` overrides for one run.
+- Quote clock times and hex colors; prefer ISO dates (`2026-10-15`).
+- Notifications use `headline` and `banner`. Meetings, events, invitations, and webinars use `startsAt`, `time`, `location`, `hosts`, and `agenda`, plus `joinUrl` (or `rsvpUrl` for invitations).
+- Hosts: `name`, `role` (job title), `bio` (experience), `photo`.
+- Old type names are rejected: `release-notes`/`digest` → `news`, `announcement` → `notification`, `workshop` → `meeting`.
+- Branding (name, logo, colors, footer) belongs in the one selected JSON config, not in the email. Logo paths are relative to the config file; Markdown images and host photos are relative to the current directory. Confirm referenced files exist.
+- Don't open EML files or launch a mail client unless asked.
 
-## Authoring
+## Verify
 
-- Require `type` and `lang` in YAML frontmatter. Valid types are `news`, `notification`, `meeting`, `event`, `invitation`, and `webinar`; languages are `en` and `zh`.
-- Use only `classic`, `navy-gold`, or `forest-cream`. Any type can use any theme; frontmatter that omits `theme:` falls back to the config's `theme.preset` (set by `init`'s interactive wizard, or by hand — itself `classic` unless set).
-- Keep author-written text in the requested language. Localization changes built-in labels only.
-- Quote clock times and hex colors. Prefer ISO dates and the canonical field names in README.
-- For rich host or speaker introductions, use `name`, `role` for the job title, `bio` for experience, and `photo` for the avatar. Treat bundled profiles as examples, not facts about the user’s hosts.
-- Notifications use `headline` and `banner`. Meetings, events, invitations, and webinars use `startsAt`, `time`, `location`, `hosts`, and `agenda`. Use `rsvpUrl` for invitations and `joinUrl` for the other event types. Date and time belong inside the details box.
-- Migrate legacy types when encountered: `release-notes` / `digest` → `news`, `announcement` → `notification`, `workshop` → `meeting`.
+- `--output <folder>` is required (`--output .` for the current directory). All of `.html`, `.eml`, `.png` are written by default; `--format html,eml,png` picks a subset and leaves other existing files alone.
+- Confirm the expected files exist and check the content, including the QR codes above the footer. Folder mode processes `.md` files in filename order and stops at the first error, leaving earlier outputs in place.
+- PNG rendering uses headless Chrome, which mdmailer finds or downloads automatically. If rendering fails, check for network access or set `PUPPETEER_EXECUTABLE_PATH`, then rerun.
 
-Branding belongs in the selected JSON config (one complete file, no merging); per-email theme selection belongs in frontmatter. Overrides are available with `--theme <preset>` and `--config <file>`. There are no type or language CLI overrides.
+## Working on the source repo
 
-Logo paths resolve relative to the selected JSON file; Markdown images and host photos resolve from the current directory. Confirm files exist before referencing them. Local images use data URLs in HTML and CID attachments in EML; hosted HTTPS images stay remote. Do not open EML files or launch a mail client unless asked.
-
-## Verification
-
-- Generate the requested email and confirm HTML, EML, and PNG exist. All three share the complete email layout, with labeled QR codes just above the branding footer, once per unique destination. Readable link labels and numbered references remain clickable in HTML and EML; EML embeds QR images as CID attachments. The PNG uses twice the CSS resolution with no fixed height or summary truncation; no `promotion` frontmatter is needed. Inspect all content and QR codes. Shared rendering uses Puppeteer’s headless Chrome. Generation does not send email.
-- Folder generation processes immediate `.md` files in filename order and stops on the first error. Already generated files remain in place.
-- `--output <folder>` is mandatory; use `--output .` to explicitly select the current directory. The destination is created if missing. All formats are generated by default; `--format html,eml,png` selects a comma-separated subset. Verify only requested formats. Unselected existing files are untouched. Matching selected filenames are replaced. MIME boundaries and image IDs vary between runs.
-
-## Source development only
-
-When working on the source repository itself, use `npm ci`, `npm run typecheck`, tests, and `npm run build` as needed. `npm run generate -- <file.md> --output <folder>` runs from source. Keep bundled templates, `init`, README, and this skill synchronized. These build steps are not required for npm users.
+Use `npm ci`, `npm run typecheck`, `npm test`, `npm run build`. Keep `templates/`, `init`, README, and this file in sync. npm users don't need any of this.
