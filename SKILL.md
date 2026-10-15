@@ -19,6 +19,8 @@ Generates email files from Markdown; it does not send email. Full field referenc
    npx --no-install mdmailer ./drafts --output ./emails
    ```
 
+For live authoring, run `npx --no-install mdmailer preview my-email.md` and open the printed local URL. It refreshes after Markdown/config saves, keeps the last valid preview on errors, and writes no exports. Supports `--config`, `--theme`, and `--port` (default 3000). Stop the server when finished; use generate for final files.
+
 ## Authoring rules
 
 - Frontmatter requires `type` (`news`, `notification`, `meeting`, `event`, `invitation`, `webinar`) and `lang` (`en` or `zh`). `lang` only changes built-in labels; write the content in the requested language.

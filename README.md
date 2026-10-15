@@ -41,6 +41,18 @@ All three outputs share one layout. Links keep their labels with small numbered 
 
 Layout and PNG rendering use Puppeteer's Chrome, which is installed with the package. If it is missing, mdmailer uses an installed Chrome/Chromium or downloads one on first use (needs internet). To use your own Chrome, set `PUPPETEER_EXECUTABLE_PATH`. Hosted images must be reachable while generating.
 
+## Live preview
+
+```bash
+mdmailer preview my-email.md
+mdmailer preview my-email.md --theme navy-gold --port 3001
+mdmailer preview my-email.md --config path/to/config.json
+```
+
+Open the printed local URL in your browser and keep editing in your usual editor. Each save to the Markdown file or branding config updates the email automatically, including embedded images and QR codes. Use Desktop/Mobile to check the layout. Invalid frontmatter or config shows an error while keeping the last successful preview; fix it and save to recover. Updates render serially and may take a few seconds when images need loading.
+
+Preview accepts one file, requires no `--output`, and writes no export files. It listens only on `127.0.0.1` (port 3000 by default; use `--port 0` for a free port). Stop with Ctrl+C. Changes to image files alone require restarting preview. When ready, generate your HTML/EML/PNG files with the normal command. Browser rendering approximates email layout; individual mail clients may differ.
+
 ## Write an email
 
 ```markdown
@@ -145,6 +157,7 @@ The package also bundles example emails in `templates/` (one English and one Chi
 npm ci
 npm run build
 npm run generate -- my-email.md --output emails   # run from source
+npm run preview -- my-email.md                   # live preview from source
 npm run typecheck
 npm test
 ```

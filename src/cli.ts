@@ -1,4 +1,5 @@
 import { runGenerate } from "./commands/generate.js";
+import { runPreview } from "./commands/preview.js";
 import { runInit } from "./commands/init.js";
 import { TEMPLATE_NAMES } from "./emails/registry.js";
 
@@ -7,6 +8,7 @@ const HELP = `mdmailer — turn a Markdown file into a branded email, ready to s
 Usage:
   mdmailer <file.md> --output <folder>    Generate <name>.html, .eml, and .png
   mdmailer <folder/> --output <folder>    Generate every .md file directly in a folder
+  mdmailer preview <file.md>             Live email preview, updates on save
   mdmailer init                          Scaffold local config and templates
   mdmailer init --global                 Create user-wide branding config
 
@@ -15,6 +17,7 @@ Options:
   --format <html,eml,png>                Comma-separated outputs; defaults to all three
   --theme <preset>                       Override the theme preset
   --config <file>                        Override local or user-global configuration
+  --port <number>                       Preview port (default 3000; 0 picks a free port)
   -h, --help                            Show this help
 
 Examples:
@@ -44,6 +47,9 @@ async function main() {
   switch (command) {
     case "generate":
       await runGenerate(rest);
+      break;
+    case "preview":
+      await runPreview(rest);
       break;
     case "init":
       await runInit(rest);

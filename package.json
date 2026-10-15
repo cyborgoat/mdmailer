@@ -1,6 +1,6 @@
 {
   "name": "@goatcheese/mdmailer",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "Turn a Markdown file into a branded HTML/EML email, ready to send manually. Configure your organization's name, logo, theme, and tagline once; write updates in plain Markdown.",
   "type": "module",
   "license": "MIT",
@@ -17,6 +17,7 @@
   },
   "scripts": {
     "generate": "tsx src/cli.ts generate",
+    "preview": "tsx src/cli.ts preview",
     "init": "tsx src/cli.ts init",
     "email:dev": "email dev --dir src/emails/templates",
     "test": "tsx --test \"src/**/*.test.ts\"",

@@ -127,8 +127,7 @@ export async function runGenerate(argv: string[]) {
   }
 }
 
-async function generateFile(inputPath: string, config: Config, outputDir: string, formats: Set<OutputFormat>, themeFlag?: string) {
-  const rawMarkdown = await readFile(resolve(inputPath), "utf-8");
+export async function renderEmail(rawMarkdown: string, config: Config, themeFlag?: string, formats = new Set<OutputFormat>(["html"])) {
   const { data: frontmatter, content: rawBodyMarkdown } = matter(rawMarkdown);
   const rawTemplateName = frontmatter.type;
   if (typeof rawTemplateName !== "string" || !rawTemplateName.trim()) {
@@ -187,9 +186,14 @@ async function generateFile(inputPath: string, config: Config, outputDir: string
   const element = React.createElement(component, buildProps(ctx));
 
   const preview = await screenshotEmail(await render(element), theme.contentWidth, formats.has("png"));
-  const html = preview.html;
   const text = formats.has("eml") ? await render(element, { plainText: true }) : "";
 
+  return { ...preview, title, text, organization, logoAttachment, contentImages, hostImages };
+}
+
+async function generateFile(inputPath: string, config: Config, outputDir: string, formats: Set<OutputFormat>, themeFlag?: string) {
+  const preview = await renderEmail(await readFile(resolve(inputPath), "utf-8"), config, themeFlag, formats);
+  const { html, title, text, organization, logoAttachment, contentImages, hostImages } = preview;
   await mkdir(outputDir, { recursive: true });
   const stem = basename(inputPath, extname(inputPath));
 
