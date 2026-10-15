@@ -7,7 +7,7 @@ Requires **Node.js 24 or later**.
 ## Quick start
 
 ```bash
-npm install @cyborgoat/mdmailer
+npm install @goatcheese/mdmailer
 npx mdmailer init
 ```
 
@@ -18,7 +18,7 @@ cd <project-name>
 npx mdmailer my-email.md --output emails
 ```
 
-For a global command, use `npm install -g @cyborgoat/mdmailer` and run `mdmailer` directly.
+For a global command, use `npm install -g @goatcheese/mdmailer` and run `mdmailer` directly.
 
 ## Generate
 
@@ -135,7 +135,7 @@ theme:
 
 > Read `SKILL.md` and use mdmailer to create my email.
 
-Or point at the installed copy: `node_modules/@cyborgoat/mdmailer/SKILL.md`. For a global install, find it under `$(npm root -g)/@cyborgoat/mdmailer/`.
+Or point at the installed copy: `node_modules/@goatcheese/mdmailer/SKILL.md`. For a global install, find it under `$(npm root -g)/@goatcheese/mdmailer/`.
 
 The package also bundles example emails in `templates/` (one English and one Chinese for each type). They are references for you and your agent, not something you need to copy or edit.
 

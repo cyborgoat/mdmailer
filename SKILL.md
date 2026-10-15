@@ -5,11 +5,11 @@ description: Create, configure, generate, and validate branded HTML, EML, and PN
 
 # mdmailer
 
-Generates email files from Markdown; it does not send email. Full field reference: `README.md` in the installed package (`node_modules/@cyborgoat/mdmailer/README.md`, or `$(npm root -g)/@cyborgoat/mdmailer/README.md` for a global install).
+Generates email files from Markdown; it does not send email. Full field reference: `README.md` in the installed package (`node_modules/@goatcheese/mdmailer/README.md`, or `$(npm root -g)/@goatcheese/mdmailer/README.md` for a global install).
 
 ## Workflow
 
-1. Work in the user's email workspace, not inside the installed package, and never modify the package. Use Node.js 24+. Run `npx --no-install mdmailer` for a local install, or `mdmailer` for a global one. If it isn't installed: `npm install @cyborgoat/mdmailer`.
+1. Work in the user's email workspace, not inside the installed package, and never modify the package. Use Node.js 24+. Run `npx --no-install mdmailer` for a local install, or `mdmailer` for a global one. If it isn't installed: `npm install @goatcheese/mdmailer`.
 2. Find the config in this order: `--config <file>`, `mdmailer.config.json` in the working directory, `~/.mdmailer/mdmailer.config.json`. If none exists, run `npx --no-install mdmailer init` (non-interactive here; it scaffolds into the current directory and never overwrites files). `init --global` sets up `~/.mdmailer/` instead.
 3. Write or edit the Markdown file. If the user named a file, edit it and keep unrelated content. Otherwise create a new one, using the bundled examples as a reference. They live in the package's `templates/` folder, one English and one Chinese per type: `news`, `notification`, `meeting`, `event`, `invitation`, `webinar` (`<type>.md`, `<type>.zh.md`). Copy one into the workspace to start; example host photos are in the package's `assets/images/hosts/` and are placeholders, not the user's real hosts.
 4. Generate:
