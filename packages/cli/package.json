@@ -1,0 +1,75 @@
+{
+  "name": "@goatcheese/mdmailer",
+  "version": "0.2.0",
+  "description": "Turn a Markdown file into a branded HTML/EML email, ready to send manually. Configure your organization's name, logo, theme, and tagline once; write updates in plain Markdown.",
+  "type": "module",
+  "license": "MIT",
+  "author": "cyborgoat",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cyborgoat/mdmailer.git"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "bin": {
+    "mdmailer": "dist/cli.js"
+  },
+  "scripts": {
+    "generate": "tsx src/cli.ts generate",
+    "preview": "tsx src/cli.ts preview",
+    "init": "tsx src/cli.ts init",
+    "email:dev": "email dev --dir src/emails/templates",
+    "test": "tsx --test \"src/**/*.test.ts\"",
+    "typecheck": "tsc --noEmit",
+    "build": "tsup",
+    "prepack": "npm run build"
+  },
+  "dependencies": {
+    "@react-email/render": "^2.1.0",
+    "js-yaml": "^4.1.0",
+    "markdown-to-jsx": "^9.10.2",
+    "puppeteer": "^25.11.0",
+    "qrcode": "^1.5.4",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-email": "^6.9.3",
+    "sharp": "^0.35.3",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@goatcheese/mdmailer-core": "^0.1.0",
+    "@types/node": "^26.3.0",
+    "@types/qrcode": "^1.5.6",
+    "@types/react": "^19.2.18",
+    "tsup": "^8.5.1",
+    "tsx": "^4.23.12",
+    "typescript": "^7.0.2"
+  },
+  "files": [
+    "dist/cli.js",
+    "templates/news.md",
+    "templates/news.zh.md",
+    "templates/notification.md",
+    "templates/notification.zh.md",
+    "templates/meeting.md",
+    "templates/meeting.zh.md",
+    "templates/event.md",
+    "templates/event.zh.md",
+    "templates/invitation.md",
+    "templates/invitation.zh.md",
+    "templates/webinar.md",
+    "templates/webinar.zh.md",
+    "SKILL.md",
+    "README.md",
+    "LICENSE",
+    "assets/images/hosts/jordan-lee.jpg",
+    "assets/images/hosts/maya-thompson.jpg",
+    "assets/images/hosts/eleanor-brooks.jpg",
+    "assets/images/hosts/priya-nair.jpg",
+    "assets/images/hosts/marcus-cole.jpg"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}
