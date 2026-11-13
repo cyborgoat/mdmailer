@@ -5,8 +5,8 @@ const HOST_PHOTOS = [
   "jordan-lee.jpg",
   "maya-thompson.jpg",
   "eleanor-brooks.jpg",
-  "priya-nair.jpg",
-  "marcus-cole.jpg",
+  "sam-chen.jpg",
+  "alex-rivera.jpg",
 ] as const;
 
 const STARTER_TEMPLATES = [

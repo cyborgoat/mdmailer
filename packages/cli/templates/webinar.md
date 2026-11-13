@@ -9,13 +9,13 @@ time: "16:00–17:00 UTC"
 location: "Online — Zoom"
 joinUrl: "https://example.com/zoom/api-webinar"
 hosts:
-  - name: Priya Nair
+  - name: Sam Chen
     role: Staff Platform Engineer
-    photo: assets/images/hosts/priya-nair.jpg
+    photo: assets/images/hosts/sam-chen.jpg
     bio: Leads API reliability across our edge services, with eight years of experience building distributed systems. Previously developed the timeout and retry libraries used by our product teams.
-  - name: Marcus Cole
+  - name: Alex Rivera
     role: Principal Engineer, Observability
-    photo: assets/images/hosts/marcus-cole.jpg
+    photo: assets/images/hosts/alex-rivera.jpg
     bio: Has spent ten years helping teams run reliable production services. Designs tracing and SLO tools, coaches incident responders, and turns noisy dashboards into useful signals.
 agenda:
   - time: "16:00"

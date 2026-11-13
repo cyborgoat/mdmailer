@@ -9,13 +9,13 @@ time: "16:00–17:00 UTC"
 location: "线上 — Zoom"
 joinUrl: "https://example.com/zoom/api-webinar"
 hosts:
-  - name: Priya Nair
+  - name: Sam Chen
     role: 资深平台工程师
-    photo: assets/images/hosts/priya-nair.jpg
+    photo: assets/images/hosts/sam-chen.jpg
     bio: 负责边缘服务的 API 可靠性，拥有八年分布式系统开发经验，曾开发产品团队使用的超时和重试工具库。
-  - name: Marcus Cole
+  - name: Alex Rivera
     role: 可观测性首席工程师
-    photo: assets/images/hosts/marcus-cole.jpg
+    photo: assets/images/hosts/alex-rivera.jpg
     bio: 拥有十年生产系统可靠性经验，负责追踪和 SLO 工具设计、事故响应培训，并帮助团队建立真正有用的监控体系。
 agenda:
   - time: "16:00"
