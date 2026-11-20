@@ -27,7 +27,7 @@ test("global setup, config precedence, relative logos, and synchronized starters
     await runInit(["--global"]);
     assert.deepEqual(await readdir(workspace), []);
     const globalPath = globalConfigPath();
-    const bundledSkill = await readFile(fileURLToPath(new URL("../SKILL.md", import.meta.url)), "utf8");
+    const bundledSkill = await readFile(fileURLToPath(new URL("../../../SKILL.md", import.meta.url)), "utf8");
     assert.equal(await readFile(join(dirname(globalPath), "SKILL.md"), "utf8"), bundledSkill);
     await writeFile(join(dirname(globalPath), "SKILL.md"), "User global instructions");
     assert.equal(globalPath, join(home, ".mdmailer/mdmailer.config.json"));

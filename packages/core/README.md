@@ -1,80 +1,112 @@
+English | [简体中文](README.zh-CN.md)
+
 # @goatcheese/mdmailer-core
 
-The environment-neutral core of [mdmailer](https://github.com/cyborgoat/mdmailer): turn Markdown plus configuration into branded email HTML and EML. It has no `node:fs`, `sharp`, `puppeteer` or `node:http` imports, and runs in Node and in browsers/webviews.
+Render branded HTML emails and build EML files from Markdown in a Node.js, browser, or webview application. For a terminal workflow with live preview and PNG export, use the [mdmailer CLI](https://github.com/cyborgoat/mdmailer).
 
-The command-line tool is [`@goatcheese/mdmailer`](../cli).
+## Installation
+
+Run this in your application’s project directory:
 
 ```sh
 npm install @goatcheese/mdmailer-core
 ```
 
-## What core does and doesn't do
+## Usage
 
-- **Does:** parse frontmatter, render the template to HTML (`renderEmail`), post-process the DOM (QR codes for links, baked `<img>` sizes), and assemble the `.eml` (`buildEml`).
-- **Doesn't:** read files, rasterize SVGs, or export PNG. You pass in an `ImageIO` for image access; PNG export lives in the CLI (puppeteer).
+### Render a Markdown draft
 
-## Rendering
+Pass the Markdown source, parsed branding config, and an image adapter to `renderEmail`. This example uses an embedded logo. Replace it and supply an adapter for any local images used by your drafts.
 
-```ts
-import { parseConfig, renderEmail, type ImageIO } from "@goatcheese/mdmailer-core";
+```js
+import { parseConfig, renderEmail } from "@goatcheese/mdmailer-core";
 
-const images: ImageIO = {
-  // Resolve a local image ref however your environment does it.
-  async read(ref) {
-    const response = await fetch(ref);
-    return { bytes: new Uint8Array(await response.arrayBuffer()), mime: response.headers.get("content-type") ?? "image/png" };
-  },
-};
+const markdown = `---
+title: Team update
+type: news
+lang: en
+---
+
+The new handbook is ready. [Read it](https://example.com/handbook).`;
 
 const config = parseConfig({
-  organization: { name: "Example", logoUrl: "https://example.com/logo.png" },
+  organization: {
+    name: "Example",
+    logoUrl: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
+  },
   theme: { primaryColor: "#1A73E8", footerText: "© Example" },
 });
 
-const rendered = await renderEmail(markdown, { config, images, plainText: true });
-// rendered.html is the raw React render — post-process it next.
+const rendered = await renderEmail(markdown, {
+  config,
+  images: {
+    async read(ref) {
+      throw new Error(`No local image adapter for ${ref}`);
+    },
+  },
+  plainText: true,
+});
+
+console.log(rendered.title); // Team update
 ```
 
-`rendered.html` is the render **before** DOM post-processing. To get the final HTML:
+The result includes the subject, initial HTML, plain-text body, content width, and image attachment metadata. Finalize the HTML in a DOM to add QR codes and set image dimensions.
 
-### In a browser
+### Finalize HTML and build EML in a browser
 
-```ts
-import { postProcessDocument, serializeDocument, buildEml, collectEmlAttachments } from "@goatcheese/mdmailer-core";
+In the same browser module, load the initial HTML into an attached iframe at the email’s content width. The iframe gives the DOM a layout to measure.
+
+```js
+import {
+  buildEml,
+  collectEmlAttachments,
+  postProcessDocument,
+  serializeDocument,
+} from "@goatcheese/mdmailer-core";
 
 const frame = document.createElement("iframe");
+frame.setAttribute("sandbox", "allow-same-origin");
 frame.style.cssText = `position:fixed;left:-9999px;width:${rendered.contentWidth}px`;
-document.body.append(frame);
-frame.srcdoc = rendered.html;
-await new Promise((resolve) => (frame.onload = resolve));
-
-const { qrImages } = await postProcessDocument(frame.contentDocument!);
-const html = serializeDocument(frame.contentDocument!);
-const eml = buildEml({
-  subject: rendered.title,
-  html,
-  text: rendered.text,
-  attachments: collectEmlAttachments(rendered, qrImages),
+const loaded = new Promise((resolve) => {
+  frame.addEventListener("load", resolve, { once: true });
 });
-frame.remove();
+frame.srcdoc = rendered.html;
+document.body.append(frame);
+
+let html;
+let eml;
+try {
+  await loaded;
+  const doc = frame.contentDocument;
+  const { qrImages } = await postProcessDocument(doc);
+  html = serializeDocument(doc);
+  eml = buildEml({
+    subject: rendered.title,
+    html,
+    text: rendered.text,
+    attachments: collectEmlAttachments(rendered, qrImages),
+  });
+} finally {
+  frame.remove();
+}
 ```
 
-The iframe must be attached and laid out: image dimensions are measured with `getBoundingClientRect`. A host without layout (jsdom) can pass `imageSizes` to `postProcessDocument` instead.
+In Node.js, use a browser page for DOM processing or provide measured dimensions through the `imageSizes` option when using a DOM without layout. The CLI demonstrates running the separate DOM phases through `inPageCall`. [CLI rendering source](https://github.com/cyborgoat/mdmailer/blob/main/packages/cli/src/screenshot.ts)
 
-### In Node (puppeteer)
+## Image adapter
 
-Load `rendered.html` into a page, then run the self-contained phases with `inPageCall` — see `packages/cli/src/screenshot.ts` and `promotion.ts`.
+| Method | When to supply it | What it returns |
+| --- | --- | --- |
+| `read(ref)` | Required adapter method. Called for local logo paths, Markdown images, and host photos. HTTP(S) and data URLs bypass it. | Image bytes and MIME type. |
+| `rasterize(img, { height })` | Supply it if your local inputs include SVGs. | PNG bytes and dimensions, with optional scaling to the requested height. |
+| `measure(img)` | Supply it to report raster image dimensions. The logo uses a default aspect ratio when dimensions are unavailable. | Pixel width and height. |
 
-## `ImageIO`
+The host application provides file access and image conversion. Use the CLI if you need PNG output.
 
-| Method | Required | Purpose |
-|---|---|---|
-| `read(ref)` | yes | Bytes + MIME type for a non-remote image ref (logo, Markdown image, host photo). `http(s):` and `data:` refs are never passed to it. |
-| `rasterize(img, { height })` | when an SVG is referenced | SVG → PNG (optionally scaled to `height`), returning the new size. Node: sharp. Browser: canvas. |
-| `measure(img)` | optional | Pixel size of raster images; without it they report 0×0 (the logo then falls back to a default aspect ratio). |
+## API reference
 
-## API
+The main entry points are `parseConfig`, `renderEmail`, `postProcessDocument`, `serializeDocument`, `collectEmlAttachments`, and `buildEml`. The package also exports the config schemas, theme presets, template names, `qrDataUrl`, and the individual DOM processing phases. The API is in the 0.x series. [Public exports](https://github.com/cyborgoat/mdmailer/blob/main/packages/core/src/index.ts)
 
-`renderEmail`, `parseConfig`, `postProcessDocument`, `serializeDocument`, `buildEml`, `collectEmlAttachments`, `qrDataUrl`, plus the config schema, theme presets, template names and the lower-level post-processing phases (`replaceLinksWithQrMarkers`, `insertQrImages`, `bakeImageSizes`, `inPageCall`). The API is `0.x` and may change.
+## License
 
-`crypto.randomUUID` is used when available (secure contexts), with a `getRandomValues` fallback.
+[MIT](LICENSE)

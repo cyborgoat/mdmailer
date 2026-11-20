@@ -57,7 +57,8 @@ export async function copyStarterPhotos(assetsDir: string): Promise<void> {
 /** Copy the bundled agent instructions without replacing user customizations. */
 export async function copyAgentSkill(targetDir: string): Promise<void> {
   const target = join(targetDir, "SKILL.md");
-  const skill = await readFile(new URL("../SKILL.md", import.meta.url));
+  const skillPath = import.meta.url.endsWith(".ts") ? "../../../SKILL.md" : "./skills/mdmailer/SKILL.md";
+  const skill = await readFile(new URL(skillPath, import.meta.url));
   try {
     await writeFile(target, skill, { flag: "wx" });
     console.log(`Created: ${target}`);

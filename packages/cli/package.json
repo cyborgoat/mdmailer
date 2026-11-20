@@ -1,6 +1,6 @@
 {
   "name": "@goatcheese/mdmailer",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Turn a Markdown file into a branded HTML/EML email, ready to send manually. Configure your organization's name, logo, theme, and tagline once; write updates in plain Markdown.",
   "type": "module",
   "license": "MIT",
@@ -60,8 +60,9 @@
     "templates/invitation.zh.md",
     "templates/webinar.md",
     "templates/webinar.zh.md",
-    "SKILL.md",
+    "dist/skills/mdmailer/SKILL.md",
     "README.md",
+    "README.zh-CN.md",
     "LICENSE",
     "assets/images/hosts/jordan-lee.jpg",
     "assets/images/hosts/maya-thompson.jpg",
