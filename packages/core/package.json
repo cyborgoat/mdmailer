@@ -1,6 +1,6 @@
 {
   "name": "@goatcheese/mdmailer-core",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Environment-neutral core of mdmailer: turn Markdown plus configuration into branded email HTML and EML. Runs in Node and in browsers.",
   "type": "module",
   "license": "MIT",
